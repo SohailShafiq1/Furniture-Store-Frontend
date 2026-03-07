@@ -6,6 +6,9 @@ import PromoBanners from '../components/PromoBanners/PromoBanners';
 import BedroomSets from '../components/BedroomSets/BedroomSets';
 import ShopByCategory from '../components/ShopByCategory/ShopByCategory';
 import DiningTable from '../components/BedroomSets/DiningTable';
+import SlidingBanner from '../components/SlidingBanner/SlidingBanner';
+import Inspiration from '../components/Inspiration/Inspiration';
+import TopBrands from '../components/TopBrands/TopBrands';
 
 export default function HomePage() {
   return (
@@ -19,6 +22,9 @@ export default function HomePage() {
       <BedroomSets />
       <PromoBanners />
       <DiningTable/>
+      <SlidingBanner />
+      <Inspiration />
+      <TopBrands />
     </div>
   );
 }

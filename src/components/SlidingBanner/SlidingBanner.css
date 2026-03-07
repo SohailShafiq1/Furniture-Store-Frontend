@@ -1,0 +1,127 @@
+.sliding-banner {
+  width: 100%;
+  padding: 40px 0;
+  background-color: #ffffff;
+  border-top: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
+  overflow: hidden;
+}
+
+.banner-track {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.banner-content {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  animation: slideLeft 40s linear infinite;
+  width: max-content;
+}
+
+@keyframes slideLeft {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-33.333%);
+  }
+}
+
+.banner-item {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.banner-text {
+  font-size: 48px;
+  font-weight: 700;
+  color: #1a1a1a;
+  white-space: nowrap;
+  padding: 0 20px;
+}
+
+.banner-image-wrapper {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #f5f5f5;
+  flex-shrink: 0;
+}
+
+.banner-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Pause animation on hover */
+.banner-content:hover {
+  animation-play-state: paused;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .sliding-banner {
+    padding: 35px 0;
+  }
+
+  .banner-text {
+    font-size: 40px;
+  }
+
+  .banner-image-wrapper {
+    width: 70px;
+    height: 70px;
+  }
+
+  .banner-content {
+    gap: 35px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sliding-banner {
+    padding: 30px 0;
+  }
+
+  .banner-text {
+    font-size: 32px;
+    padding: 0 15px;
+  }
+
+  .banner-image-wrapper {
+    width: 60px;
+    height: 60px;
+  }
+
+  .banner-content {
+    gap: 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sliding-banner {
+    padding: 25px 0;
+  }
+
+  .banner-text {
+    font-size: 24px;
+    padding: 0 12px;
+  }
+
+  .banner-image-wrapper {
+    width: 50px;
+    height: 50px;
+  }
+
+  .banner-content {
+    gap: 25px;
+    animation: slideLeft 30s linear infinite;
+  }
+}
