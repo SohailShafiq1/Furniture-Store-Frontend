@@ -43,3 +43,57 @@
   clip: rect(1px, 1px, 1px, 1px);
   white-space: nowrap;
 }
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .stay-in-touch {
+    padding: 36px 20px 24px;
+  }
+  
+  .stay-title {
+    font-size: 28px;
+  }
+  
+  .stay-sub {
+    font-size: 14px;
+  }
+  
+  .stay-input {
+    width: 260px;
+  }
+}
+
+@media (max-width: 480px) {
+  .stay-in-touch {
+    padding: 28px 16px 20px;
+  }
+  
+  .stay-container {
+    max-width: 100%;
+  }
+  
+  .stay-title {
+    font-size: 24px;
+  }
+  
+  .stay-sub {
+    font-size: 13px;
+    margin: 0 0 14px;
+  }
+  
+  .stay-form {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+  }
+  
+  .stay-input {
+    width: 100%;
+    max-width: 320px;
+  }
+  
+  .stay-btn {
+    width: 100%;
+    max-width: 320px;
+  }
+}
