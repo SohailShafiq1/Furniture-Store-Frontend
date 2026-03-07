@@ -1,0 +1,45 @@
+.stay-in-touch {
+  padding: 48px 0 28px;
+  background: #fff;
+  text-align: center;
+}
+.stay-container {
+  max-width: 760px;
+  margin: 0 auto;
+}
+.stay-title {
+  font-size: 36px;
+  margin: 0 0 8px;
+  font-weight: 800;
+}
+.stay-sub {
+  color: #666;
+  margin: 0 0 18px;
+}
+.stay-form {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.stay-input {
+  padding: 12px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  width: 320px;
+}
+.stay-btn {
+  padding: 10px 14px;
+  border: 0;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 18px;
+}
+.visually-hidden {
+  position: absolute !important;
+  height: 1px; width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
+}

@@ -10,6 +10,7 @@ import SlidingBanner from '../components/SlidingBanner/SlidingBanner';
 import Inspiration from '../components/Inspiration/Inspiration';
 import TopBrands from '../components/TopBrands/TopBrands';
 import NewsUpdates from '../components/NewsUpdates/NewsUpdates';
+import Footer from '../components/Footer/Footer';
 
 export default function HomePage() {
   return (
@@ -27,6 +28,7 @@ export default function HomePage() {
       <Inspiration />
       <TopBrands />
       <NewsUpdates />
+      <Footer />
     </div>
   );
 }

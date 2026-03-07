@@ -1,0 +1,49 @@
+.benefits-strip {
+  display: flex;
+  gap: 16px;
+  background: #0d5448;
+  color: #fff;
+  padding: 20px 24px;
+  justify-content: center;
+  align-items: center;
+}
+.benefit { display:flex; flex-direction:column; align-items:center; gap:6px; flex:1; max-width:300px }
+.benefit .icon { font-size:32px; filter: brightness(0) invert(1); }
+.benefit .text { text-align:center; font-size:14px }
+.benefit .text strong { display:block; font-weight:600; margin-bottom:2px }
+.benefit .text .sub { font-size:13px; color: #d6e7e2; font-weight:400 }
+
+.back-to-top { text-align:center; padding:16px 0; font-weight:600; font-size:14px; cursor:pointer; background:#fff }
+
+.footer-main {
+  display: flex;
+  gap: 60px;
+  padding: 48px 40px;
+  max-width: 100%;
+  margin: 0;
+  background: #f5f5f5;
+  align-items:flex-start;
+}
+.footer-col { flex:1; }
+.footer-col h4 { margin: 0 0 16px; font-size:16px; font-weight:700 }
+.footer-col ul { list-style:none; padding:0; margin:0 }
+.footer-col ul li { margin-bottom:10px; font-size:14px; color:#333; cursor:pointer }
+.footer-col ul li:hover { text-decoration:underline }
+.footer-col p { margin:0 0 10px; font-size:14px; color:#333 }
+.footer-logo { width:180px; display:block; margin-bottom:20px }
+.about-text { color:#555; font-size:13px; line-height:1.7; margin-bottom:20px }
+.footer-col.about { flex:1.3 }
+
+.payment-icons { margin-top:20px; display:flex; gap:6px; flex-wrap:wrap; align-items:center }
+.pay-pill { background:#fff; border-radius:4px; padding:8px 10px; border:1px solid #ddd; font-size:11px; font-weight:600; color:#333 }
+
+.social-row { margin-top:20px; display:flex; gap:14px; align-items:center }
+.social { width:36px; height:36px; display:inline-flex; align-items:center; justify-content:center; border-radius:50%; background:#222; color:#fff; font-size:18px; cursor:pointer }
+.social:hover { background:#444 }
+
+.footer-bottom { display:flex; justify-content:space-between; align-items:center; padding:20px 40px; color:#666; font-size:13px; background:#fff; border-top:1px solid #e0e0e0 }
+.footer-bottom .left { color:#333 }
+.footer-bottom .right { display:flex; gap:20px }
+.footer-bottom .right a { color:#333; text-decoration:none }
+.footer-bottom .right a:hover { text-decoration:underline }
+
