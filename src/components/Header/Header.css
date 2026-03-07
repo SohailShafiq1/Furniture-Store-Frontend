@@ -1,0 +1,160 @@
+/* ===== HEADER ===== */
+.header {
+  background-color: white;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  width: 100%;
+}
+
+/* ===== ROW 1: Logo | Search | Icons ===== */
+.header-top-row {
+  display: flex;
+  align-items: center;
+  padding: 7px 30px;
+  gap: 20px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.logo-container {
+  flex-shrink: 0;
+}
+
+.logo {
+  height: 38px;
+  width: auto;
+  cursor: pointer;
+  display: block;
+}
+
+.icon-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.header-icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+  color: #2c2c2c;
+}
+
+.header-icon-btn:hover {
+  background-color: #f0f0f0;
+}
+
+.header-icon-btn svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* ===== ROW 2: Nav | Financing + Premium ===== */
+.header-nav-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30px;
+}
+
+.nav-row-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.financing-text {
+  font-size: 13px;
+  color: #555;
+  white-space: nowrap;
+}
+
+.luna-premium-btn {
+  background-color: #1a1a1a;
+  color: white;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s ease;
+}
+
+.luna-premium-btn:hover {
+  background-color: #3a3a3a;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .header-top-row {
+    padding: 10px 20px;
+  }
+
+  .header-nav-row {
+    padding: 0 20px;
+  }
+
+  .header-icon-btn svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-top-row {
+    padding: 10px 15px;
+    gap: 12px;
+  }
+
+  .header-nav-row {
+    padding: 0 15px;
+  }
+
+  .nav-row-right {
+    display: none;
+  }
+
+  .logo {
+    height: 38px;
+  }
+
+  .icon-group {
+    gap: 4px;
+  }
+
+  .header-icon-btn svg {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-top-row {
+    padding: 8px 12px;
+    gap: 8px;
+  }
+
+  .logo {
+    height: 32px;
+  }
+
+  .header-icon-btn {
+    padding: 6px;
+  }
+
+  .header-icon-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+}

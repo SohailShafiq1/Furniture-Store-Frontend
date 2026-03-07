@@ -1,0 +1,150 @@
+/* ===== NAVIGATION ===== */
+.navigation {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+/* Hamburger - hidden on desktop */
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  flex-direction: column;
+  gap: 5px;
+  padding: 8px;
+}
+
+.menu-toggle span {
+  width: 24px;
+  height: 2px;
+  background-color: #333;
+  border-radius: 2px;
+  display: block;
+  transition: all 0.3s ease;
+}
+
+/* Nav list */
+.nav-list {
+  display: flex;
+  list-style: none;
+  gap: 4px;
+  padding: 0;
+  margin: 0;
+  align-items: center;
+}
+
+.nav-item {
+  position: relative;
+}
+
+/* Nav link with inline chevron */
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 12px 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #2c2c2c;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+  border-bottom: 2px solid transparent;
+}
+
+.nav-link:hover {
+  color: #111;
+  border-bottom-color: #1a1a1a;
+}
+
+.nav-link .chevron {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+  stroke-width: 2.5;
+  color: #555;
+  transition: transform 0.2s ease;
+}
+
+.nav-link:hover .chevron {
+  transform: rotate(180deg);
+}
+
+/* Premium item */
+.nav-link.premium {
+  color: #e67e22;
+  font-weight: 600;
+}
+
+.nav-link.premium .chevron {
+  color: #e67e22;
+}
+
+.nav-link.premium:hover {
+  color: #d35400;
+  border-bottom-color: #e67e22;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: flex;
+  }
+
+  .nav-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: white;
+    flex-direction: column;
+    gap: 0;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    z-index: 1000;
+    border-top: 1px solid #eee;
+  }
+
+  .nav-list.active {
+    max-height: 500px;
+  }
+
+  .nav-item {
+    width: 100%;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .nav-item:last-child {
+    border-bottom: none;
+  }
+
+  .nav-link {
+    display: flex;
+    justify-content: space-between;
+    padding: 14px 20px;
+    font-size: 15px;
+    border-bottom: none;
+  }
+
+  .nav-link:hover {
+    background-color: #f9f9f9;
+    border-bottom: none;
+  }
+
+  .nav-link .chevron {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-link {
+    font-size: 14px;
+    padding: 13px 16px;
+  }
+}
+

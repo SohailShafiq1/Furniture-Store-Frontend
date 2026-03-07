@@ -1,0 +1,113 @@
+.hero-section {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-container {
+  position: relative;
+  width: 100%;
+  height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-image-picture {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Button overlay - no background, no text, just the CTA */
+.hero-content {
+  position: absolute;
+  bottom: 18%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+}
+
+.cta-button {
+  background-color: #2d7a5e;
+  color: white;
+  border: none;
+  padding: 14px 44px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.25s ease, transform 0.2s ease;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+
+.cta-button:hover {
+  background-color: #235f48;
+  transform: scale(1.03);
+}
+
+.cta-button:active {
+  transform: scale(0.98);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .hero-container {
+    height: 480px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-container {
+    height: 420px;
+  }
+
+  .hero-content {
+    bottom: 12%;
+  }
+
+  .cta-button {
+    padding: 12px 36px;
+    font-size: 12px;
+    letter-spacing: 2px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-container {
+    height: 360px;
+  }
+
+  .hero-content {
+    bottom: 10%;
+  }
+
+  .cta-button {
+    padding: 11px 28px;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+  }
+}
+
+@media (max-width: 360px) {
+  .hero-container {
+    height: 300px;
+  }
+
+  .cta-button {
+    padding: 10px 22px;
+    font-size: 10px;
+  }
+}
