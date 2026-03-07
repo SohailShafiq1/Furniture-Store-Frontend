@@ -12,7 +12,7 @@ export default function HeroSection() {
           />
           <source 
             media="(min-width: 769px)" 
-            srcSet="/images.jpeg"
+            srcSet="/sale.webp"
           />
           <img 
             src="/images.jpeg" 
