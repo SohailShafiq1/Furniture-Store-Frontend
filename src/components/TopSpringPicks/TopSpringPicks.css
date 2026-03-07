@@ -1,0 +1,153 @@
+.top-spring-picks {
+  width: 100%;
+  padding: 60px 20px;
+  background-color: #ffffff;
+}
+
+.spring-picks-container {
+  max-width: 1480px;
+  margin: 0 auto;
+}
+
+.spring-picks-title {
+  font-size: 36px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 40px 0;
+  text-align: left;
+}
+
+.spring-picks-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.spring-pick-card {
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  overflow: hidden;
+}
+
+.pick-image-wrapper {
+  width: 100%;
+  aspect-ratio: 1.2;
+  overflow: hidden;
+  background-color: #f5f5f5;
+}
+
+.pick-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.spring-pick-card:hover .pick-image {
+  transform: scale(1.05);
+}
+
+.pick-content {
+  padding: 24px;
+  background-color: #d4e8e0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pick-price {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.pick-button {
+  background-color: #2d7a5e;
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: capitalize;
+  cursor: pointer;
+  transition: background-color 0.25s ease, transform 0.2s ease;
+  border-radius: 2px;
+  align-self: flex-start;
+  white-space: nowrap;
+}
+
+.pick-button:hover {
+  background-color: #235f48;
+  transform: translateY(-2px);
+}
+
+.pick-button:active {
+  transform: translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .spring-picks-grid {
+    gap: 20px;
+  }
+
+  .spring-picks-title {
+    font-size: 32px;
+    margin-bottom: 32px;
+  }
+
+  .pick-price {
+    font-size: 22px;
+  }
+
+  .pick-content {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .top-spring-picks {
+    padding: 48px 16px;
+  }
+
+  .spring-picks-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .spring-picks-title {
+    font-size: 28px;
+    margin-bottom: 28px;
+  }
+
+  .pick-image-wrapper {
+    aspect-ratio: 1.5;
+  }
+}
+
+@media (max-width: 480px) {
+  .top-spring-picks {
+    padding: 40px 16px;
+  }
+
+  .spring-picks-title {
+    font-size: 24px;
+    margin-bottom: 24px;
+  }
+
+  .pick-content {
+    padding: 18px;
+  }
+
+  .pick-price {
+    font-size: 20px;
+  }
+
+  .pick-button {
+    padding: 10px 24px;
+    font-size: 13px;
+  }
+}
