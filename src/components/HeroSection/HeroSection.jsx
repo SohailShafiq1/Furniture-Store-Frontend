@@ -14,17 +14,17 @@ export default function HeroSection() {
             media="(min-width: 769px)" 
             srcSet="/sale.webp"
           />
-          <img 
+          <img
             src="/images.jpeg" 
             alt="Spring Sale - Up to 70% Off" 
             className="hero-image"
           />
         </picture>
 
-        {/* CTA Button Only - text is part of the image */}
+        {/* CTA Button Only - text is part of the image
         <div className="hero-content">
           <button className="cta-button">REFRESH YOUR SPACE</button>
-        </div>
+        </div> */}
       </div>
     </section>
   );
