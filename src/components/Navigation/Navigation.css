@@ -59,6 +59,11 @@
   border-bottom-color: #1a1a1a;
 }
 
+.nav-link.active {
+  color: #111;
+  border-bottom-color: #1a1a1a;
+}
+
 .nav-link .chevron {
   width: 13px;
   height: 13px;
@@ -69,6 +74,10 @@
 }
 
 .nav-link:hover .chevron {
+  transform: rotate(180deg);
+}
+
+.nav-link.active .chevron {
   transform: rotate(180deg);
 }
 

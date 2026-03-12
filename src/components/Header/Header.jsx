@@ -1,10 +1,14 @@
+import { useState } from 'react';
 import SearchBar from '../common/SearchBar';
-import Navigation from '../Navigation/Navigation';
+import Navigation, { NAV_ITEMS } from '../Navigation/Navigation';
 import './Header.css';
 
 export default function Header() {
+  const [activeMenu, setActiveMenu] = useState(null);
+  const activeNavItem = NAV_ITEMS.find((item) => item.id === activeMenu);
+
   return (
-    <header className="header">
+    <header className="header" onMouseLeave={() => setActiveMenu(null)}>
 
       {/* Row 1: Logo | Search | Icons */}
       <div className="header-top-row">
@@ -42,12 +46,26 @@ export default function Header() {
 
       {/* Row 2: Nav links | Financing + Luna Premium */}
       <div className="header-nav-row">
-        <Navigation />
+        <Navigation activeMenu={activeMenu} onCategoryHover={setActiveMenu} />
         <div className="nav-row-right">
           <span className="financing-text">Financing / Lease to Own</span>
           <button className="luna-premium-btn">Luna Premium</button>
         </div>
       </div>
+
+      {/* Full-width mega-menu — positioned absolute relative to sticky header */}
+      {activeNavItem?.subcategories?.length ? (
+        <div className="mega-menu" role="region" aria-label={`${activeNavItem.label} subcategories`}>
+          <div className="mega-menu-grid">
+            {activeNavItem.subcategories.map((sub) => (
+              <a key={sub.label} href={sub.href} className="mega-menu-item">
+                <img src={sub.image} alt={sub.label} className="mega-menu-image" loading="lazy" />
+                <span className="mega-menu-label">{sub.label}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      ) : null}
 
     </header>
   );
