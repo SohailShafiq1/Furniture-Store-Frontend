@@ -29,6 +29,10 @@ const AdminDashboard = () => {
               <p>Create and delete administrative accounts</p>
             </Link>
           )}
+          <Link to="/admin/categories" className="dashboard-card">
+            <h3>Manage Categories</h3>
+            <p>Add and manage categories and sub-categories</p>
+          </Link>
           <div className="dashboard-card">
             <h3>Manage Products</h3>
             <p>Add, edit or remove furniture items (Coming soon)</p>

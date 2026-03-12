@@ -6,6 +6,7 @@ import './admin-panel/admin-panel.css';
 import AdminLogin from './admin-panel/pages/AdminLogin';
 import SubAdminManagement from './admin-panel/pages/SubAdminManagement';
 import AdminDashboard from './admin-panel/pages/AdminDashboard';
+import CategoryManagement from './admin-panel/pages/CategoryManagement';
 import ProtectedRoute from './admin-panel/components/ProtectedRoute';
 
 function App() {
@@ -31,6 +32,14 @@ function App() {
           element={
             <ProtectedRoute role="superadmin">
               <SubAdminManagement />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/categories" 
+          element={
+            <ProtectedRoute>
+              <CategoryManagement />
             </ProtectedRoute>
           } 
         />
