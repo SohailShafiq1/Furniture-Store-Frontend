@@ -325,16 +325,15 @@ const ProductManagement = () => {
                                                             <input 
                                                                 value={val} 
                                                                 onChange={e => handleValueChange(sIdx, fIdx, vIdx, e.target.value)}
-                                                                style={{ background: 'transparent' }}
+                                                                style={{ background: 'transparent', color: '#0f172a', fontWeight: '500' }}
                                                             />
                                                             {field.values.length > 1 && (
                                                                 <button type="button" onClick={() => handleRemoveValue(sIdx, fIdx, vIdx)}>×</button>
                                                             )}
                                                         </div>
                                                     ))}
-                                                    <button type="button" onClick={() => handleAddValue(sIdx, fIdx)} 
-                                                            style={{ padding: '6px 10px', borderRadius: '8px', border: '1px dashed #cbd5e1', background: '#fff', fontSize: '0.8rem' }}>
-                                                        + Add
+                                                    <button type="button" onClick={() => handleAddValue(sIdx, fIdx)} className="spec-add-value-btn">
+                                                        + Add Val
                                                     </button>
                                                 </div>
                                             </div>

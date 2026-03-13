@@ -215,14 +215,35 @@
 .spec-value-chip button {
   background: none;
   border: none;
-  color: #94a3b8;
+  color: #ef4444; /* Bright red for visibility */
   cursor: pointer;
   font-size: 1.2rem;
   padding: 0 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .spec-value-chip button:hover {
-  color: #ef4444;
+  color: #dc2626;
+}
+
+.spec-add-value-btn {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px dashed #cbd5e1;
+  background: #fff;
+  color: #475569;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.spec-add-value-btn:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  color: #1e293b;
 }
 
 /* --- Buttons --- */
