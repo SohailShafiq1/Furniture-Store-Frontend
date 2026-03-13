@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { CATEGORIES, getProducts } from '../data/categoryData';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useCategoryData } from '../hooks/useCategoryData';
+import { useProductsByCategory } from '../hooks/useProductsByCategory';
 import FilterSidebar from '../components/FilterSidebar/FilterSidebar';
 import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
@@ -47,7 +48,13 @@ const StarIcon = ({ filled }) => (
 
 export default function CategoryPage() {
   const { categoryId } = useParams();
-  const category = CATEGORIES[categoryId];
+  const navigate = useNavigate();
+  const { categories, loading: categoriesLoading } = useCategoryData();
+  const { products: categoryProducts, loading: productsLoading } = useProductsByCategory(categoryId);
+  
+  // Find the current category from fetched categories
+  const category = categories.find(cat => cat._id === categoryId);
+  
   const [selectedSubcategory, setSelectedSubcategory] = useState('all');
   const [products, setProducts] = useState([]);
   const [viewMode, setViewMode] = useState('grid');
@@ -59,12 +66,18 @@ export default function CategoryPage() {
     price: { min: '', max: '' }
   });
 
+  // Update products when categoryProducts change
   useEffect(() => {
-    if (category) {
-      const categoryProducts = getProducts(categoryId, selectedSubcategory);
+    if (selectedSubcategory === 'all') {
       setProducts(categoryProducts);
+    } else {
+      // Filter products by sub-category if needed
+      const filtered = categoryProducts.filter(
+        p => p.subCategoryName === selectedSubcategory
+      );
+      setProducts(filtered);
     }
-  }, [categoryId, selectedSubcategory, category]);
+  }, [categoryProducts, selectedSubcategory]);
 
   const handleFilterChange = (filterType, value) => {
     if (filterType === 'clearAll') {
@@ -99,8 +112,33 @@ export default function CategoryPage() {
     }
   };
 
+  if (categoriesLoading || productsLoading) {
+    return (
+      <div className="luna-category-page">
+        <Header />
+        <div className="luna-page-container" style={{ textAlign: 'center', padding: '60px 20px' }}>
+          <p>Loading...</p>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
   if (!category) {
-    return <div className="category-not-found">Category not found</div>;
+    return (
+      <div className="luna-category-page">
+        <Header />
+        <div className="luna-page-container">
+          <div style={{ textAlign: 'center', padding: '60px 20px' }}>
+            <h2>Category not found</h2>
+            <button onClick={() => navigate('/')} className="luna-clear-btn">
+              Back to Home
+            </button>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
   }
 
   return (
@@ -117,18 +155,30 @@ export default function CategoryPage() {
 
         {/* Circular Sub-categories */}
         <div className="luna-subcat-row">
-          {category.subcategories.map((sub) => (
+          {category.subCategories && category.subCategories.length > 0 ? (
+            category.subCategories.map((sub, idx) => (
+              <button
+                key={idx}
+                className={`luna-subcat-card ${selectedSubcategory === sub.name ? 'active' : ''}`}
+                onClick={() => setSelectedSubcategory(sub.name)}
+              >
+                <div className="luna-subcat-img-wrapper">
+                  <img src={sub.image} alt={sub.name} />
+                </div>
+                <span className="luna-subcat-label">{sub.name}</span>
+              </button>
+            ))
+          ) : (
             <button
-              key={sub.id}
-              className={`luna-subcat-card ${selectedSubcategory === sub.id ? 'active' : ''}`}
-              onClick={() => setSelectedSubcategory(sub.id)}
+              className={`luna-subcat-card ${selectedSubcategory === 'all' ? 'active' : ''}`}
+              onClick={() => setSelectedSubcategory('all')}
             >
               <div className="luna-subcat-img-wrapper">
-                <img src={sub.image} alt={sub.label} />
+                <img src={category.image} alt="All" />
               </div>
-              <span className="luna-subcat-label">{sub.label}</span>
+              <span className="luna-subcat-label">All Products</span>
             </button>
-          ))}
+          )}
         </div>
 
         {/* Page Title & Count */}
@@ -187,7 +237,12 @@ export default function CategoryPage() {
             <div className={`luna-products-grid ${viewMode}`}>
               {products.length > 0 ? (
                 products.map((product) => (
-                  <div key={product.id} className="luna-product-card">
+                  <button 
+                    key={product._id} 
+                    className="luna-product-card-btn"
+                    onClick={() => navigate(`/product/${categoryId}/${product._id}`)}
+                  >
+                    <div className="luna-product-card">
                     <div className="luna-card-media">
                       <img src={product.image} alt={product.name} />
                       
@@ -207,26 +262,27 @@ export default function CategoryPage() {
                     </div>
 
                     <div className="luna-card-info">
-                      <p className="luna-product-brand">{product.brand || 'LUNA'}</p>
+                      <p className="luna-product-brand">{product.brandId || 'LUNA'}</p>
                       <h3 className="luna-product-name">{product.name}</h3>
                       
                       <div className="luna-rating-row">
                         <div className="luna-stars">
                           {[...Array(5)].map((_, i) => (
-                            <StarIcon key={i} filled={i < Math.floor(product.rating || 5)} />
+                            <StarIcon key={i} filled={i < 4} />
                           ))}
                         </div>
-                        <span className="luna-review-text">({product.reviews || 0})</span>
+                        <span className="luna-review-text">(0)</span>
                       </div>
 
                       <div className="luna-price-row">
                         <span className="luna-current-price">${product.price}</span>
-                        {product.originalPrice && (
-                          <span className="luna-old-price">${product.originalPrice}</span>
+                        {product.discount > 0 && (
+                          <span className="luna-old-price">${product.price + (product.price * product.discount / 100)}</span>
                         )}
                       </div>
                     </div>
-                  </div>
+                    </div>
+                  </button>
                 ))
               ) : (
                 <div className="luna-no-results">

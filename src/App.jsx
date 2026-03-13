@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import CategoryPage from './pages/CategoryPage';
+import ProductDetailPage from './pages/ProductDetailPage';
 import './App.css';
 import './admin-panel/admin-panel.css';
 import AdminLogin from './admin-panel/pages/AdminLogin';
@@ -18,6 +19,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/category/:categoryId" element={<CategoryPage />} />
+        <Route path="/product/:categoryId/:productId" element={<ProductDetailPage />} />
         <Route path="/admin" element={<AdminLogin />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         

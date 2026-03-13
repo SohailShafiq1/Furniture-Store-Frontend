@@ -204,12 +204,25 @@
   gap: 30px 20px;
 }
 
+/* Product Card Button Wrapper */
+.luna-product-card-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  transition: transform 0.3s ease;
+}
+
+.luna-product-card-btn:hover {
+  transform: translateY(-4px);
+}
+
 /* Product Card */
 .luna-product-card {
   display: flex;
   flex-direction: column;
   position: relative;
-  transition: transform 0.3s ease;
 }
 
 .luna-card-media {

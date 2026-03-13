@@ -1,16 +1,30 @@
 import { useState } from 'react';
 import SearchBar from '../common/SearchBar';
-import Navigation, { NAV_ITEMS } from '../Navigation/Navigation';
+import Navigation from '../Navigation/Navigation';
 import AuthModal from '../common/AuthModal';
 import { useUserAuth } from '../../context/UserAuthContext';
+import { useCategoryData } from '../../hooks/useCategoryData';
 import './Header.css';
 
 export default function Header() {
   const [activeMenu, setActiveMenu] = useState(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const { user, logout } = useUserAuth();
-  
-  const activeNavItem = NAV_ITEMS.find((item) => item.id === activeMenu);
+  const { categories } = useCategoryData();
+
+  // Transform backend categories to have the structure needed for mega-menu
+  const navItems = categories.map((category) => ({
+    id: category._id || category.name.toLowerCase(),
+    label: category.name,
+    href: `/category/${category._id || category.name.toLowerCase()}`,
+    subcategories: (category.subCategories || []).map((sub) => ({
+      label: sub.name,
+      href: `/category/${category._id || category.name.toLowerCase()}`,
+      image: sub.image,
+    })),
+  }));
+
+  const activeNavItem = navItems.find((item) => item.id === activeMenu);
 
   return (
     <header className="header" onMouseLeave={() => setActiveMenu(null)}>
