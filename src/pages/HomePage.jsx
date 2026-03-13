@@ -18,24 +18,23 @@ import Footer from '../components/Footer/Footer';
 export default function HomePage() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { login } = useUserAuth();
+  const { login, token: currentToken } = useUserAuth();
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const token = params.get('token');
     const userJson = params.get('user');
 
-    if (token && userJson) {
+    if (token && userJson && token !== currentToken) {
       try {
         const user = JSON.parse(decodeURIComponent(userJson));
         login(token, user);
-        // Clear query params
         navigate('/', { replace: true });
       } catch (err) {
         console.error("Failed to parse social login data:", err);
       }
     }
-  }, [location, login, navigate]);
+  }, [location, login, navigate, currentToken]);
 
   return (
     <div className="home-page">

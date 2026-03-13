@@ -4,16 +4,19 @@ import axios from 'axios';
 const UserAuthContext = createContext();
 
 export const UserAuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState(() => {
+        const savedUser = localStorage.getItem('userProfile');
+        return savedUser ? JSON.parse(savedUser) : null;
+    });
     const [token, setToken] = useState(localStorage.getItem('userToken') || null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if (token) {
             localStorage.setItem('userToken', token);
-            // Optionally fetch user profile info here to sync
         } else {
             localStorage.removeItem('userToken');
+            localStorage.removeItem('userProfile');
         }
         setLoading(false);
     }, [token]);
@@ -21,11 +24,14 @@ export const UserAuthProvider = ({ children }) => {
     const login = (newToken, userData) => {
         setToken(newToken);
         setUser(userData);
+        localStorage.setItem('userProfile', JSON.stringify(userData));
     };
 
     const logout = () => {
         setToken(null);
         setUser(null);
+        localStorage.removeItem('userToken');
+        localStorage.removeItem('userProfile');
     };
 
     return (

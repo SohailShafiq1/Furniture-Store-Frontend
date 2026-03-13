@@ -45,7 +45,15 @@ export default function Header() {
                   </div>
                   <button className="dropdown-item">My Orders</button>
                   <button className="dropdown-item">Profile Settings</button>
-                  <button className="dropdown-item logout-btn" onClick={logout}>Sign Out</button>
+                  <button 
+                    className="dropdown-item logout-btn" 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      logout();
+                    }}
+                  >
+                    Sign Out
+                  </button>
                 </div>
               </div>
             ) : (
