@@ -10,7 +10,14 @@ const ProductManagement = () => {
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
     
-    // Form State
+    // Search and Filter State
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filterSubCat, setFilterSubCat] = useState('');
+    const [priceSort, setPriceSort] = useState(''); // 'low', 'high', ''
+
+    // Form and Editing State
+    const [isEditing, setIsEditing] = useState(false);
+    const [currentProductId, setCurrentProductId] = useState(null);
     const [subCategories, setSubCategories] = useState([]);
     const [formData, setFormData] = useState({
         name: '',
@@ -112,24 +119,77 @@ const ProductManagement = () => {
         }
     };
 
+    const handleEditClick = (prod) => {
+        setIsEditing(true);
+        setCurrentProductId(prod._id);
+        
+        // Populate form with product data
+        setFormData({
+            name: prod.name || '',
+            sku: prod.sku || '',
+            price: prod.price || '',
+            discount: prod.discount || '0',
+            quantity: prod.quantity || '0',
+            description: prod.description || '',
+            categoryId: prod.category?._id || '',
+            subCategoryName: prod.subCategoryName || '',
+            collectionName: prod.collectionName || '',
+            brandId: prod.brandId || ''
+        });
+        
+        // Handle specifications safely
+        let specs = [];
+        try {
+            specs = typeof prod.specifications === 'string' 
+                ? JSON.parse(prod.specifications) 
+                : (prod.specifications || []);
+        } catch (e) {
+            specs = [];
+        }
+        setSpecifications(specs);
+        
+        // Scroll to form for immediate visibility
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    // Filter Logic
+    const filteredProducts = products.filter(prod => {
+        const matchesSearch = prod.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                            prod.sku.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesSubCat = filterSubCat === '' || prod.subCategoryName === filterSubCat;
+        return matchesSearch && matchesSubCat;
+    }).sort((a, b) => {
+        if (priceSort === 'low') return a.price - b.price;
+        if (priceSort === 'high') return b.price - a.price;
+        return 0; // Default: Order by creation/fetch
+    });
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             const fd = new FormData();
             Object.keys(formData).forEach(key => fd.append(key, formData[key]));
-            fd.append('image', productImage);
+            if (productImage) fd.append('image', productImage);
             fd.append('specifications', JSON.stringify(specifications));
 
-            await axios.post(`${apiBase}/products/add`, fd, multipartConfig);
-            setMessage('Product added successfully!');
+            if (isEditing) {
+                await axios.put(`${apiBase}/products/${currentProductId}`, fd, multipartConfig);
+                setMessage('Product updated successfully!');
+            } else {
+                await axios.post(`${apiBase}/products/add`, fd, multipartConfig);
+                setMessage('Product added successfully!');
+            }
+
             resetForm();
             fetchInitialData();
         } catch (err) {
-            setError(err.response?.data?.message || 'Error adding product');
+            setError(err.response?.data?.message || 'Error saving product');
         }
     };
 
     const resetForm = () => {
+        setIsEditing(false);
+        setCurrentProductId(null);
         setFormData({
             name: '',
             sku: 'SKU-' + Math.random().toString(36).substr(2, 9).toUpperCase(),
@@ -167,8 +227,22 @@ const ProductManagement = () => {
                 <div className="form-left-col">
                     <section className="admin-card">
                         <div className="admin-card-title">
-                            <span>General Information</span>
-                            <button type="button" onClick={resetForm} className="btn-secondary" style={{ padding: '8px 16px', fontSize: '0.85rem' }}>Reset Form</button>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                                <span style={{ 
+                                    padding: '6px 12px', 
+                                    background: isEditing ? '#4f46e5' : '#0f172a', 
+                                    color: 'white', 
+                                    borderRadius: '8px',
+                                    fontSize: '0.9rem',
+                                    fontWeight: '700'
+                                }}>
+                                    {isEditing ? 'EDITING PRODUCT' : 'CREATE NEW'}
+                                </span>
+                                <span>{isEditing ? `Modifying: ${formData.name}` : 'General Information'}</span>
+                            </div>
+                            <button type="button" onClick={resetForm} className="btn-secondary" style={{ padding: '8px 16px', fontSize: '0.85rem' }}>
+                                {isEditing ? 'Cancel Edit' : 'Reset Form'}
+                            </button>
                         </div>
 
                         <div className="admin-grid-3">
@@ -376,27 +450,85 @@ const ProductManagement = () => {
                             </div>
                         </div>
 
-                        <button type="submit" className="btn-publish">
-                            Publish Product
+                        <button type="submit" className="btn-publish" style={{
+                            background: isEditing ? '#4f46e5' : '#0f172a'
+                        }}>
+                            {isEditing ? '💾 Update Product Changes' : '🚀 Publish Product'}
                         </button>
                     </section>
                 </div>
             </form>
 
             <div className="product-inventory-list" style={{ marginTop: '4rem' }}>
-                <h2 style={{ fontSize: '1.8rem', fontWeight: '800', color: '#0f172a', marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    Inventory Catalog
-                    <span style={{ fontSize: '1rem', color: '#64748b', fontWeight: 'normal', background: '#f1f5f9', padding: '5px 15px', borderRadius: '20px' }}>Total: {products.length}</span>
-                </h2>
+                <div style={{ background: '#fff', padding: '25px', borderRadius: '24px', border: '1px solid #f1f5f9', marginBottom: '25px', boxShadow: '0 4px 10px rgba(0,0,0,0.02)' }}>
+                    <h2 style={{ fontSize: '1.8rem', fontWeight: '800', color: '#0f172a', marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        Inventory Catalog
+                        <span style={{ fontSize: '1rem', color: '#64748b', fontWeight: 'normal', background: '#f1f5f9', padding: '5px 15px', borderRadius: '20px' }}>Showing {filteredProducts.length} Of {products.length}</span>
+                    </h2>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: '20px' }}>
+                        <div className="form-group">
+                            <input 
+                                className="form-control" 
+                                placeholder="Search by name or SKU..." 
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                style={{ border: '2px solid #f1f5f9' }}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <select 
+                                className="form-control" 
+                                value={filterSubCat}
+                                onChange={(e) => setFilterSubCat(e.target.value)}
+                                style={{ border: '2px solid #f1f5f9' }}
+                            >
+                                <option value="">Filter By Sub-category</option>
+                                {/* Get all unique subcats from actual products */}
+                                {[...new Set(products.map(p => p.subCategoryName))].map(s => <option key={s} value={s}>{s}</option>)}
+                            </select>
+                        </div>
+                        <div className="form-group">
+                            <select 
+                                className="form-control" 
+                                value={priceSort}
+                                onChange={(e) => setPriceSort(e.target.value)}
+                                style={{ border: '2px solid #f1f5f9' }}
+                            >
+                                <option value="">Sort By Price</option>
+                                <option value="low">Price: Low to High</option>
+                                <option value="high">Price: High to Low</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
                 <div className="inventory-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(450px, 1fr))', gap: '20px' }}>
-                    {products.map(prod => (
+                    {filteredProducts.map(prod => (
                         <div key={prod._id} className="category-node" style={{ borderRadius: '20px', border: '1px solid #f1f5f9', background: 'white', overflow: 'hidden', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)', padding: '20px' }}>
                             <div className="cat-info" style={{ display: 'flex', gap: '24px', alignItems: 'flex-start' }}>
                                 <img src={`${backendRoot}/${prod.image}`} alt="" style={{ width: '100px', height: '100px', borderRadius: '14px', objectFit: 'cover', border: '1px solid #f1f5f9' }} />
                                 <div style={{ flex: 1 }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                        <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: '800', color: '#0f172a' }}>{prod.name}</h3>
-                                        <button className="btn-secondary" style={{ color: '#ef4444', padding: '6px 12px', fontSize: '0.8rem' }} onClick={() => handleDelete(prod._id)}>Delete</button>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <h3 
+                                            onClick={() => handleEditClick(prod)}
+                                            style={{ 
+                                                margin: 0, 
+                                                fontSize: '1.25rem', 
+                                                fontWeight: '800', 
+                                                color: '#0f172a', 
+                                                cursor: 'pointer',
+                                                transition: 'color 0.2s'
+                                            }}
+                                            onMouseEnter={(e) => e.target.style.color = '#4f46e5'}
+                                            onMouseLeave={(e) => e.target.style.color = '#0f172a'}
+                                        >
+                                            {prod.name}
+                                        </h3>
+                                        <div style={{ display: 'flex', gap: '8px' }}>
+                                            <button className="btn-secondary" style={{ padding: '6px 12px', fontSize: '0.8rem', background: '#ebf5ff', color: '#0070f3', borderColor: '#d0e8ff' }} onClick={() => handleEditClick(prod)}>Edit</button>
+                                            <button className="btn-secondary" style={{ color: '#ef4444', padding: '6px 12px', fontSize: '0.8rem' }} onClick={() => handleDelete(prod._id)}>Delete</button>
+                                        </div>
                                     </div>
                                     <div style={{ marginTop: '10px', fontSize: '0.9rem', color: '#64748b', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                                         <span><b>SKU:</b> {prod.sku}</span>
