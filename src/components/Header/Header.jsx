@@ -4,6 +4,7 @@ import Navigation from '../Navigation/Navigation';
 import AuthModal from '../common/AuthModal';
 import { useUserAuth } from '../../context/UserAuthContext';
 import { useCategoryData } from '../../hooks/useCategoryData';
+import { BACKEND_URL } from '../../config/api';
 import './Header.css';
 
 export default function Header() {
@@ -112,12 +113,15 @@ export default function Header() {
       {activeNavItem?.subcategories?.length ? (
         <div className="mega-menu" role="region" aria-label={`${activeNavItem.label} subcategories`}>
           <div className="mega-menu-grid">
-            {activeNavItem.subcategories.map((sub) => (
-              <a key={sub.label} href={sub.href} className="mega-menu-item">
-                <img src={sub.image} alt={sub.label} className="mega-menu-image" loading="lazy" />
-                <span className="mega-menu-label">{sub.label}</span>
-              </a>
-            ))}
+            {activeNavItem.subcategories.map((sub) => {
+              const imageUrl = sub.image?.startsWith('http') ? sub.image : `${BACKEND_URL}/${sub.image}`;
+              return (
+                <a key={sub.label} href={sub.href} className="mega-menu-item">
+                  <img src={imageUrl} alt={sub.label} className="mega-menu-image" loading="lazy" />
+                  <span className="mega-menu-label">{sub.label}</span>
+                </a>
+              );
+            })}
           </div>
         </div>
       ) : null}

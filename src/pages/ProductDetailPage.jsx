@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useProductsByCategory } from '../hooks/useProductsByCategory';
+import { BACKEND_URL } from '../config/api';
 import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
 import './ProductDetailPage.css';
@@ -59,6 +60,12 @@ export default function ProductDetailPage() {
     product.image,
   ];
 
+  // Helper to ensure full image URL
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return '';
+    return imagePath.startsWith('http') ? imagePath : `${BACKEND_URL}/${imagePath}`;
+  };
+
   const handlePrevImage = () => {
     setMainImageIndex((prev) => (prev - 1 + galleryImages.length) % galleryImages.length);
   };
@@ -90,7 +97,7 @@ export default function ProductDetailPage() {
               </button>
               
               <div className="pd-main-image">
-                <img src={galleryImages[mainImageIndex]} alt={product.name} />
+                <img src={getImageUrl(galleryImages[mainImageIndex])} alt={product.name} />
               </div>
               
               <button className="pd-nav-btn pd-nav-next" onClick={handleNextImage}>
@@ -106,7 +113,7 @@ export default function ProductDetailPage() {
                   className={`pd-thumbnail ${mainImageIndex === idx ? 'active' : ''}`}
                   onClick={() => setMainImageIndex(idx)}
                 >
-                  <img src={img} alt={`View ${idx + 1}`} />
+                  <img src={getImageUrl(img)} alt={`View ${idx + 1}`} />
                 </button>
               ))}
             </div>

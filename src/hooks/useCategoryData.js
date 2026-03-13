@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../config/api';
 
 export const useCategoryData = () => {
   const [categories, setCategories] = useState([]);
@@ -9,7 +10,7 @@ export const useCategoryData = () => {
     const fetchCategories = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:5001/api/categories/all');
+        const response = await fetch(`${API_BASE_URL}/categories/all`);
         
         if (!response.ok) {
           throw new Error(`API error: ${response.status}`);

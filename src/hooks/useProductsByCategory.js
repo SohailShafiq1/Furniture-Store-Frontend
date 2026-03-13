@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../config/api';
 
 export const useProductsByCategory = (categoryId) => {
   const [products, setProducts] = useState([]);
@@ -15,7 +16,7 @@ export const useProductsByCategory = (categoryId) => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:5001/api/products/all`);
+        const response = await fetch(`${API_BASE_URL}/products/all`);
         
         if (!response.ok) {
           throw new Error(`API error: ${response.status}`);
