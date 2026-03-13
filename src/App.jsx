@@ -7,6 +7,7 @@ import AdminLogin from './admin-panel/pages/AdminLogin';
 import SubAdminManagement from './admin-panel/pages/SubAdminManagement';
 import AdminDashboard from './admin-panel/pages/AdminDashboard';
 import CategoryManagement from './admin-panel/pages/CategoryManagement';
+import ProductManagement from './admin-panel/pages/ProductManagement';
 import CategoryDetailPage from './admin-panel/pages/CategoryDetailPage';
 import SubCategoryDetailPage from './admin-panel/pages/SubCategoryDetailPage';
 import ProtectedRoute from './admin-panel/components/ProtectedRoute';
@@ -42,6 +43,14 @@ function App() {
           element={
             <ProtectedRoute>
               <CategoryManagement />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/products" 
+          element={
+            <ProtectedRoute>
+              <ProductManagement />
             </ProtectedRoute>
           } 
         />
