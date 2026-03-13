@@ -1,3 +1,6 @@
+import { useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useUserAuth } from '../context/UserAuthContext';
 import Header from '../components/Header/Header';
 import HeroSection from '../components/HeroSection/HeroSection';
 import TopSpringPicks from '../components/TopSpringPicks/TopSpringPicks';
@@ -13,6 +16,27 @@ import NewsUpdates from '../components/NewsUpdates/NewsUpdates';
 import Footer from '../components/Footer/Footer';
 
 export default function HomePage() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { login } = useUserAuth();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const token = params.get('token');
+    const userJson = params.get('user');
+
+    if (token && userJson) {
+      try {
+        const user = JSON.parse(decodeURIComponent(userJson));
+        login(token, user);
+        // Clear query params
+        navigate('/', { replace: true });
+      } catch (err) {
+        console.error("Failed to parse social login data:", err);
+      }
+    }
+  }, [location, login, navigate]);
+
   return (
     <div className="home-page">
       <Header />
