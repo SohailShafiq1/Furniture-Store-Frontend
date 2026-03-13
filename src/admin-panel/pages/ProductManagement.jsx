@@ -61,7 +61,7 @@ const ProductManagement = () => {
     }, [formData.categoryId, categories]);
 
     const handleAddSpecTitle = () => {
-        setSpecifications([...specifications, { title: '', fields: [{ name: '', value: '' }] }]);
+        setSpecifications([...specifications, { title: '', fields: [{ name: '', values: [''] }] }]);
     };
 
     const handleRemoveSpecTitle = (index) => {
@@ -76,7 +76,7 @@ const ProductManagement = () => {
 
     const handleAddField = (titleIndex) => {
         const updated = [...specifications];
-        updated[titleIndex].fields.push({ name: '', value: '' });
+        updated[titleIndex].fields.push({ name: '', values: [''] });
         setSpecifications(updated);
     };
 
@@ -90,6 +90,26 @@ const ProductManagement = () => {
         const updated = [...specifications];
         updated[titleIndex].fields[fieldIndex][key] = value;
         setSpecifications(updated);
+    };
+
+    const handleValueChange = (titleIndex, fieldIndex, valueIndex, value) => {
+        const updated = [...specifications];
+        updated[titleIndex].fields[fieldIndex].values[valueIndex] = value;
+        setSpecifications(updated);
+    };
+
+    const handleAddValue = (titleIndex, fieldIndex) => {
+        const updated = [...specifications];
+        updated[titleIndex].fields[fieldIndex].values.push('');
+        setSpecifications(updated);
+    };
+
+    const handleRemoveValue = (titleIndex, fieldIndex, valueIndex) => {
+        const updated = [...specifications];
+        if (updated[titleIndex].fields[fieldIndex].values.length > 1) {
+            updated[titleIndex].fields[fieldIndex].values = updated[titleIndex].fields[fieldIndex].values.filter((_, i) => i !== valueIndex);
+            setSpecifications(updated);
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -115,6 +135,7 @@ const ProductManagement = () => {
             sku: 'SKU-' + Math.random().toString(36).substr(2, 9).toUpperCase(),
             price: '',
             discount: '0',
+            quantity: '0',
             description: '',
             categoryId: '',
             subCategoryName: '',
@@ -144,7 +165,7 @@ const ProductManagement = () => {
             <section style={{ background: 'white', padding: '2.5rem', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
                 <h2>Create New Product</h2>
                 <form onSubmit={handleSubmit} className="admin-form">
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
                         <div className="file-input-group">
                             <label>Product Name</label>
                             <input value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} required />
@@ -160,6 +181,10 @@ const ProductManagement = () => {
                         <div className="file-input-group">
                             <label>Discount (%)</label>
                             <input type="number" value={formData.discount} onChange={e => setFormData({...formData, discount: e.target.value})} />
+                        </div>
+                        <div className="file-input-group">
+                            <label>Stock Quantity</label>
+                            <input type="number" value={formData.quantity} onChange={e => setFormData({...formData, quantity: e.target.value})} />
                         </div>
                         <div className="file-input-group">
                             <label>Parent Category</label>
@@ -219,28 +244,37 @@ const ProductManagement = () => {
                                     <button type="button" onClick={() => handleRemoveSpecTitle(sIdx)} style={{ background: '#e74c3c', color: 'white', border: 'none', padding: '10px 15px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}>Remove Group</button>
                                 </div>
                                 
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '20px' }}>
                                     {spec.fields.map((field, fIdx) => (
-                                        <div key={fIdx} style={{ display: 'flex', gap: '15px', alignItems: 'flex-end', padding: '10px', background: '#fcfcfc', borderRadius: '8px' }}>
-                                            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                                                <label style={{ fontSize: '0.8rem', color: '#555', fontWeight: 'bold' }}>Label (e.g. Width)</label>
+                                        <div key={fIdx} style={{ display: 'flex', gap: '15px', alignItems: 'flex-start', padding: '20px', background: '#fcfcfc', borderRadius: '12px', border: '1px solid #eee', transition: 'all 0.2s ease' }}>
+                                            <div style={{ flex: '0 0 200px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                                                <label style={{ fontSize: '0.8rem', color: '#555', fontWeight: 'bold' }}>Label (e.g. Color)</label>
                                                 <input 
                                                     placeholder="Label" 
                                                     value={field.name} 
                                                     onChange={e => handleFieldChange(sIdx, fIdx, 'name', e.target.value)} 
                                                     style={{ padding: '10px', border: '1px solid #ccc', borderRadius: '4px', color: '#000000', background: '#ffffff', fontSize: '0.9rem' }}
                                                 />
+                                                <button type="button" onClick={() => handleRemoveField(sIdx, fIdx)} style={{ marginTop: '10px', background: '#fff0f0', border: '1px solid #ffdada', color: '#e74c3c', padding: '5px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem' }}>Remove Entire Label</button>
                                             </div>
-                                            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                                                <label style={{ fontSize: '0.8rem', color: '#555', fontWeight: 'bold' }}>Value (e.g. 100cm)</label>
-                                                <input 
-                                                    placeholder="Value" 
-                                                    value={field.value} 
-                                                    onChange={e => handleFieldChange(sIdx, fIdx, 'value', e.target.value)} 
-                                                    style={{ padding: '10px', border: '1px solid #ccc', borderRadius: '4px', color: '#000000', background: '#ffffff', fontSize: '0.9rem' }}
-                                                />
+
+                                            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                                <label style={{ fontSize: '0.8rem', color: '#555', fontWeight: 'bold' }}>Values (Add one or more)</label>
+                                                {field.values.map((val, vIdx) => (
+                                                    <div key={vIdx} style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                                        <input 
+                                                            placeholder="Value" 
+                                                            value={val} 
+                                                            onChange={e => handleValueChange(sIdx, fIdx, vIdx, e.target.value)} 
+                                                            style={{ flex: 1, padding: '10px', border: '1px solid #ccc', borderRadius: '4px', color: '#000000', background: '#ffffff', fontSize: '0.9rem' }}
+                                                        />
+                                                        {field.values.length > 1 && (
+                                                            <button type="button" onClick={() => handleRemoveValue(sIdx, fIdx, vIdx)} style={{ background: 'transparent', border: 'none', color: '#e74c3c', cursor: 'pointer', fontSize: '1.2rem', padding: '0 5px' }}>×</button>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                                <button type="button" onClick={() => handleAddValue(sIdx, fIdx)} style={{ alignSelf: 'flex-start', background: '#f0f7ff', border: '1px solid #cce5ff', color: '#004085', padding: '4px 12px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem', fontWeight: '600' }}>+ Add Value</button>
                                             </div>
-                                            <button type="button" onClick={() => handleRemoveField(sIdx, fIdx)} style={{ background: '#f8f9fa', border: '1px solid #ddd', color: '#e74c3c', width: '40px', height: '40px', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '1.2rem' }}>×</button>
                                         </div>
                                     ))}
                                 </div>
@@ -263,7 +297,12 @@ const ProductManagement = () => {
                                     <img src={`${backendRoot}/${prod.image}`} alt="" className="cat-main-img" />
                                     <div className="cat-name-box">
                                         <h3>{prod.name}</h3>
-                                        <span className="sub-count">{prod.sku} | {prod.category?.name} → {prod.subCategoryName} | ${prod.price}</span>
+                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', fontSize: '0.85rem', color: '#666' }}>
+                                            <span>SKU: {prod.sku}</span> | 
+                                            <span>{prod.category?.name} → {prod.subCategoryName}</span> | 
+                                            <span>Price: ${prod.price}</span> |
+                                            <span>Stock: {prod.quantity || 0}</span>
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="node-actions">
