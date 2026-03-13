@@ -293,7 +293,7 @@
   cursor: pointer;
   font-weight: 700;
   width: 100%;
-  fontSize: 1.15rem;
+  font-size: 1.15rem;
   transition: all 0.3s;
   box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.1);
 }

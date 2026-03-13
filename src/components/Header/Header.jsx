@@ -1,10 +1,15 @@
 import { useState } from 'react';
 import SearchBar from '../common/SearchBar';
 import Navigation, { NAV_ITEMS } from '../Navigation/Navigation';
+import AuthModal from '../common/AuthModal';
+import { useUserAuth } from '../../context/UserAuthContext';
 import './Header.css';
 
 export default function Header() {
   const [activeMenu, setActiveMenu] = useState(null);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const { user, logout } = useUserAuth();
+  
   const activeNavItem = NAV_ITEMS.find((item) => item.id === activeMenu);
 
   return (
@@ -28,12 +33,35 @@ export default function Header() {
               <circle cx="12" cy="10" r="3"></circle>
             </svg>
           </button>
-          <button className="header-icon-btn" title="Account">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-              <circle cx="12" cy="7" r="4"></circle>
-            </svg>
-          </button>
+          
+          <div className="user-account-container">
+            {user ? (
+              <div className="user-profile-nav">
+                <span className="user-name-bubble">{user.name.charAt(0).toUpperCase()}</span>
+                <div className="user-dropdown">
+                  <div className="dropdown-header">
+                    <strong>{user.name}</strong>
+                    <p>{user.email}</p>
+                  </div>
+                  <button className="dropdown-item">My Orders</button>
+                  <button className="dropdown-item">Profile Settings</button>
+                  <button className="dropdown-item logout-btn" onClick={logout}>Sign Out</button>
+                </div>
+              </div>
+            ) : (
+              <button 
+                className="header-icon-btn" 
+                title="Account"
+                onClick={() => setIsAuthModalOpen(true)}
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </button>
+            )}
+          </div>
+
           <button className="header-icon-btn" title="Cart">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
@@ -43,6 +71,11 @@ export default function Header() {
           </button>
         </div>
       </div>
+
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
+      />
 
       {/* Row 2: Nav links | Financing + Luna Premium */}
       <div className="header-nav-row">

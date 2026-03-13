@@ -51,7 +51,91 @@
 .header-icon-btn:hover {
   background-color: #f0f0f0;
 }
+/* User Account Container */
+.user-account-container {
+  position: relative;
+}
 
+.user-profile-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 20px;
+  transition: all 0.2s;
+}
+
+.user-name-bubble {
+  width: 32px;
+  height: 32px;
+  background-color: #FF6B00;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.user-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 200px;
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  padding: 10px 0;
+  display: none;
+  z-index: 1000;
+}
+
+.user-account-container:hover .user-dropdown {
+  display: block;
+}
+
+.dropdown-header {
+  padding: 10px 15px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 5px;
+}
+
+.dropdown-header strong {
+  display: block;
+  font-size: 14px;
+  color: #333;
+}
+
+.dropdown-header p {
+  font-size: 12px;
+  color: #666;
+  margin: 0;
+}
+
+.dropdown-item {
+  width: 100%;
+  padding: 10px 15px;
+  text-align: left;
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: #444;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.dropdown-item:hover {
+  background: #f8f8f8;
+}
+
+.logout-btn {
+  color: #d32f2f;
+  border-top: 1px solid #eee;
+  margin-top: 5px;
+}
 .header-icon-btn svg {
   width: 22px;
   height: 22px;
