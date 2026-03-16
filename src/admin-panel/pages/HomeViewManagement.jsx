@@ -63,12 +63,6 @@ const HomeViewManagement = () => {
       const category = categories.find(cat => cat._id === homeContent.selectedCategory);
       if (category) {
         setSubCategories(category.subCategories || []);
-        setHomeContent(prev => ({
-          ...prev,
-          selectedSubCategory: '',
-          selectedProducts: []
-        }));
-        setProducts([]);
       }
     }
   }, [homeContent.selectedCategory, categories]);
@@ -149,7 +143,13 @@ const HomeViewManagement = () => {
   const handleSaveContent = async (e) => {
     e.preventDefault();
     
-    if (!homeContent.promotionPhotos[0].image || !homeContent.promotionPhotos[1].image) {
+    // For new content, require both images. For editing, use existing if not changed
+    const photo1HasValue = homeContent.promotionPhotos[0].image instanceof File || 
+                          (typeof homeContent.promotionPhotos[0].image === 'string' && homeContent.promotionPhotos[0].image.length > 0);
+    const photo2HasValue = homeContent.promotionPhotos[1].image instanceof File || 
+                          (typeof homeContent.promotionPhotos[1].image === 'string' && homeContent.promotionPhotos[1].image.length > 0);
+
+    if (!photo1HasValue || !photo2HasValue) {
       setError('Please upload both promotion photos');
       return;
     }
@@ -173,12 +173,16 @@ const HomeViewManagement = () => {
       setLoading(true);
       const formData = new FormData();
 
-      // Add promotion photos
-      formData.append('promotionPhoto1', homeContent.promotionPhotos[0].image);
+      // Add promotion photos (only if they are File objects, not existing paths)
+      if (homeContent.promotionPhotos[0].image instanceof File) {
+        formData.append('promotionPhoto1', homeContent.promotionPhotos[0].image);
+      }
       formData.append('promotionHeading1', homeContent.promotionPhotos[0].heading);
       formData.append('promotionSubHeading1', homeContent.promotionPhotos[0].subHeading);
 
-      formData.append('promotionPhoto2', homeContent.promotionPhotos[1].image);
+      if (homeContent.promotionPhotos[1].image instanceof File) {
+        formData.append('promotionPhoto2', homeContent.promotionPhotos[1].image);
+      }
       formData.append('promotionHeading2', homeContent.promotionPhotos[1].heading);
       formData.append('promotionSubHeading2', homeContent.promotionPhotos[1].subHeading);
 
@@ -281,15 +285,15 @@ const HomeViewManagement = () => {
   };
 
   // Toggle visibility
-  const handleToggleVisibility = async (contentId, currentStatus) => {
+  const handleToggleVisibility = async (contentId, newStatus) => {
     try {
       await axios.patch(`${apiEndpoint}/home/toggle-visibility/${contentId}`, 
-        { isVisible: !currentStatus },
+        { isVisible: newStatus },
         {
           headers: { Authorization: `Bearer ${token}` }
         }
       );
-      setMessage(!currentStatus ? 'Content will be shown on home screen' : 'Content hidden from home screen');
+      setMessage(newStatus ? 'Content will be shown on home screen' : 'Content hidden from home screen');
       setTimeout(() => setMessage(''), 3000);
       await fetchSavedContent();
     } catch (err) {
@@ -334,7 +338,10 @@ const HomeViewManagement = () => {
         {/* Promotion Photos Section */}
         <section className="promotion-section">
           <h2>Promotion Photos (Banner Items)</h2>
-          <p className="section-subtitle">Add 2 promotion items with photo, heading, and sub-heading</p>
+          <p className="section-subtitle">
+            Add 2 promotion items with photo, heading, and sub-heading
+            {editingId && <span> (Photos are optional - existing ones will be kept)</span>}
+          </p>
 
           <div className="promotion-items">
             {homeContent.promotionPhotos.map((photo, index) => (
@@ -342,7 +349,7 @@ const HomeViewManagement = () => {
                 <h3>Promotion Item {index + 1}</h3>
 
                 <div className="file-input-group">
-                  <label>Photo</label>
+                  <label>Photo {editingId && <span className="optional">(Optional)</span>}</label>
                   {imagePreview[index] && (
                     <div className="image-preview">
                       <img src={imagePreview[index]} alt={`Preview ${index + 1}`} />
@@ -352,7 +359,7 @@ const HomeViewManagement = () => {
                     type="file"
                     accept="image/*"
                     onChange={(e) => handlePromotionImageChange(index, e.target.files[0])}
-                    required
+                    required={!editingId}
                   />
                 </div>
 
@@ -513,8 +520,8 @@ const HomeViewManagement = () => {
                     <label>
                       <input
                         type="checkbox"
-                        checked={content.isVisible !== false}
-                        onChange={() => handleToggleVisibility(content._id, content.isVisible !== false)}
+                        checked={content.isVisible === true}
+                        onChange={(e) => handleToggleVisibility(content._id, e.target.checked)}
                       />
                       <span>Show on Home</span>
                     </label>

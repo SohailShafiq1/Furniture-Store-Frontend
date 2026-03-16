@@ -156,6 +156,12 @@
   font-size: 14px;
 }
 
+.file-input-group label .optional {
+  color: #999;
+  font-weight: normal;
+  font-size: 12px;
+}
+
 .file-input-group input[type="file"],
 .form-group input[type="text"],
 .form-group select {
