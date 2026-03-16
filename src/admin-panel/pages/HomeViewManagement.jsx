@@ -12,6 +12,7 @@ const HomeViewManagement = () => {
     selectedCategory: '',
     selectedSubCategory: '',
     selectedProducts: [],
+    isVisible: true,
   });
 
   const [categories, setCategories] = useState([]);
@@ -190,6 +191,7 @@ const HomeViewManagement = () => {
       formData.append('selectedCategory', homeContent.selectedCategory);
       formData.append('selectedSubCategory', homeContent.selectedSubCategory);
       formData.append('selectedProducts', JSON.stringify(homeContent.selectedProducts));
+      formData.append('isVisible', String(homeContent.isVisible));
       
       // Add ID if editing
       if (editingId) {
@@ -242,6 +244,7 @@ const HomeViewManagement = () => {
       selectedCategory: '',
       selectedSubCategory: '',
       selectedProducts: [],
+      isVisible: true,
     });
     setImagePreview([null, null]);
     setEditingId(null);
@@ -256,6 +259,7 @@ const HomeViewManagement = () => {
       selectedCategory: content.selectedCategory._id,
       selectedSubCategory: content.selectedSubCategoryName,
       selectedProducts: content.selectedProducts.map(p => p._id),
+      isVisible: content.isVisible !== false,
     });
     setImagePreview([
       `${backendRoot}/${content.promotionPhotos[0]?.image}`,
@@ -281,23 +285,6 @@ const HomeViewManagement = () => {
       setError('Failed to delete content');
     } finally {
       setLoading(false);
-    }
-  };
-
-  // Toggle visibility
-  const handleToggleVisibility = async (contentId, newStatus) => {
-    try {
-      await axios.patch(`${apiEndpoint}/home/toggle-visibility/${contentId}`, 
-        { isVisible: newStatus },
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
-      );
-      setMessage(newStatus ? 'Content will be shown on home screen' : 'Content hidden from home screen');
-      setTimeout(() => setMessage(''), 3000);
-      await fetchSavedContent();
-    } catch (err) {
-      setError('Failed to update visibility');
     }
   };
 
@@ -485,6 +472,36 @@ const HomeViewManagement = () => {
           </section>
         )}
 
+        {/* Visibility Section */}
+        <section className="visibility-section">
+          <h2>Display Settings</h2>
+          <div className="visibility-choice-group">
+            <p>Show this content on home screen?</p>
+            <div className="choice-buttons">
+              <button
+                type="button"
+                className={`choice-btn ${homeContent.isVisible === true ? 'active' : ''}`}
+                onClick={() => setHomeContent(prev => ({
+                  ...prev,
+                  isVisible: true
+                }))}
+              >
+                ✓ Yes
+              </button>
+              <button
+                type="button"
+                className={`choice-btn ${homeContent.isVisible === false ? 'active' : ''}`}
+                onClick={() => setHomeContent(prev => ({
+                  ...prev,
+                  isVisible: false
+                }))}
+              >
+                ✕ No
+              </button>
+            </div>
+          </div>
+        </section>
+
         <button
           type="submit"
           className="save-button"
@@ -516,15 +533,12 @@ const HomeViewManagement = () => {
                   <h3>
                     {content.selectedCategory?.name} - {content.selectedSubCategoryName}
                   </h3>
-                  <div className="visibility-toggle">
-                    <label>
-                      <input
-                        type="checkbox"
-                        checked={content.isVisible === true}
-                        onChange={(e) => handleToggleVisibility(content._id, e.target.checked)}
-                      />
-                      <span>Show on Home</span>
-                    </label>
+                  <div className="visibility-status">
+                    {content.isVisible === true ? (
+                      <span className="status-badge visible">✓ Visible</span>
+                    ) : (
+                      <span className="status-badge hidden">✕ Hidden</span>
+                    )}
                   </div>
                 </div>
 
