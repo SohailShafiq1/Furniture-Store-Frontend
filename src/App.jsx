@@ -11,6 +11,7 @@ import CategoryManagement from './admin-panel/pages/CategoryManagement';
 import ProductManagement from './admin-panel/pages/ProductManagement';
 import CategoryDetailPage from './admin-panel/pages/CategoryDetailPage';
 import SubCategoryDetailPage from './admin-panel/pages/SubCategoryDetailPage';
+import HomeViewManagement from './admin-panel/pages/HomeViewManagement';
 import ProtectedRoute from './admin-panel/components/ProtectedRoute';
 
 function App() {
@@ -69,6 +70,14 @@ function App() {
           element={
             <ProtectedRoute>
               <SubCategoryDetailPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/home-content" 
+          element={
+            <ProtectedRoute>
+              <HomeViewManagement />
             </ProtectedRoute>
           } 
         />
