@@ -51,14 +51,10 @@ export default function ProductDetailPage() {
     );
   }
 
-  // Mock gallery images - in real app, would be from product data
-  const galleryImages = [
-    product.image,
-    product.image,
-    product.image,
-    product.image,
-    product.image,
-  ];
+  // Use actual product images from backend, fallback to single image if not available
+  const galleryImages = product.images && product.images.length > 0 
+    ? product.images 
+    : [product.image];
 
   // Helper to ensure full image URL
   const getImageUrl = (imagePath) => {

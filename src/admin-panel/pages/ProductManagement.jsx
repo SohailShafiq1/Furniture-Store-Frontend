@@ -30,7 +30,7 @@ const ProductManagement = () => {
         collectionName: '',
         brandId: ''
     });
-    const [productImage, setProductImage] = useState(null);
+    const [productImages, setProductImages] = useState([]); // Array for multiple images
 
     // Dynamic Fields (Specifications)
     const [specifications, setSpecifications] = useState([]);
@@ -166,10 +166,21 @@ const ProductManagement = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        if (productImages.length === 0) {
+            setError('Please upload at least one product image');
+            return;
+        }
+
         try {
             const fd = new FormData();
             Object.keys(formData).forEach(key => fd.append(key, formData[key]));
-            if (productImage) fd.append('image', productImage);
+            
+            // Add multiple images
+            productImages.forEach(img => {
+                fd.append('images', img);
+            });
+            
             fd.append('specifications', JSON.stringify(specifications));
 
             if (isEditing) {
@@ -202,7 +213,7 @@ const ProductManagement = () => {
             collectionName: '',
             brandId: ''
         });
-        setProductImage(null);
+        setProductImages([]);
         setSpecifications([]);
     };
 
@@ -430,21 +441,50 @@ const ProductManagement = () => {
                     <section className="admin-card">
                         <div className="admin-card-title">Media</div>
                         <div className="form-group">
-                            <label>Product Hero Image</label>
+                            <label>Product Images (Multiple Images Supported)</label>
                             <div className="image-upload-wrapper" 
                                  onClick={() => document.getElementById('imageInput').click()}>
-                                <input id="imageInput" type="file" onChange={e => setProductImage(e.target.files[0])} style={{ display: 'none' }} />
-                                {productImage ? (
-                                    <div className="image-selection-preview">
-                                        <img src={URL.createObjectURL(productImage)} alt="Preview" />
-                                        <p style={{ margin: 0, fontSize: '0.8rem', color: '#64748b' }}>{productImage.name}</p>
-                                        <span style={{ color: '#4f46e5', fontWeight: '600', fontSize: '0.85rem' }}>Change Image</span>
+                                <input 
+                                    id="imageInput" 
+                                    type="file" 
+                                    multiple 
+                                    onChange={e => setProductImages([...productImages, ...Array.from(e.target.files)])} 
+                                    style={{ display: 'none' }} 
+                                />
+                                {productImages.length > 0 ? (
+                                    <div className="images-selection-preview">
+                                        <p style={{ margin: '0 0 10px 0', fontSize: '0.9rem', fontWeight: '600', color: '#333' }}>
+                                            {productImages.length} image{productImages.length !== 1 ? 's' : ''} selected
+                                        </p>
+                                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', gap: '8px', marginBottom: '10px' }}>
+                                            {productImages.map((img, idx) => (
+                                                <div key={idx} style={{ position: 'relative' }}>
+                                                    <img 
+                                                        src={URL.createObjectURL(img)} 
+                                                        alt={`Preview ${idx + 1}`}
+                                                        style={{ width: '100%', height: '80px', objectFit: 'cover', borderRadius: '5px', border: idx === 0 ? '2px solid #4f46e5' : '1px solid #e0d4c4' }}
+                                                    />
+                                                    {idx === 0 && <span style={{ position: 'absolute', top: '2px', right: '2px', background: '#4f46e5', color: 'white', fontSize: '10px', padding: '2px 6px', borderRadius: '3px' }}>Main</span>}
+                                                    <button 
+                                                        type="button"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setProductImages(productImages.filter((_, i) => i !== idx));
+                                                        }}
+                                                        style={{ position: 'absolute', top: '0', right: '0', background: '#f44336', color: 'white', border: 'none', borderRadius: '0 5px 0 3px', padding: '2px 4px', cursor: 'pointer', fontSize: '12px' }}
+                                                    >
+                                                        ✕
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <span style={{ color: '#4f46e5', fontWeight: '600', fontSize: '0.85rem' }}>Change Images</span>
                                     </div>
                                 ) : (
                                     <div style={{ color: '#94a3b8' }}>
                                         <span style={{ fontSize: '3rem', display: 'block', marginBottom: '10px' }}>🖼️</span>
-                                        <p style={{ margin: 0, fontSize: '1rem', fontWeight: '500' }}>Drop image here or click</p>
-                                        <p style={{ margin: '5px 0 0', fontSize: '0.8rem' }}>Supports JPG, PNG, AVIF</p>
+                                        <p style={{ margin: 0, fontSize: '1rem', fontWeight: '500' }}>Drop images here or click</p>
+                                        <p style={{ margin: '5px 0 0', fontSize: '0.8rem' }}>Supports JPG, PNG, AVIF. Add multiple images for gallery</p>
                                     </div>
                                 )}
                             </div>
