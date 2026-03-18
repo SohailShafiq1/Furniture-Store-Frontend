@@ -5,13 +5,16 @@ import { API_BASE_URL, BACKEND_URL } from '../config/api';
 import axios from 'axios';
 import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
+import Modal from '../components/Modal/Modal';
 import './CheckoutPage.css';
 
 const CheckoutPage = () => {
-  const { cart, clearCart } = useCart();
+  const { cart, clearCart, removeFromCart } = useCart();
   const { token } = useUserAuth();
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('Stripe');
+  const [modal, setModal] = useState({ isOpen: false, title: '', message: '', type: 'info', action: null });
+  const [pendingRemoveId, setPendingRemoveId] = useState(null);
   const [shippingAddress, setShippingAddress] = useState({
     firstName: '',
     lastName: '',
@@ -26,9 +29,37 @@ const CheckoutPage = () => {
     setShippingAddress({ ...shippingAddress, [e.target.name]: e.target.value });
   };
 
+  const handleRemoveItem = (itemId) => {
+    setPendingRemoveId(itemId);
+    setModal({
+      isOpen: true,
+      title: 'Remove Item',
+      message: 'Are you sure you want to remove this item from your cart?',
+      type: 'warning',
+      action: 'remove'
+    });
+  };
+
+  const confirmRemoveItem = async () => {
+    if (pendingRemoveId) {
+      await removeFromCart(pendingRemoveId);
+      setPendingRemoveId(null);
+    }
+    closeModal();
+  };
+
   const handleCheckout = async (e) => {
     e.preventDefault();
-    if (cart.items.length === 0) return alert('Cart is empty');
+    
+    if (cart.items.length === 0) {
+      setModal({
+        isOpen: true,
+        title: 'Empty Cart',
+        message: 'Your cart is empty. Please add items before checking out.',
+        type: 'warning'
+      });
+      return;
+    }
 
     try {
       setLoading(true);
@@ -43,17 +74,33 @@ const CheckoutPage = () => {
 
       if (res.data.success) {
         if (paymentMethod === 'COD') {
-          alert('Order placed successfully (COD)');
+          setModal({
+            isOpen: true,
+            title: 'Order Placed Successfully',
+            message: 'Your order has been placed. You will receive your items soon.',
+            type: 'success',
+            action: 'clearCart'
+          });
           clearCart();
         } else if (res.data.url) {
           window.location.href = res.data.url;
         }
       }
     } catch (err) {
-      alert('Checkout failed: ' + (err.response?.data?.message || err.message));
+      const errorMessage = err.response?.data?.message || err.message || 'An error occurred';
+      setModal({
+        isOpen: true,
+        title: 'Checkout Failed',
+        message: errorMessage,
+        type: 'error'
+      });
     } finally {
       setLoading(false);
     }
+  };
+
+  const closeModal = () => {
+    setModal({ isOpen: false, title: '', message: '', type: 'info', action: null });
   };
 
   const getImageUrl = (imagePath) => {
@@ -175,6 +222,13 @@ const CheckoutPage = () => {
                     {item.variation && <p className="summary-product-variant">Variation: {item.variation}</p>}
                     <p className="summary-product-qty">Qty: {item.quantity}</p>
                     <p className="summary-product-price">${(item.price * item.quantity).toFixed(2)}</p>
+                    <button 
+                      type="button"
+                      className="remove-item-btn"
+                      onClick={() => handleRemoveItem(item._id)}
+                    >
+                      ✕ Remove
+                    </button>
                   </div>
                 </div>
               ))}
@@ -195,6 +249,18 @@ const CheckoutPage = () => {
             </div>
           </aside>
         </div>
+
+        <Modal
+          isOpen={modal.isOpen}
+          title={modal.title}
+          message={modal.message}
+          type={modal.type}
+          confirmText={modal.action === 'remove' ? 'Remove' : modal.action === 'clearCart' ? 'Continue' : 'OK'}
+          cancelText={modal.action ? 'Cancel' : 'Close'}
+          showCancelButton={modal.action ? true : false}
+          onConfirm={modal.action === 'remove' ? confirmRemoveItem : closeModal}
+          onCancel={closeModal}
+        />
       </div>
       <Footer />
     </div>

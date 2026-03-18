@@ -6,6 +6,7 @@ import { useProductsByCategory } from '../hooks/useProductsByCategory';
 import { BACKEND_URL } from '../config/api';
 import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
+import Modal from '../components/Modal/Modal';
 import './ProductDetailPage.css';
 
 const StarIcon = ({ filled }) => (
@@ -39,6 +40,7 @@ export default function ProductDetailPage() {
   const [quantity, setQuantity] = useState(1);
   const [selectedVariation, setSelectedVariation] = useState(null);
   const [addingToCart, setAddingToCart] = useState(false);
+  const [modal, setModal] = useState({ isOpen: false, title: '', message: '', type: 'info' });
 
   if (!product) {
     return (
@@ -89,7 +91,12 @@ export default function ProductDetailPage() {
 
   const handleAddToCart = async () => {
     if (!user) {
-      alert('Please log in to add items to cart');
+      setModal({
+        isOpen: true,
+        title: 'Login Required',
+        message: 'Please log in to your account to add items to cart.',
+        type: 'warning'
+      });
       return;
     }
 
@@ -102,13 +109,32 @@ export default function ProductDetailPage() {
     setAddingToCart(false);
 
     if (success) {
-      alert('Product added to cart!');
+      setModal({
+        isOpen: true,
+        title: 'Added to Cart',
+        message: `${product.name} has been added to your cart successfully!`,
+        type: 'success'
+      });
     }
+  };
+
+  const closeModal = () => {
+    setModal({ isOpen: false, title: '', message: '', type: 'info' });
   };
 
   return (
     <div className="pd-page">
       <Header />
+      
+      <Modal
+        isOpen={modal.isOpen}
+        title={modal.title}
+        message={modal.message}
+        type={modal.type}
+        onConfirm={closeModal}
+        onCancel={closeModal}
+        showCancelButton={false}
+      />
       
       <div className="pd-container">
         {/* Breadcrumb */}

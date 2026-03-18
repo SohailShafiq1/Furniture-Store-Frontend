@@ -40,9 +40,9 @@ export const CartProvider = ({ children }) => {
 
   const addToCart = async (productId, variation, quantity, price) => {
     if (!user) {
-      // Handle guest cart or prompt for login
-      alert('Please log in to add items to cart');
-      return;
+      // User should not reach here as ProductDetailPage checks this first
+      console.error('Attempted to add to cart without user');
+      return false;
     }
 
     try {
