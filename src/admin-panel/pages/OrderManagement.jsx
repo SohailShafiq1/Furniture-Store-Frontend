@@ -3,12 +3,14 @@ import axios from 'axios';
 import { API_BASE_URL } from '../../config/api';
 import { useAdminAuth } from '../context/AdminAuthContext';
 import Modal from '../../components/Modal/Modal';
+import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
 import './OrderManagement.css';
 
 const OrderManagement = () => {
   const { token } = useAdminAuth();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [statusUpdating, setStatusUpdating] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [modal, setModal] = useState({ isOpen: false, title: '', message: '', type: 'info' });
   const [cancelReason, setCancelReason] = useState('');
@@ -49,6 +51,19 @@ const OrderManagement = () => {
 
   const handleStatusUpdate = async (orderId, newStatus, reason = '') => {
     try {
+      setStatusUpdating(true);
+      
+      // Show loading message based on status
+      const statusMessages = {
+        'Confirmed': 'Confirming order and notifying customer...',
+        'Processing': 'Processing order and sending update email...',
+        'Shipped': 'Updating shipment status and notifying customer...',
+        'Out for Delivery': 'Notifying customer - out for delivery...',
+        'Delivered': 'Marking as delivered and sending confirmation...',
+        'Cancelled': 'Cancelling order and notifying customer...'
+      };
+      
+      // This is for visual feedback - the actual update happens via API
       const res = await axios.put(
         `${API_BASE_URL}/orders/admin/update-status/${orderId}`,
         { status: newStatus, reason },
@@ -59,12 +74,15 @@ const OrderManagement = () => {
         setModal({
           isOpen: true,
           title: 'Success',
-          message: `Order status updated to ${newStatus}. Customer notified via email.`,
+          message: `Order status updated to ${newStatus}. Customer notified via email at ${getCustomerEmail()}.`,
           type: 'success'
         });
-        fetchOrders();
-        setSelectedOrder(null);
-        setCancelReason('');
+        // Refresh orders after a short delay to show completion
+        setTimeout(() => {
+          fetchOrders();
+          setSelectedOrder(null);
+          setCancelReason('');
+        }, 500);
       }
     } catch (err) {
       console.error('Error updating order:', err);
@@ -74,6 +92,80 @@ const OrderManagement = () => {
         message: err.response?.data?.message || 'Failed to update order status',
         type: 'error'
       });
+    } finally {
+      setStatusUpdating(false);
+    }
+  };
+
+  const getCustomerEmail = () => {
+    return selectedOrder?.user?.email || 'customer';
+  };
+
+  const fixPaymentStatuses = async () => {
+    try {
+      setStatusUpdating(true);
+      const res = await axios.post(
+        `${API_BASE_URL}/orders/admin/fix-payment-statuses`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (res.data.success) {
+        setModal({
+          isOpen: true,
+          title: 'Success',
+          message: `Fixed payment status for ${res.data.modifiedCount} orders. Page will refresh.`,
+          type: 'success'
+        });
+        setTimeout(() => {
+          fetchOrders();
+        }, 500);
+      }
+    } catch (err) {
+      console.error('Error fixing payment statuses:', err);
+      setModal({
+        isOpen: true,
+        title: 'Error',
+        message: 'Failed to fix payment statuses',
+        type: 'error'
+      });
+    } finally {
+      setStatusUpdating(false);
+    }
+  };
+
+  const markPaymentCompleted = async (orderId) => {
+    try {
+      setStatusUpdating(true);
+      
+      const res = await axios.post(
+        `${API_BASE_URL}/orders/admin/mark-payment-completed/${orderId}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (res.data.success) {
+        setModal({
+          isOpen: true,
+          title: 'Success',
+          message: 'Payment marked as completed and confirmation email sent to customer.',
+          type: 'success'
+        });
+        setTimeout(() => {
+          fetchOrders();
+          setSelectedOrder(null);
+        }, 500);
+      }
+    } catch (err) {
+      console.error('Error marking payment as completed:', err);
+      setModal({
+        isOpen: true,
+        title: 'Error',
+        message: err.response?.data?.message || 'Failed to mark payment as completed',
+        type: 'error'
+      });
+    } finally {
+      setStatusUpdating(false);
     }
   };
 
@@ -94,9 +186,9 @@ const OrderManagement = () => {
   const filteredOrders = orders.filter(order => {
     const statusMatch = filterStatus === 'All' || order.orderStatus === filterStatus;
     const searchMatch = 
-      order._id.includes(searchTerm) ||
-      order.user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.user.firstName.toLowerCase().includes(searchTerm.toLowerCase());
+      (order._id?.toString() || '').includes(searchTerm) ||
+      (order.user?.email?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+      (order.user?.firstName?.toLowerCase() || '').includes(searchTerm.toLowerCase());
     
     return statusMatch && searchMatch;
   });
@@ -121,8 +213,19 @@ const OrderManagement = () => {
   return (
     <div className="order-management">
       <div className="om-header">
-        <h2>Order Management</h2>
-        <p className="om-subtitle">Total Orders: {orders.length}</p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <h2>Order Management</h2>
+            <p className="om-subtitle">Total Orders: {orders.length}</p>
+          </div>
+          <button 
+            className="om-fix-payment-btn" 
+            onClick={fixPaymentStatuses}
+            title="Fix payment status for all confirmed orders with pending payment"
+          >
+            🔧 Fix Payment Status
+          </button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -174,10 +277,10 @@ const OrderManagement = () => {
               filteredOrders.map((order) => (
                 <tr key={order._id} className="om-row">
                   <td className="om-order-id">{order._id.substring(0, 8)}...</td>
-                  <td>{order.user.firstName} {order.user.lastName}</td>
-                  <td>{order.user.email}</td>
-                  <td className="om-items-count">{order.items.length} item(s)</td>
-                  <td className="om-amount">${order.totalAmount.toFixed(2)}</td>
+                  <td>{(order.user?.firstName || '-')} {(order.user?.lastName || '')}</td>
+                  <td>{order.user?.email || 'N/A'}</td>
+                  <td className="om-items-count">{order.items?.length || 0} item(s)</td>
+                  <td className="om-amount">${(order.totalAmount || 0).toFixed(2)}</td>
                   <td>
                     <span className="om-status-badge" style={{ backgroundColor: getStatusColor(order.orderStatus) }}>
                       {order.orderStatus}
@@ -222,16 +325,16 @@ const OrderManagement = () => {
               {/* Customer Info */}
               <div className="om-section">
                 <h4>Customer Information</h4>
-                <p><strong>Name:</strong> {selectedOrder.user.firstName} {selectedOrder.user.lastName}</p>
-                <p><strong>Email:</strong> {selectedOrder.user.email}</p>
-                <p><strong>Phone:</strong> {selectedOrder.shippingAddress.phone}</p>
+                <p><strong>Name:</strong> {(selectedOrder.user?.firstName || '-')} {(selectedOrder.user?.lastName || '')}</p>
+                <p><strong>Email:</strong> {selectedOrder.user?.email || 'N/A'}</p>
+                <p><strong>Phone:</strong> {selectedOrder.shippingAddress?.phone || 'N/A'}</p>
               </div>
 
               {/* Shipping Address */}
               <div className="om-section">
                 <h4>Shipping Address</h4>
-                <p>{selectedOrder.shippingAddress.address}</p>
-                <p>{selectedOrder.shippingAddress.city}, {selectedOrder.shippingAddress.state} {selectedOrder.shippingAddress.zipCode}</p>
+                <p>{selectedOrder.shippingAddress?.address || 'N/A'}</p>
+                <p>{selectedOrder.shippingAddress?.city || 'N/A'}, {selectedOrder.shippingAddress?.state || ''} {selectedOrder.shippingAddress?.zipCode || ''}</p>
               </div>
 
               {/* Order Items */}
@@ -261,24 +364,33 @@ const OrderManagement = () => {
 
               {/* Order Summary */}
               <div className="om-section om-summary">
-                <p><strong>Subtotal:</strong> <span>${selectedOrder.totalAmount.toFixed(2)}</span></p>
+                <p><strong>Subtotal:</strong> <span>${(selectedOrder.totalAmount || 0).toFixed(2)}</span></p>
                 <p><strong>Shipping:</strong> <span>FREE</span></p>
-                <p className="om-total"><strong>Total:</strong> <span>${selectedOrder.totalAmount.toFixed(2)}</span></p>
+                <p className="om-total"><strong>Total:</strong> <span>${(selectedOrder.totalAmount || 0).toFixed(2)}</span></p>
               </div>
 
               {/* Order Status & Payment */}
               <div className="om-section om-status-section">
                 <div>
                   <p><strong>Order Status:</strong></p>
-                  <span className="om-status-badge" style={{ backgroundColor: getStatusColor(selectedOrder.orderStatus) }}>
-                    {selectedOrder.orderStatus}
+                  <span className="om-status-badge" style={{ backgroundColor: getStatusColor(selectedOrder.orderStatus || 'Pending') }}>
+                    {selectedOrder.orderStatus || 'Pending'}
                   </span>
                 </div>
                 <div>
                   <p><strong>Payment Status:</strong></p>
-                  <span className={`om-payment-badge ${selectedOrder.paymentStatus.toLowerCase()}`}>
-                    {selectedOrder.paymentStatus}
+                  <span className={`om-payment-badge ${(selectedOrder.paymentStatus || 'Pending').toLowerCase()}`}>
+                    {selectedOrder.paymentStatus || 'Pending'}
                   </span>
+                  {selectedOrder.paymentStatus === 'Pending' && (
+                    <button
+                      className="om-mark-payment-btn"
+                      onClick={() => markPaymentCompleted(selectedOrder._id)}
+                      title="Mark this payment as completed (use if Stripe webhook failed)"
+                    >
+                      ✓ Mark Payment Completed
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -381,6 +493,11 @@ const OrderManagement = () => {
         onCancel={closeModal}
         showCancelButton={false}
       />
+
+      {/* Loading Spinner for status updates */}
+      {statusUpdating && (
+        <LoadingSpinner message="Processing... Sending confirmation email to customer..." />
+      )}
     </div>
   );
 };

@@ -26,6 +26,29 @@
   opacity: 0.9;
 }
 
+.om-fix-payment-btn {
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid white;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+
+.om-fix-payment-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.om-fix-payment-btn:active {
+  transform: translateY(0);
+}
+
 .om-loading {
   text-align: center;
   padding: 50px;
@@ -396,6 +419,31 @@
   margin-bottom: 8px;
 }
 
+.om-mark-payment-btn {
+  display: inline-block;
+  margin-left: 10px;
+  padding: 6px 12px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 12px;
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+
+.om-mark-payment-btn:hover {
+  background: #218838;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+}
+
+.om-mark-payment-btn:active {
+  transform: translateY(0);
+}
+
 /* Action Buttons */
 .om-actions {
   background: #f8f9fa;
@@ -487,6 +535,22 @@
 
   .om-modal-content {
     max-width: 95vw;
+  }
+
+  .om-header {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .om-header > div {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .om-fix-payment-btn {
+    align-self: flex-start;
+    margin-top: 15px;
   }
 }
 
