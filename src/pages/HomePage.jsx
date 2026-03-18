@@ -104,7 +104,7 @@ const DynamicSubcategoryComponent = ({ subcategoryName, selectedProducts }) => {
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+          gridTemplateColumns: 'repeat(4, 1fr)',
           gap: '24px'
         }}>
           {selectedProducts.map((product) => (
@@ -187,7 +187,8 @@ const DynamicSubcategoryComponent = ({ subcategoryName, selectedProducts }) => {
                 )}
 
                 {/* Wishlist Button */}
-                <button
+                {/* Commented out - can be enabled with proper functionality */}
+                {/* <button
                   onClick={(e) => e.stopPropagation()}
                   style={{
                     position: 'absolute',
@@ -208,16 +209,16 @@ const DynamicSubcategoryComponent = ({ subcategoryName, selectedProducts }) => {
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                   </svg>
-                </button>
+                </button> */}
               </div>
 
               {/* Product Info */}
-              <p style={{ fontSize: '12px', color: '#999', margin: '0 0 8px 0' }}>
+              <p style={{ fontSize: '14px', color: '#999', margin: '0 0 8px 0' }}>
                 {product.brand || product.brandId || 'LUNA'}
               </p>
 
               <h3 style={{
-                fontSize: '14px',
+                fontSize: '16px',
                 fontWeight: '600',
                 color: '#1a1a1a',
                 margin: '0 0 8px 0',
@@ -239,7 +240,7 @@ const DynamicSubcategoryComponent = ({ subcategoryName, selectedProducts }) => {
                     <StarIcon key={i} filled={i < 4} />
                   ))}
                 </div>
-                <span style={{ fontSize: '12px', color: '#999' }}>(0)</span>
+                <span style={{ fontSize: '14px', color: '#999' }}>(0)</span>
               </div>
 
               {/* Price */}
@@ -249,7 +250,7 @@ const DynamicSubcategoryComponent = ({ subcategoryName, selectedProducts }) => {
                 alignItems: 'center'
               }}>
                 <span style={{
-                  fontSize: '14px',
+                  fontSize: '16px',
                   fontWeight: '700',
                   color: '#FF6B35'
                 }}>
@@ -257,7 +258,7 @@ const DynamicSubcategoryComponent = ({ subcategoryName, selectedProducts }) => {
                 </span>
                 {product.discount > 0 && (
                   <span style={{
-                    fontSize: '12px',
+                    fontSize: '14px',
                     color: '#999',
                     textDecoration: 'line-through'
                   }}>
