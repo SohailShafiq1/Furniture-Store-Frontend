@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import SearchBar from '../common/SearchBar';
 import Navigation from '../Navigation/Navigation';
 import AuthModal from '../common/AuthModal';
 import { useUserAuth } from '../../context/UserAuthContext';
+import { useCart } from '../../context/CartContext';
 import { useCategoryData } from '../../hooks/useCategoryData';
 import { BACKEND_URL } from '../../config/api';
 import './Header.css';
@@ -11,7 +13,12 @@ export default function Header() {
   const [activeMenu, setActiveMenu] = useState(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const { user, logout } = useUserAuth();
+  const { cart } = useCart();
   const { categories } = useCategoryData();
+  const navigate = useNavigate();
+
+  // Calculate total items in cart
+  const cartItemCount = cart.items.reduce((total, item) => total + item.quantity, 0);
 
   // Transform backend categories to have the structure needed for mega-menu
   const navItems = categories.map((category) => ({
@@ -85,12 +92,19 @@ export default function Header() {
             )}
           </div>
 
-          <button className="header-icon-btn" title="Cart">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-              <line x1="3" y1="6" x2="21" y2="6"></line>
-              <path d="M16 10a4 4 0 0 1-8 0"></path>
-            </svg>
+          <button 
+            className="header-icon-btn cart-icon-btn" 
+            title="Cart"
+            onClick={() => navigate('/checkout')}
+          >
+            <div className="cart-icon-wrapper">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <path d="M16 10a4 4 0 0 1-8 0"></path>
+              </svg>
+              {cartItemCount > 0 && <span className="cart-badge">{cartItemCount}</span>}
+            </div>
           </button>
         </div>
       </div>

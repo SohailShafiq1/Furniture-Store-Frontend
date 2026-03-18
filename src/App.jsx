@@ -13,6 +13,8 @@ import CategoryDetailPage from './admin-panel/pages/CategoryDetailPage';
 import SubCategoryDetailPage from './admin-panel/pages/SubCategoryDetailPage';
 import HomeViewManagement from './admin-panel/pages/HomeViewManagement';
 import ProtectedRoute from './admin-panel/components/ProtectedRoute';
+import CheckoutPage from './pages/CheckoutPage';
+import OrderSuccessPage from './pages/OrderSuccessPage';
 
 function App() {
   return (
@@ -21,6 +23,8 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/category/:categoryId" element={<CategoryPage />} />
         <Route path="/product/:categoryId/:productId" element={<ProductDetailPage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/order-success/:sessionId" element={<OrderSuccessPage />} />
         <Route path="/admin" element={<AdminLogin />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         

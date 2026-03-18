@@ -1,5 +1,7 @@
-import { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useUserAuth } from '../context/UserAuthContext';
+import { useCart } from '../context/CartContext';
 import { useProductsByCategory } from '../hooks/useProductsByCategory';
 import { BACKEND_URL } from '../config/api';
 import Header from '../components/Header/Header';
@@ -28,12 +30,15 @@ export default function ProductDetailPage() {
   const { categoryId, productId } = useParams();
   const navigate = useNavigate();
   const { products: categoryProducts } = useProductsByCategory(categoryId);
+  const { user } = useUserAuth();
+  const { addToCart } = useCart();
   
   const product = categoryProducts.find(p => p._id === productId);
   
   const [mainImageIndex, setMainImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [selectedVariation, setSelectedVariation] = useState(null);
+  const [addingToCart, setAddingToCart] = useState(false);
 
   if (!product) {
     return (
@@ -81,6 +86,25 @@ export default function ProductDetailPage() {
   };
 
   const currentPrice = getCurrentPrice();
+
+  const handleAddToCart = async () => {
+    if (!user) {
+      alert('Please log in to add items to cart');
+      return;
+    }
+
+    const variationName = selectedVariation !== null && product.variations 
+      ? product.variations[selectedVariation].name 
+      : null;
+    
+    setAddingToCart(true);
+    const success = await addToCart(product._id, variationName, quantity, currentPrice);
+    setAddingToCart(false);
+
+    if (success) {
+      alert('Product added to cart!');
+    }
+  };
 
   return (
     <div className="pd-page">
@@ -198,7 +222,13 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Add to Cart Button */}
-            <button className="pd-add-cart-btn">ADD TO CART</button>
+            <button 
+              className="pd-add-cart-btn" 
+              onClick={handleAddToCart}
+              disabled={addingToCart}
+            >
+              {addingToCart ? 'ADDING...' : 'ADD TO CART'}
+            </button>
 
             {/* Shop Pay */}
             <p className="pd-shop-pay">

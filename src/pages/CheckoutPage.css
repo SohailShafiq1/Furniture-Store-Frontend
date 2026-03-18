@@ -1,0 +1,263 @@
+.checkout-page {
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+.checkout-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.checkout-container h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.checkout-layout {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+.checkout-form {
+  flex: 1.5;
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.form-section {
+  margin-bottom: 40px;
+}
+
+.form-section h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.checkout-form input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
+  margin-bottom: 15px;
+}
+
+.checkout-form input:focus {
+  outline: none;
+  border-color: #333;
+}
+
+/* Payment Options Styles */
+.payment-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.payment-group-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.payment-group-option:hover {
+  background-color: #fcfcfc;
+  border-color: #999;
+}
+
+.payment-group-option.selected {
+  border-color: #333;
+  background-color: #f8f9fa;
+  box-shadow: inset 0 0 0 1px #333;
+}
+
+.payment-radio-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.payment-radio-wrapper input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  cursor: pointer;
+}
+
+.payment-labels {
+  display: flex;
+  flex-direction: column;
+}
+
+.payment-main-label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.payment-sub-label {
+  font-size: 0.8rem;
+  color: #777;
+}
+
+.payment-logos {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.payment-logos img {
+  height: 24px;
+  object-fit: contain;
+}
+
+/* Order Summary Styles */
+.order-summary {
+  flex: 1;
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 100px;
+}
+
+.order-summary h3 {
+  margin-bottom: 25px;
+  font-size: 1.2rem;
+}
+
+.summary-items {
+  max-height: 400px;
+  overflow-y: auto;
+  margin-bottom: 25px;
+}
+
+.summary-product-card {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.summary-product-img {
+  width: 70px;
+  height: 70px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f9f9f9;
+}
+
+.summary-product-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.summary-product-info {
+  flex: 1;
+}
+
+.summary-product-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+}
+
+.summary-product-variant,
+.summary-product-qty {
+  font-size: 0.8rem;
+  color: #777;
+  margin: 0;
+}
+
+.summary-product-price {
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-top: 5px;
+}
+
+.summary-totals-box {
+  border-top: 1.5px solid #eee;
+  padding-top: 20px;
+}
+
+.summary-line {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.free-shipping {
+  color: #28a745;
+  font-weight: 600;
+}
+
+.summary-total-line {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1.5px solid #eee;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #333;
+}
+
+.place-order-btn {
+  width: 100%;
+  padding: 16px;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 20px;
+}
+
+.place-order-btn:hover {
+  background-color: #000;
+}
+
+.place-order-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+@media (max-width: 900px) {
+  .checkout-layout {
+    flex-direction: column-reverse;
+  }
+  
+  .order-summary {
+    width: 100%;
+    position: static;
+  }
+}
