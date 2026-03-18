@@ -82,7 +82,7 @@ const DynamicPromoBanners = ({ homeContent }) => {
 };
 
 // Dynamic Subcategory Component - Same as CategoryPage layout
-const DynamicSubcategoryComponent = ({ subcategoryName, selectedProducts }) => {
+const DynamicSubcategoryComponent = ({ subcategoryName, selectedProducts, categoryId }) => {
   const navigate = useNavigate();
 
   const StarIcon = ({ filled }) => (
@@ -269,6 +269,48 @@ const DynamicSubcategoryComponent = ({ subcategoryName, selectedProducts }) => {
             </div>
           ))}
         </div>
+
+        {/* View All Button */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '40px' }}>
+          <button
+            onClick={() => {
+              // Navigate to category page
+              if (categoryId) {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                navigate(`/category/${categoryId}`, { 
+                  state: { subcategoryFilter: subcategoryName } 
+                });
+              } else {
+                console.error('Category ID not found');
+              }
+            }}
+            style={{
+              padding: '12px 48px',
+              backgroundColor: '#FF6B35',
+              color: '#ffffff',
+              border: 'none',
+              borderRadius: '4px',
+              fontSize: '14px',
+              fontWeight: '600',
+              cursor: categoryId ? 'pointer' : 'not-allowed',
+              transition: 'all 0.3s ease',
+              letterSpacing: '0.5px',
+              opacity: categoryId ? 1 : 0.6
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#e55a27';
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(255, 107, 53, 0.3)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#FF6B35';
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+          >
+            View All {subcategoryName}
+          </button>
+        </div>
       </div>
     </section>
   );
@@ -336,6 +378,7 @@ export default function HomePage() {
             <DynamicSubcategoryComponent 
               subcategoryName={content.selectedSubCategoryName}
               selectedProducts={content.selectedProducts}
+              categoryId={content.selectedCategory?._id || content.selectedProducts[0]?.category}
             />
           ) : (
             <div style={{ padding: '20px', textAlign: 'center', color: '#999' }}>
