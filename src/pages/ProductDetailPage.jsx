@@ -33,6 +33,7 @@ export default function ProductDetailPage() {
   
   const [mainImageIndex, setMainImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const [selectedVariation, setSelectedVariation] = useState(null);
 
   if (!product) {
     return (
@@ -69,6 +70,17 @@ export default function ProductDetailPage() {
   const handleNextImage = () => {
     setMainImageIndex((prev) => (prev + 1) % galleryImages.length);
   };
+
+  // Get current price based on selected variation
+  const getCurrentPrice = () => {
+    if (selectedVariation !== null && product.variations && product.variations.length > 0) {
+      const variation = product.variations[selectedVariation];
+      return variation ? variation.price : product.price;
+    }
+    return product.price;
+  };
+
+  const currentPrice = getCurrentPrice();
 
   return (
     <div className="pd-page">
@@ -141,12 +153,61 @@ export default function ProductDetailPage() {
               <span className="pd-review-count">(0 reviews)</span>
             </div>
 
+            {/* Variations Section */}
+            {product.variations && product.variations.length > 0 && (
+              <div className="pd-variations-section">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                  <h3 style={{ fontSize: '14px', fontWeight: '600', color: '#333' }}>CHOOSE VARIATION</h3>
+                  {selectedVariation !== null && (
+                    <button 
+                      onClick={() => setSelectedVariation(null)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: '#FF6B35',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        textDecoration: 'underline'
+                      }}
+                    >
+                      Reset to main price
+                    </button>
+                  )}
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                  {product.variations.map((variation, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setSelectedVariation(idx)}
+                      style={{
+                        padding: '10px 16px',
+                        border: selectedVariation === idx ? '2px solid #FF6B35' : '1px solid #D1D1D1',
+                        borderRadius: '8px',
+                        background: selectedVariation === idx ? '#fff' : '#fff',
+                        boxShadow: selectedVariation === idx ? '0 0 0 1px #FF6B35' : 'none',
+                        color: '#333',
+                        fontWeight: '500',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                        fontSize: '14px',
+                        minWidth: '120px',
+                        textAlign: 'left'
+                      }}
+                    >
+                      {variation.name} <span style={{ marginLeft: '8px', fontWeight: '700' }}>${variation.price}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Price Section */}
             <div className="pd-price-section">
               <div className="pd-price-container">
-                <span className="pd-current-price">${product.price}</span>
+                <span className="pd-current-price">${currentPrice}</span>
                 {product.discount > 0 && (
-                  <span className="pd-original-price">${(product.price / (1 - product.discount / 100)).toFixed(2)}</span>
+                  <span className="pd-original-price">${(currentPrice / (1 - product.discount / 100)).toFixed(2)}</span>
                 )}
               </div>
               <p className="pd-discount-text">Extra 5% off with code <span className="pd-code">55OFF</span></p>
@@ -157,7 +218,7 @@ export default function ProductDetailPage() {
 
             {/* Shop Pay */}
             <p className="pd-shop-pay">
-              From <span className="pd-shop-price">${(product.price / 12).toFixed(2)}</span>/mo with <span className="pd-shop-logo">Shop Pay</span>
+              From <span className="pd-shop-price">${(currentPrice / 12).toFixed(2)}</span>/mo with <span className="pd-shop-logo">Shop Pay</span>
               <br />
               <a href="#" className="pd-policy-link">Check your purchasing power</a>
             </p>

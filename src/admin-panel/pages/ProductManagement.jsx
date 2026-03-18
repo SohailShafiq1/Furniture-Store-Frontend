@@ -24,6 +24,7 @@ const ProductManagement = () => {
         sku: 'SKU-' + Math.random().toString(36).substr(2, 9).toUpperCase(),
         price: '',
         discount: '0',
+        quantity: '0',
         description: '',
         categoryId: '',
         subCategoryName: '',
@@ -34,6 +35,12 @@ const ProductManagement = () => {
 
     // Dynamic Fields (Specifications)
     const [specifications, setSpecifications] = useState([]);
+    
+    // Product Variations
+    const [variations, setVariations] = useState([]);
+    
+    // Track existing images separately from new images
+    const [existingImages, setExistingImages] = useState([]);
 
     const apiBase = import.meta.env.VITE_API_URL;
     const backendRoot = apiBase.replace('/api', '');
@@ -119,6 +126,21 @@ const ProductManagement = () => {
         }
     };
 
+    // Variations Handlers
+    const handleAddVariation = () => {
+        setVariations([...variations, { name: '', price: '' }]);
+    };
+
+    const handleRemoveVariation = (index) => {
+        setVariations(variations.filter((_, i) => i !== index));
+    };
+
+    const handleVariationChange = (index, key, value) => {
+        const updated = [...variations];
+        updated[index][key] = value;
+        setVariations(updated);
+    };
+
     const handleEditClick = (prod) => {
         setIsEditing(true);
         setCurrentProductId(prod._id);
@@ -148,6 +170,24 @@ const ProductManagement = () => {
         }
         setSpecifications(specs);
         
+        // Handle variations safely
+        let vars = [];
+        try {
+            vars = typeof prod.variations === 'string' 
+                ? JSON.parse(prod.variations) 
+                : (prod.variations || []);
+        } catch (e) {
+            vars = [];
+        }
+        setVariations(vars);
+        
+        // Load existing images
+        const existingImgs = prod.images && prod.images.length > 0 
+            ? prod.images 
+            : (prod.image ? [prod.image] : []);
+        setExistingImages(existingImgs);
+        setProductImages([]); // Reset new images array
+        
         // Scroll to form for immediate visibility
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -167,7 +207,8 @@ const ProductManagement = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        if (productImages.length === 0) {
+        // Only require images for new products (no existing images)
+        if (!isEditing && productImages.length === 0) {
             setError('Please upload at least one product image');
             return;
         }
@@ -176,12 +217,26 @@ const ProductManagement = () => {
             const fd = new FormData();
             Object.keys(formData).forEach(key => fd.append(key, formData[key]));
             
-            // Add multiple images
-            productImages.forEach(img => {
-                fd.append('images', img);
-            });
+            // Only send new images if they were added
+            if (productImages.length > 0) {
+                productImages.forEach(img => {
+                    fd.append('images', img);
+                });
+            }
             
+            // For editing, if no new images, send the existing image paths to preserve them
+            if (isEditing && productImages.length === 0 && existingImages.length > 0) {
+                existingImages.forEach(imgPath => {
+                    fd.append('existingImages', imgPath);
+                });
+            }
+            
+            // Always send variations for both new and edit
+            const variationsJSON = JSON.stringify(variations);
             fd.append('specifications', JSON.stringify(specifications));
+            fd.append('variations', variationsJSON);
+            
+            console.log('Submitting with variations:', variations, 'JSON:', variationsJSON);
 
             if (isEditing) {
                 await axios.put(`${apiBase}/products/${currentProductId}`, fd, multipartConfig);
@@ -194,6 +249,7 @@ const ProductManagement = () => {
             resetForm();
             fetchInitialData();
         } catch (err) {
+            console.error('Submit error:', err);
             setError(err.response?.data?.message || 'Error saving product');
         }
     };
@@ -214,7 +270,9 @@ const ProductManagement = () => {
             brandId: ''
         });
         setProductImages([]);
+        setExistingImages([]);
         setSpecifications([]);
+        setVariations([]);
     };
 
     const handleDelete = async (id) => {
@@ -436,6 +494,81 @@ const ProductManagement = () => {
                     </div>
                 </div>
 
+                {/* Variations Section */}
+                <div className="spec-container">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                        <div>
+                            <h3 style={{ margin: 0, color: '#0f172a', fontSize: '1.4rem', fontWeight: '800' }}>Product Variations</h3>
+                            <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: '0.9rem' }}>Add different variations like sizes, colors, etc. with their own prices.</p>
+                        </div>
+                        <button type="button" onClick={handleAddVariation} className="btn-primary">
+                            + Add Variation
+                        </button>
+                    </div>
+
+                    {variations.length === 0 ? (
+                        <div style={{ 
+                            padding: '40px 20px', 
+                            textAlign: 'center', 
+                            background: '#f8fafc', 
+                            borderRadius: '12px', 
+                            border: '2px dashed #e2e8f0',
+                            color: '#94a3b8'
+                        }}>
+                            <p style={{ margin: 0, fontSize: '1rem' }}>No variations added yet. Click "Add Variation" to add product variations.</p>
+                        </div>
+                    ) : (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                            {variations.map((variation, idx) => (
+                                <div key={idx} className="spec-group-card" style={{ border: '2px solid #f1f5f9', padding: '20px', borderRadius: '12px', background: '#fff' }}>
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 80px', gap: '16px', alignItems: 'flex-start' }}>
+                                        <div className="form-group">
+                                            <label style={{ fontSize: '0.85rem', fontWeight: '600', color: '#475569', marginBottom: '6px', display: 'block' }}>Variation Name</label>
+                                            <input 
+                                                className="form-control"
+                                                placeholder="e.g. Queen, Red, Leather"
+                                                value={variation.name}
+                                                onChange={(e) => handleVariationChange(idx, 'name', e.target.value)}
+                                                style={{ marginBottom: '0' }}
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label style={{ fontSize: '0.85rem', fontWeight: '600', color: '#475569', marginBottom: '6px', display: 'block' }}>Price ($)</label>
+                                            <input 
+                                                type="number"
+                                                className="form-control"
+                                                placeholder="0.00"
+                                                value={variation.price}
+                                                onChange={(e) => handleVariationChange(idx, 'price', e.target.value)}
+                                                style={{ marginBottom: '0' }}
+                                            />
+                                        </div>
+                                        <div style={{ paddingTop: '28px' }}>
+                                            <button 
+                                                type="button" 
+                                                onClick={() => handleRemoveVariation(idx)}
+                                                style={{ 
+                                                    width: '100%',
+                                                    padding: '8px', 
+                                                    background: '#fee2e2', 
+                                                    color: '#dc2626', 
+                                                    border: 'none', 
+                                                    borderRadius: '6px', 
+                                                    fontWeight: '600', 
+                                                    cursor: 'pointer',
+                                                    fontSize: '0.85rem'
+                                                }}
+                                            >
+                                                Delete
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
                 {/* Right Column: Media and Actions */}
                 <div className="form-right-col">
                     <section className="admin-card">
@@ -451,34 +584,58 @@ const ProductManagement = () => {
                                     onChange={e => setProductImages([...productImages, ...Array.from(e.target.files)])} 
                                     style={{ display: 'none' }} 
                                 />
-                                {productImages.length > 0 ? (
+                                {existingImages.length > 0 || productImages.length > 0 ? (
                                     <div className="images-selection-preview">
-                                        <p style={{ margin: '0 0 10px 0', fontSize: '0.9rem', fontWeight: '600', color: '#333' }}>
-                                            {productImages.length} image{productImages.length !== 1 ? 's' : ''} selected
-                                        </p>
-                                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', gap: '8px', marginBottom: '10px' }}>
-                                            {productImages.map((img, idx) => (
-                                                <div key={idx} style={{ position: 'relative' }}>
-                                                    <img 
-                                                        src={URL.createObjectURL(img)} 
-                                                        alt={`Preview ${idx + 1}`}
-                                                        style={{ width: '100%', height: '80px', objectFit: 'cover', borderRadius: '5px', border: idx === 0 ? '2px solid #4f46e5' : '1px solid #e0d4c4' }}
-                                                    />
-                                                    {idx === 0 && <span style={{ position: 'absolute', top: '2px', right: '2px', background: '#4f46e5', color: 'white', fontSize: '10px', padding: '2px 6px', borderRadius: '3px' }}>Main</span>}
-                                                    <button 
-                                                        type="button"
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            setProductImages(productImages.filter((_, i) => i !== idx));
-                                                        }}
-                                                        style={{ position: 'absolute', top: '0', right: '0', background: '#f44336', color: 'white', border: 'none', borderRadius: '0 5px 0 3px', padding: '2px 4px', cursor: 'pointer', fontSize: '12px' }}
-                                                    >
-                                                        ✕
-                                                    </button>
+                                        {existingImages.length > 0 && (
+                                            <div style={{ marginBottom: '16px' }}>
+                                                <p style={{ margin: '0 0 10px 0', fontSize: '0.85rem', fontWeight: '700', color: '#4f46e5', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                                                    ✓ Current Images ({existingImages.length})
+                                                </p>
+                                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', gap: '8px', marginBottom: '10px' }}>
+                                                    {existingImages.map((imgPath, idx) => (
+                                                        <div key={idx} style={{ position: 'relative' }}>
+                                                            <img 
+                                                                src={`${backendRoot}/${imgPath}`} 
+                                                                alt={`Existing ${idx + 1}`}
+                                                                style={{ width: '100%', height: '80px', objectFit: 'cover', borderRadius: '5px', border: idx === 0 ? '2px solid #10b981' : '1px solid #d1d5db' }}
+                                                            />
+                                                            {idx === 0 && <span style={{ position: 'absolute', top: '2px', right: '2px', background: '#10b981', color: 'white', fontSize: '10px', padding: '2px 6px', borderRadius: '3px' }}>Main</span>}
+                                                        </div>
+                                                    ))}
                                                 </div>
-                                            ))}
-                                        </div>
-                                        <span style={{ color: '#4f46e5', fontWeight: '600', fontSize: '0.85rem' }}>Change Images</span>
+                                            </div>
+                                        )}
+                                        {productImages.length > 0 && (
+                                            <div>
+                                                <p style={{ margin: '0 0 10px 0', fontSize: '0.85rem', fontWeight: '700', color: '#f59e0b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                                                    ⬆ New Images ({productImages.length})
+                                                </p>
+                                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', gap: '8px', marginBottom: '10px' }}>
+                                                    {productImages.map((img, idx) => (
+                                                        <div key={idx} style={{ position: 'relative' }}>
+                                                            <img 
+                                                                src={URL.createObjectURL(img)} 
+                                                                alt={`New ${idx + 1}`}
+                                                                style={{ width: '100%', height: '80px', objectFit: 'cover', borderRadius: '5px', border: '2px solid #f59e0b' }}
+                                                            />
+                                                            <button 
+                                                                type="button"
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    setProductImages(productImages.filter((_, i) => i !== idx));
+                                                                }}
+                                                                style={{ position: 'absolute', top: '0', right: '0', background: '#f44336', color: 'white', border: 'none', borderRadius: '0 5px 0 3px', padding: '2px 4px', cursor: 'pointer', fontSize: '12px' }}
+                                                            >
+                                                                ✕
+                                                            </button>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                        <span style={{ color: '#4f46e5', fontWeight: '600', fontSize: '0.85rem' }}>
+                                            {productImages.length > 0 ? 'Add More Images' : 'Replace Images'}
+                                        </span>
                                     </div>
                                 ) : (
                                     <div style={{ color: '#94a3b8' }}>
@@ -575,6 +732,11 @@ const ProductManagement = () => {
                                         <span><b>Stock:</b> {prod.quantity || 0}</span>
                                         <span style={{ gridColumn: 'span 2' }}><b>Category:</b> {prod.category?.name} / {prod.subCategoryName}</span>
                                         <span style={{ fontSize: '1.1rem', color: '#0f172a', fontWeight: '800' }}>${prod.price}</span>
+                                        {prod.variations && prod.variations.length > 0 && (
+                                            <span style={{ gridColumn: 'span 2', fontSize: '0.85rem', color: '#4f46e5', fontWeight: '600' }}>
+                                                ✓ {prod.variations.length} variation{prod.variations.length !== 1 ? 's' : ''}: {prod.variations.map(v => `${v.name} ($${v.price})`).join(', ')}
+                                            </span>
+                                        )}
                                     </div>
                                 </div>
                             </div>

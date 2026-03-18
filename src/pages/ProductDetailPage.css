@@ -211,6 +211,22 @@
   color: var(--luna-text-light);
 }
 
+/* Variations Section */
+.pd-variations-section {
+  margin: 20px 0;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--luna-border);
+}
+
+.pd-variations-section h3 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--luna-text);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 /* Price Section */
 .pd-price-section {
   border-top: 1px solid var(--luna-border);
