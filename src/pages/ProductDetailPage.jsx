@@ -158,28 +158,12 @@ export default function ProductDetailPage() {
               <div className="pd-variations-section">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                   <h3 style={{ fontSize: '14px', fontWeight: '600', color: '#333' }}>CHOOSE VARIATION</h3>
-                  {selectedVariation !== null && (
-                    <button 
-                      onClick={() => setSelectedVariation(null)}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        color: '#FF6B35',
-                        fontSize: '12px',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                        textDecoration: 'underline'
-                      }}
-                    >
-                      Reset to main price
-                    </button>
-                  )}
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
                   {product.variations.map((variation, idx) => (
                     <button
                       key={idx}
-                      onClick={() => setSelectedVariation(idx)}
+                      onClick={() => setSelectedVariation(selectedVariation === idx ? null : idx)}
                       style={{
                         padding: '10px 16px',
                         border: selectedVariation === idx ? '2px solid #FF6B35' : '1px solid #D1D1D1',
