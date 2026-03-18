@@ -1,7 +1,7 @@
 import React from 'react';
 import './Modal.css';
 
-const Modal = ({ isOpen, title, message, type = 'info', onConfirm, onCancel, confirmText = 'Confirm', cancelText = 'Cancel', showCancelButton = true }) => {
+const Modal = ({ isOpen, title, message, type = 'info', onConfirm, onCancel, confirmText = 'Confirm', cancelText = 'Cancel', showCancelButton = true, children }) => {
   if (!isOpen) return null;
 
   return (
@@ -20,6 +20,7 @@ const Modal = ({ isOpen, title, message, type = 'info', onConfirm, onCancel, con
             {type === 'info' && 'ℹ'}
           </div>
           <p>{message}</p>
+          {children && <div className="modal-custom-content">{children}</div>}
         </div>
 
         <div className="modal-footer">

@@ -12,6 +12,7 @@ import ProductManagement from './admin-panel/pages/ProductManagement';
 import CategoryDetailPage from './admin-panel/pages/CategoryDetailPage';
 import SubCategoryDetailPage from './admin-panel/pages/SubCategoryDetailPage';
 import HomeViewManagement from './admin-panel/pages/HomeViewManagement';
+import OrderManagement from './admin-panel/pages/OrderManagement';
 import ProtectedRoute from './admin-panel/components/ProtectedRoute';
 import CheckoutPage from './pages/CheckoutPage';
 import OrderSuccessPage from './pages/OrderSuccessPage';
@@ -82,6 +83,14 @@ function App() {
           element={
             <ProtectedRoute>
               <HomeViewManagement />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/orders" 
+          element={
+            <ProtectedRoute>
+              <OrderManagement />
             </ProtectedRoute>
           } 
         />

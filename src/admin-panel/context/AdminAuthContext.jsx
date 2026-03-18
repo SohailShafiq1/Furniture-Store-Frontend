@@ -3,8 +3,15 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 const AdminAuthContext = createContext();
 
 export const AdminAuthProvider = ({ children }) => {
-  const [admin, setAdmin] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('adminToken'));
+  // Initialize from localStorage immediately
+  const [admin, setAdmin] = useState(() => {
+    const saved = localStorage.getItem('adminUser');
+    return saved ? JSON.parse(saved) : null;
+  });
+  
+  const [token, setToken] = useState(() => {
+    return localStorage.getItem('adminToken') || null;
+  });
 
   const login = (adminData, authToken) => {
     localStorage.setItem('adminToken', authToken);
@@ -19,11 +26,6 @@ export const AdminAuthProvider = ({ children }) => {
     setToken(null);
     setAdmin(null);
   };
-
-  useEffect(() => {
-    const savedUser = localStorage.getItem('adminUser');
-    if (savedUser) setAdmin(JSON.parse(savedUser));
-  }, []);
 
   return (
     <AdminAuthContext.Provider value={{ admin, token, login, logout }}>

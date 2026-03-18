@@ -1,0 +1,388 @@
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { API_BASE_URL } from '../../config/api';
+import { useAdminAuth } from '../context/AdminAuthContext';
+import Modal from '../../components/Modal/Modal';
+import './OrderManagement.css';
+
+const OrderManagement = () => {
+  const { token } = useAdminAuth();
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [modal, setModal] = useState({ isOpen: false, title: '', message: '', type: 'info' });
+  const [cancelReason, setCancelReason] = useState('');
+  const [filterStatus, setFilterStatus] = useState('All');
+  const [searchTerm, setSearchTerm] = useState('');
+
+  useEffect(() => {
+    if (token) {
+      fetchOrders();
+    }
+  }, [token]);
+
+  const fetchOrders = async () => {
+    if (!token) {
+      return;
+    }
+    try {
+      setLoading(true);
+      const res = await axios.get(`${API_BASE_URL}/orders/admin/all-orders`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (res.data.success) {
+        setOrders(res.data.orders);
+      }
+    } catch (err) {
+      console.error('Error fetching orders:', err);
+      setModal({
+        isOpen: true,
+        title: 'Error',
+        message: err.response?.data?.message || 'Failed to fetch orders',
+        type: 'error'
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleStatusUpdate = async (orderId, newStatus, reason = '') => {
+    try {
+      const res = await axios.put(
+        `${API_BASE_URL}/orders/admin/update-status/${orderId}`,
+        { status: newStatus, reason },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (res.data.success) {
+        setModal({
+          isOpen: true,
+          title: 'Success',
+          message: `Order status updated to ${newStatus}. Customer notified via email.`,
+          type: 'success'
+        });
+        fetchOrders();
+        setSelectedOrder(null);
+        setCancelReason('');
+      }
+    } catch (err) {
+      console.error('Error updating order:', err);
+      setModal({
+        isOpen: true,
+        title: 'Error',
+        message: err.response?.data?.message || 'Failed to update order status',
+        type: 'error'
+      });
+    }
+  };
+
+  const openCancelModal = () => {
+    setModal({
+      isOpen: true,
+      title: 'Cancel Order',
+      message: 'Are you sure you want to cancel this order?',
+      type: 'warning',
+      action: 'confirm-cancel'
+    });
+  };
+
+  const closeModal = () => {
+    setModal({ isOpen: false, title: '', message: '', type: 'info' });
+  };
+
+  const filteredOrders = orders.filter(order => {
+    const statusMatch = filterStatus === 'All' || order.orderStatus === filterStatus;
+    const searchMatch = 
+      order._id.includes(searchTerm) ||
+      order.user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.user.firstName.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    return statusMatch && searchMatch;
+  });
+
+  const getStatusColor = (status) => {
+    const colors = {
+      'Pending': '#ffc107',
+      'Confirmed': '#17a2b8',
+      'Processing': '#007bff',
+      'Shipped': '#495057',
+      'Out for Delivery': '#fd7e14',
+      'Delivered': '#28a745',
+      'Cancelled': '#dc3545'
+    };
+    return colors[status] || '#6c757d';
+  };
+
+  if (loading) {
+    return <div className="om-loading">Loading orders...</div>;
+  }
+
+  return (
+    <div className="order-management">
+      <div className="om-header">
+        <h2>Order Management</h2>
+        <p className="om-subtitle">Total Orders: {orders.length}</p>
+      </div>
+
+      {/* Filters */}
+      <div className="om-filters">
+        <div className="om-filter-group">
+          <label>Filter by Status:</label>
+          <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="om-select">
+            <option>All</option>
+            <option>Pending</option>
+            <option>Confirmed</option>
+            <option>Processing</option>
+            <option>Shipped</option>
+            <option>Out for Delivery</option>
+            <option>Delivered</option>
+            <option>Cancelled</option>
+          </select>
+        </div>
+
+        <div className="om-filter-group">
+          <label>Search:</label>
+          <input
+            type="text"
+            placeholder="Search by Order ID, Email, or Name..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="om-search-input"
+          />
+        </div>
+      </div>
+
+      {/* Orders Table */}
+      <div className="om-table-wrapper">
+        <table className="om-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer</th>
+              <th>Email</th>
+              <th>Items</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Payment</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredOrders.length > 0 ? (
+              filteredOrders.map((order) => (
+                <tr key={order._id} className="om-row">
+                  <td className="om-order-id">{order._id.substring(0, 8)}...</td>
+                  <td>{order.user.firstName} {order.user.lastName}</td>
+                  <td>{order.user.email}</td>
+                  <td className="om-items-count">{order.items.length} item(s)</td>
+                  <td className="om-amount">${order.totalAmount.toFixed(2)}</td>
+                  <td>
+                    <span className="om-status-badge" style={{ backgroundColor: getStatusColor(order.orderStatus) }}>
+                      {order.orderStatus}
+                    </span>
+                  </td>
+                  <td>
+                    <span className={`om-payment-badge ${order.paymentStatus.toLowerCase()}`}>
+                      {order.paymentStatus}
+                    </span>
+                  </td>
+                  <td className="om-date">{new Date(order.createdAt).toLocaleDateString()}</td>
+                  <td>
+                    <button
+                      className="om-action-btn om-view-btn"
+                      onClick={() => setSelectedOrder(order)}
+                    >
+                      View
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="9" className="om-no-data">No orders found</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Order Detail Modal */}
+      {selectedOrder && (
+        <div className="om-detail-modal">
+          <div className="om-modal-content">
+            <button className="om-modal-close" onClick={() => setSelectedOrder(null)}>✕</button>
+
+            <div className="om-modal-header">
+              <h3>Order Details: {selectedOrder._id}</h3>
+            </div>
+
+            <div className="om-modal-body">
+              {/* Customer Info */}
+              <div className="om-section">
+                <h4>Customer Information</h4>
+                <p><strong>Name:</strong> {selectedOrder.user.firstName} {selectedOrder.user.lastName}</p>
+                <p><strong>Email:</strong> {selectedOrder.user.email}</p>
+                <p><strong>Phone:</strong> {selectedOrder.shippingAddress.phone}</p>
+              </div>
+
+              {/* Shipping Address */}
+              <div className="om-section">
+                <h4>Shipping Address</h4>
+                <p>{selectedOrder.shippingAddress.address}</p>
+                <p>{selectedOrder.shippingAddress.city}, {selectedOrder.shippingAddress.state} {selectedOrder.shippingAddress.zipCode}</p>
+              </div>
+
+              {/* Order Items */}
+              <div className="om-section">
+                <h4>Items Ordered</h4>
+                <table className="om-items-table">
+                  <thead>
+                    <tr>
+                      <th>Product</th>
+                      <th>Variation</th>
+                      <th>Qty</th>
+                      <th>Price</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedOrder.items.map((item, idx) => (
+                      <tr key={idx}>
+                        <td>{item.product?.name || 'Product'}</td>
+                        <td>{item.variation || '-'}</td>
+                        <td>{item.quantity}</td>
+                        <td>${(item.price * item.quantity).toFixed(2)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Order Summary */}
+              <div className="om-section om-summary">
+                <p><strong>Subtotal:</strong> <span>${selectedOrder.totalAmount.toFixed(2)}</span></p>
+                <p><strong>Shipping:</strong> <span>FREE</span></p>
+                <p className="om-total"><strong>Total:</strong> <span>${selectedOrder.totalAmount.toFixed(2)}</span></p>
+              </div>
+
+              {/* Order Status & Payment */}
+              <div className="om-section om-status-section">
+                <div>
+                  <p><strong>Order Status:</strong></p>
+                  <span className="om-status-badge" style={{ backgroundColor: getStatusColor(selectedOrder.orderStatus) }}>
+                    {selectedOrder.orderStatus}
+                  </span>
+                </div>
+                <div>
+                  <p><strong>Payment Status:</strong></p>
+                  <span className={`om-payment-badge ${selectedOrder.paymentStatus.toLowerCase()}`}>
+                    {selectedOrder.paymentStatus}
+                  </span>
+                </div>
+              </div>
+
+              {/* Status Update Actions */}
+              {selectedOrder.orderStatus !== 'Delivered' && selectedOrder.orderStatus !== 'Cancelled' && (
+                <div className="om-section om-actions">
+                  <h4>Update Order Status</h4>
+                  <div className="om-action-buttons">
+                    {selectedOrder.orderStatus === 'Pending' && (
+                      <button
+                        className="om-status-update-btn om-confirmed"
+                        onClick={() => handleStatusUpdate(selectedOrder._id, 'Confirmed')}
+                      >
+                        ✓ Confirm Order
+                      </button>
+                    )}
+                    {(selectedOrder.orderStatus === 'Confirmed' || selectedOrder.orderStatus === 'Pending') && (
+                      <button
+                        className="om-status-update-btn om-processing"
+                        onClick={() => handleStatusUpdate(selectedOrder._id, 'Processing')}
+                      >
+                        ⚙️ Processing
+                      </button>
+                    )}
+                    {selectedOrder.orderStatus === 'Processing' && (
+                      <button
+                        className="om-status-update-btn om-shipped"
+                        onClick={() => handleStatusUpdate(selectedOrder._id, 'Shipped')}
+                      >
+                        📦 Shipped
+                      </button>
+                    )}
+                    {selectedOrder.orderStatus === 'Shipped' && (
+                      <button
+                        className="om-status-update-btn om-delivery"
+                        onClick={() => handleStatusUpdate(selectedOrder._id, 'Out for Delivery')}
+                      >
+                        🚚 Out for Delivery
+                      </button>
+                    )}
+                    {selectedOrder.orderStatus === 'Out for Delivery' && (
+                      <button
+                        className="om-status-update-btn om-delivered"
+                        onClick={() => handleStatusUpdate(selectedOrder._id, 'Delivered')}
+                      >
+                        ✓ Mark Delivered
+                      </button>
+                    )}
+                    <button className="om-status-update-btn om-cancel" onClick={openCancelModal}>
+                      ✕ Cancel Order
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Cancel Modal */}
+      <Modal
+        isOpen={modal.isOpen && modal.action === 'confirm-cancel'}
+        title="Cancel Order"
+        message="Please provide a reason for cancellation:"
+        type="warning"
+        onConfirm={() => {
+          if (cancelReason.trim()) {
+            handleStatusUpdate(selectedOrder._id, 'Cancelled', cancelReason);
+          }
+        }}
+        onCancel={() => {
+          closeModal();
+          setCancelReason('');
+        }}
+        showCancelButton={true}
+        confirmText="Cancel Order"
+      >
+        <textarea
+          value={cancelReason}
+          onChange={(e) => setCancelReason(e.target.value)}
+          placeholder="Enter cancellation reason..."
+          style={{
+            width: '100%',
+            padding: '10px',
+            marginBottom: '10px',
+            borderRadius: '4px',
+            border: '1px solid #ddd',
+            fontFamily: 'inherit'
+          }}
+        />
+      </Modal>
+
+      {/* Regular Modal for success/error */}
+      <Modal
+        isOpen={modal.isOpen && !modal.action}
+        title={modal.title}
+        message={modal.message}
+        type={modal.type}
+        onConfirm={closeModal}
+        onCancel={closeModal}
+        showCancelButton={false}
+      />
+    </div>
+  );
+};
+
+export default OrderManagement;
