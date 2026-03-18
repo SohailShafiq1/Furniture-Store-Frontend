@@ -5,26 +5,14 @@ import { API_BASE_URL, BACKEND_URL } from '../config/api';
 import axios from 'axios';
 import Header from '../components/Header/Header';
 import HeroSection from '../components/HeroSection/HeroSection';
-import TopSpringPicks from '../components/TopSpringPicks/TopSpringPicks';
 import Sectionals from '../components/Sectionals/Sectionals';
 import PromoBanners from '../components/PromoBanners/PromoBanners';
-import BedroomSets from '../components/BedroomSets/BedroomSets';
 import ShopByCategory from '../components/ShopByCategory/ShopByCategory';
-import DiningTable from '../components/BedroomSets/DiningTable';
 import SlidingBanner from '../components/SlidingBanner/SlidingBanner';
 import Inspiration from '../components/Inspiration/Inspiration';
 import TopBrands from '../components/TopBrands/TopBrands';
 import NewsUpdates from '../components/NewsUpdates/NewsUpdates';
 import Footer from '../components/Footer/Footer';
-import ProductCarousel from '../components/ProductCarousel/ProductCarousel';
-
-// Component mapping for dynamic rendering
-const componentMap = {
-  'Sectionals': Sectionals,
-  'BedroomSets': BedroomSets,
-  'DiningTable': DiningTable,
-  'TopSpringPicks': TopSpringPicks
-};
 
 // Dynamic PromoBanners Component that accepts custom data
 const DynamicPromoBanners = ({ homeContent }) => {
@@ -93,51 +81,195 @@ const DynamicPromoBanners = ({ homeContent }) => {
   );
 };
 
-// Dynamic Subcategory Component that renders selected products
+// Dynamic Subcategory Component - Same as CategoryPage layout
 const DynamicSubcategoryComponent = ({ subcategoryName, selectedProducts }) => {
-  const formatProductForDisplay = (product) => {
-    // Extract image URL
-    const imageUrl = product.images && product.images.length > 0
-      ? (product.images[0].startsWith('http') ? product.images[0] : `${BACKEND_URL}/${product.images[0]}`)
-      : '/placeholder.png';
+  const navigate = useNavigate();
 
-    // Calculate pricing
-    const originalPrice = product.price || 0;
-    const currentPrice = product.discountedPrice || product.price || 0;
+  const StarIcon = ({ filled }) => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill={filled ? "#FFB800" : "none"} stroke={filled ? "#FFB800" : "#D1D1D1"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+    </svg>
+  );
 
-    // Determine stock status
-    let stockStatus = null;
-    if (product.stock > 0) {
-      stockStatus = product.stock > 5 ? 'In Stock | Ready to Go' : 'In Stock';
-    } else {
-      stockStatus = 'Out of Stock';
-    }
-
-    return {
-      id: product._id || product.id,
-      image: imageUrl,
-      brand: product.brand || 'Ashley',
-      name: product.name || 'Product Name',
-      rating: product.rating || 4.5,
-      reviews: product.reviews || 0,
-      currentPrice: `$${currentPrice.toFixed(2)}`,
-      originalPrice: `$${originalPrice.toFixed(2)}`,
-      badge: 'Spring Sale', // Default badge - can be customized
-      stockStatus: stockStatus
-    };
-  };
-
-  const formattedProducts = selectedProducts?.map(formatProductForDisplay) || [];
-
-  if (formattedProducts.length === 0) {
+  if (!selectedProducts || selectedProducts.length === 0) {
     return null;
   }
 
   return (
-    <ProductCarousel 
-      title={subcategoryName} 
-      products={formattedProducts}
-    />
+    <section style={{ width: '100%', padding: '60px 40px', backgroundColor: '#ffffff' }}>
+      <div style={{ maxWidth: '1480px', margin: '0 auto' }}>
+        <h2 style={{ fontSize: '32px', fontWeight: '700', color: '#1a1a1a', marginBottom: '40px' }}>
+          {subcategoryName}
+        </h2>
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+          gap: '24px'
+        }}>
+          {selectedProducts.map((product) => (
+            <div
+              key={product._id}
+              onClick={() => navigate(`/product/${product.category}/${product._id}`)}
+              style={{
+                cursor: 'pointer',
+                backgroundColor: '#ffffff',
+                border: '1px solid #e5e5e5',
+                borderRadius: '4px',
+                padding: '12px',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = '0 0 0 transparent';
+              }}
+            >
+              {/* Product Image */}
+              <div style={{
+                position: 'relative',
+                width: '100%',
+                paddingBottom: '100%',
+                overflow: 'hidden',
+                backgroundColor: '#f5f5f5',
+                borderRadius: '4px',
+                marginBottom: '12px'
+              }}>
+                <img
+                  src={product.image?.startsWith('http') ? product.image : `${BACKEND_URL}/${product.image}`}
+                  alt={product.name}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover'
+                  }}
+                />
+
+                {/* Badge */}
+                {(product.badge || (product.quantity > 0)) && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '12px',
+                    left: '12px',
+                    display: 'flex',
+                    gap: '8px',
+                    flexWrap: 'wrap'
+                  }}>
+                    {product.badge && (
+                      <span style={{
+                        backgroundColor: '#555',
+                        color: 'white',
+                        padding: '4px 8px',
+                        borderRadius: '12px',
+                        fontSize: '12px',
+                        fontWeight: '600'
+                      }}>
+                        {product.badge}
+                      </span>
+                    )}
+                    {product.quantity > 0 && (
+                      <span style={{
+                        backgroundColor: '#84CFBE',
+                        color: 'white',
+                        padding: '4px 8px',
+                        borderRadius: '12px',
+                        fontSize: '12px',
+                        fontWeight: '600'
+                      }}>
+                        {product.quantity > 5 ? 'In Stock | Ready to Go' : 'In Stock'}
+                      </span>
+                    )}
+                  </div>
+                )}
+
+                {/* Wishlist Button */}
+                <button
+                  onClick={(e) => e.stopPropagation()}
+                  style={{
+                    position: 'absolute',
+                    top: '12px',
+                    right: '12px',
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: '50%',
+                    border: 'none',
+                    backgroundColor: 'white',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+                  }}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                  </svg>
+                </button>
+              </div>
+
+              {/* Product Info */}
+              <p style={{ fontSize: '12px', color: '#999', margin: '0 0 8px 0' }}>
+                {product.brand || product.brandId || 'LUNA'}
+              </p>
+
+              <h3 style={{
+                fontSize: '14px',
+                fontWeight: '600',
+                color: '#1a1a1a',
+                margin: '0 0 8px 0',
+                lineHeight: '1.4',
+                minHeight: '28px'
+              }}>
+                {product.name}
+              </h3>
+
+              {/* Rating */}
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                marginBottom: '8px'
+              }}>
+                <div style={{ display: 'flex', gap: '2px' }}>
+                  {[...Array(5)].map((_, i) => (
+                    <StarIcon key={i} filled={i < 4} />
+                  ))}
+                </div>
+                <span style={{ fontSize: '12px', color: '#999' }}>(0)</span>
+              </div>
+
+              {/* Price */}
+              <div style={{
+                display: 'flex',
+                gap: '8px',
+                alignItems: 'center'
+              }}>
+                <span style={{
+                  fontSize: '14px',
+                  fontWeight: '700',
+                  color: '#FF6B35'
+                }}>
+                  ${parseFloat(product.price || 0).toFixed(2)}
+                </span>
+                {product.discount > 0 && (
+                  <span style={{
+                    fontSize: '12px',
+                    color: '#999',
+                    textDecoration: 'line-through'
+                  }}>
+                    ${(parseFloat(product.price || 0) * (1 + product.discount / 100)).toFixed(2)}
+                  </span>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 };
 
