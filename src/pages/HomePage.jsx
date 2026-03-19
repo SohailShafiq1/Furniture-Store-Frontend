@@ -370,10 +370,7 @@ export default function HomePage() {
       {/* Dynamically render HomeContent sections */}
       {homeContent.map((content, idx) => (
         <div key={content._id || idx}>
-          {/* Show PromoBanners first */}
-          <DynamicPromoBanners homeContent={content} />
-          
-          {/* Show Subcategory Component with selected products */}
+          {/* Show Subcategory Component with selected products first */}
           {content.selectedSubCategoryName && content.selectedProducts && content.selectedProducts.length > 0 ? (
             <DynamicSubcategoryComponent 
               subcategoryName={content.selectedSubCategoryName}
@@ -385,6 +382,9 @@ export default function HomePage() {
               No products selected for: {content.selectedSubCategoryName}
             </div>
           )}
+
+          {/* Show PromoBanners after subcategory */}
+          <DynamicPromoBanners homeContent={content} />
         </div>
       ))}
 
