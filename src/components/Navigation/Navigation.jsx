@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useCategoryData } from '../../hooks/useCategoryData';
 import './Navigation.css';
 
@@ -48,13 +49,13 @@ export default function Navigation({ activeMenu, onCategoryHover }) {
             className="nav-item"
             onMouseEnter={() => onCategoryHover(item.id)}
           >
-            <a
-              href={item.href}
+            <Link
+              to={item.href}
               className={`nav-link ${activeMenu === item.id ? 'active' : ''}`}
             >
               {item.label}
               {item.subcategories.length > 0 && <ChevronIcon />}
-            </a>
+            </Link>
           </li>
         ))}
       </ul>

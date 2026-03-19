@@ -271,10 +271,10 @@ export default function CategoryPage() {
             // IF AT MAIN CATEGORY: Show ONLY Sub-Categories
             category.subCategories && category.subCategories.length > 0 ? (
               category.subCategories.map((sub, idx) => (
-                <button
+                <Link
                   key={idx}
+                  to={`/category/${categoryId}/sub/${sub.name}`}
                   className="luna-subcat-card"
-                  onClick={() => navigate(`/category/${categoryId}/sub/${sub.name}`)}
                 >
                   <div className="luna-subcat-img-wrapper">
                     <img 
@@ -284,7 +284,7 @@ export default function CategoryPage() {
                     />
                   </div>
                   <span className="luna-subcat-label">{sub.name}</span>
-                </button>
+                </Link>
               ))
             ) : null
           )}

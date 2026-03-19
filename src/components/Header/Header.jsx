@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import SearchBar from '../common/SearchBar';
 import Navigation from '../Navigation/Navigation';
 import AuthModal from '../common/AuthModal';
@@ -130,10 +130,10 @@ export default function Header() {
             {activeNavItem.subcategories.map((sub) => {
               const imageUrl = sub.image?.startsWith('http') ? sub.image : `${BACKEND_URL}/${sub.image}`;
               return (
-                <a key={sub.label} href={sub.href} className="mega-menu-item">
+                <Link key={sub.label} to={sub.href} className="mega-menu-item">
                   <img src={imageUrl} alt={sub.label} className="mega-menu-image" loading="lazy" />
                   <span className="mega-menu-label">{sub.label}</span>
-                </a>
+                </Link>
               );
             })}
           </div>
