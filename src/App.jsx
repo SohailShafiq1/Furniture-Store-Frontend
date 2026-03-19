@@ -23,6 +23,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/category/:categoryId" element={<CategoryPage />} />
+        <Route path="/category/:categoryId/sub/:subcategoryName" element={<CategoryPage />} />
         <Route path="/product/:categoryId/:productId" element={<ProductDetailPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/order-success/:sessionId" element={<OrderSuccessPage />} />

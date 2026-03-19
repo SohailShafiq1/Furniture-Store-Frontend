@@ -27,7 +27,7 @@ export default function Header() {
     href: `/category/${category._id || category.name.toLowerCase()}`,
     subcategories: (category.subCategories || []).map((sub) => ({
       label: sub.name,
-      href: `/category/${category._id || category.name.toLowerCase()}`,
+      href: `/category/${category._id}/sub/${sub.name}`,
       image: sub.image,
     })),
   }));

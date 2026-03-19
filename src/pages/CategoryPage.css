@@ -99,6 +99,30 @@
   color: var(--luna-text);
 }
 
+.luna-subcat-group {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.luna-sub-subcat-row {
+  display: flex;
+  gap: 16px;
+  background-color: #f9f9f9;
+  padding: 15px 20px;
+  border-radius: 60px;
+  align-items: center;
+}
+
+.luna-subcat-card.sub-sub .luna-subcat-img-wrapper {
+  width: 70px;
+  height: 70px;
+}
+
+.luna-subcat-card.sub-sub .luna-subcat-label {
+  font-size: 12px;
+}
+
 /* Page Header */
 .luna-page-header {
   margin-bottom: 30px;
