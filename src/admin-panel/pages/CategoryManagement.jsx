@@ -9,7 +9,9 @@ const CategoryManagement = () => {
     const [newCategory, setNewCategory] = useState('');
     const [catImage, setCatImage] = useState(null);
     const [subCatImage, setSubCatImage] = useState(null);
+    const [subSubCatImage, setSubSubCatImage] = useState(null);
     const [subCategoryData, setSubCategoryData] = useState({ categoryId: '', name: '' });
+    const [subSubCategoryData, setSubSubCategoryData] = useState({ categoryId: '', subCategoryName: '', name: '' });
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
     const { token } = useAdminAuth();
@@ -67,6 +69,25 @@ const CategoryManagement = () => {
             fetchCategories();
         } catch (err) {
             setError(err.response?.data?.message || 'Error adding sub-category');
+        }
+    };
+
+    const handleAddSubSubCategory = async (e) => {
+        e.preventDefault();
+        try {
+            const formData = new FormData();
+            formData.append('categoryId', subSubCategoryData.categoryId);
+            formData.append('subCategoryName', subSubCategoryData.subCategoryName);
+            formData.append('name', subSubCategoryData.name);
+            if (subSubCatImage) formData.append('image', subSubCatImage);
+
+            await axios.post(`${apiEndpoint}/add-sub-subcategory`, formData, multipartConfig);
+            setMessage('Sub-sub-category added successfully!');
+            setSubSubCategoryData({ categoryId: '', subCategoryName: '', name: '' });
+            setSubSubCatImage(null);
+            fetchCategories();
+        } catch (err) {
+            setError(err.response?.data?.message || 'Error adding sub-sub-category');
         }
     };
 
@@ -130,6 +151,44 @@ const CategoryManagement = () => {
                             <input type="file" onChange={(e) => setSubCatImage(e.target.files[0])} required />
                         </div>
                         <button type="submit">Add Sub-Category</button>
+                    </form>
+                </section>
+
+                <section>
+                    <h2>New Sub-Sub-Category</h2>
+                    <form onSubmit={handleAddSubSubCategory} className="admin-form">
+                        <select 
+                            value={subSubCategoryData.categoryId} 
+                            onChange={(e) => setSubSubCategoryData({...subSubCategoryData, categoryId: e.target.value, subCategoryName: ''})}
+                            required
+                        >
+                            <option value="">Select Parent</option>
+                            {categories.map(cat => (
+                                <option key={cat._id} value={cat._id}>{cat.name}</option>
+                            ))}
+                        </select>
+                        <select 
+                            value={subSubCategoryData.subCategoryName} 
+                            onChange={(e) => setSubSubCategoryData({...subSubCategoryData, subCategoryName: e.target.value})}
+                            required
+                            disabled={!subSubCategoryData.categoryId}
+                        >
+                            <option value="">Select Sub-category</option>
+                            {categories.find(c => c._id === subSubCategoryData.categoryId)?.subCategories.map(sub => (
+                                <option key={sub.name} value={sub.name}>{sub.name}</option>
+                            ))}
+                        </select>
+                        <input 
+                            value={subSubCategoryData.name} 
+                            onChange={(e) => setSubSubCategoryData({...subSubCategoryData, name: e.target.value})} 
+                            placeholder="Sub-sub-category Name" 
+                            required 
+                        />
+                        <div className="file-input-group">
+                            <label>Display Image (Optional)</label>
+                            <input type="file" onChange={(e) => setSubSubCatImage(e.target.files[0])} />
+                        </div>
+                        <button type="submit">Add Sub-Sub-Category</button>
                     </form>
                 </section>
             </div>

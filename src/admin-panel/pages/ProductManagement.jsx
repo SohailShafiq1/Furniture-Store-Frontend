@@ -19,6 +19,7 @@ const ProductManagement = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [currentProductId, setCurrentProductId] = useState(null);
     const [subCategories, setSubCategories] = useState([]);
+    const [subSubCategories, setSubSubCategories] = useState([]);
     const [formData, setFormData] = useState({
         name: '',
         sku: 'SKU-' + Math.random().toString(36).substr(2, 9).toUpperCase(),
@@ -28,6 +29,7 @@ const ProductManagement = () => {
         description: '',
         categoryId: '',
         subCategoryName: '',
+        subSubCategoryName: '',
         collectionName: '',
         brandId: ''
     });
@@ -72,7 +74,21 @@ const ProductManagement = () => {
         } else {
             setSubCategories([]);
         }
+        // Reset dependent fields
+        setFormData(prev => ({ ...prev, subCategoryName: '', subSubCategoryName: '' }));
     }, [formData.categoryId, categories]);
+
+    // Update sub-sub-categories when sub-category changes
+    useEffect(() => {
+        if (formData.subCategoryName && formData.categoryId) {
+            const parent = categories.find(c => c._id === formData.categoryId);
+            const sub = parent?.subCategories.find(s => s.name === formData.subCategoryName);
+            setSubSubCategories(sub?.subSubCategories || []);
+        } else {
+            setSubSubCategories([]);
+        }
+        setFormData(prev => ({ ...prev, subSubCategoryName: '' }));
+    }, [formData.subCategoryName, categories, formData.categoryId]);
 
     const handleAddSpecTitle = () => {
         setSpecifications([...specifications, { title: '', fields: [{ name: '', values: [''] }] }]);
@@ -155,9 +171,17 @@ const ProductManagement = () => {
             description: prod.description || '',
             categoryId: prod.category?._id || '',
             subCategoryName: prod.subCategoryName || '',
+            subSubCategoryName: prod.subSubCategoryName || '',
             collectionName: prod.collectionName || '',
             brandId: prod.brandId || ''
         });
+
+        // Set sub-sub-categories for editing
+        if (prod.category?._id && prod.subCategoryName) {
+            const selected = categories.find(c => c._id === prod.category._id);
+            const sub = selected?.subCategories.find(s => s.name === prod.subCategoryName);
+            setSubSubCategories(sub?.subSubCategories || []);
+        }
         
         // Handle specifications safely
         let specs = [];
@@ -386,6 +410,18 @@ const ProductManagement = () => {
                                 >
                                     <option value="">Select Sub-category</option>
                                     {subCategories.map((s, i) => <option key={i} value={s.name}>{s.name}</option>)}
+                                </select>
+                            </div>
+                            <div className="form-group">
+                                <label>Sub-Sub-Category</label>
+                                <select 
+                                    className="form-control"
+                                    value={formData.subSubCategoryName} 
+                                    onChange={e => setFormData({...formData, subSubCategoryName: e.target.value})} 
+                                    disabled={!formData.subCategoryName}
+                                >
+                                    <option value="">Select Sub-Sub-Category (Optional)</option>
+                                    {subSubCategories.map((ss, i) => <option key={i} value={ss.name}>{ss.name}</option>)}
                                 </select>
                             </div>
                             <div className="form-group">

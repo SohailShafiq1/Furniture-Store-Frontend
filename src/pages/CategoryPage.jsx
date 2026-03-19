@@ -154,38 +154,73 @@ export default function CategoryPage() {
           <span>{category.name}</span>
         </nav>
 
-        {/* Circular Sub-categories */}
+        {/* Page Title & Count */}
+        <div className="luna-page-header">
+          <h1 className="luna-category-title">{category.name}</h1>
+          <p className="luna-product-count">{products.length} products found</p>
+        </div>
+
+        {/* Circular Sub-categories / Sub-Sub-categories */}
         <div className="luna-subcat-row">
           {category.subCategories && category.subCategories.length > 0 ? (
-            category.subCategories.map((sub, idx) => (
-              <button
-                key={idx}
-                className={`luna-subcat-card ${selectedSubcategory === sub.name ? 'active' : ''}`}
-                onClick={() => setSelectedSubcategory(sub.name)}
-              >
-                <div className="luna-subcat-img-wrapper">
-                  <img src={sub.image} alt={sub.name} />
-                </div>
-                <span className="luna-subcat-label">{sub.name}</span>
-              </button>
-            ))
+            // If a specific subcategory is selected, show its sub-sub-categories
+            selectedSubcategory !== 'all' && 
+            category.subCategories.find(s => s.name === selectedSubcategory)?.subSubCategories?.length > 0 ? (
+              <>
+                {/* Back to all subcategories option if needed, or just show sub-sub-cats */}
+                {category.subCategories.find(s => s.name === selectedSubcategory).subSubCategories.map((ss, idx) => (
+                  <button
+                    key={idx}
+                    className="luna-subcat-card"
+                    onClick={() => {
+                      // Filter by sub-sub-category
+                      const filtered = categoryProducts.filter(
+                        p => p.subCategoryName === selectedSubcategory && p.subSubCategoryName === ss.name
+                      );
+                      setProducts(filtered);
+                    }}
+                  >
+                    <div className="luna-subcat-img-wrapper">
+                      <img 
+                        src={ss.image?.startsWith('http') ? ss.image : (ss.image ? `${BACKEND_URL}/${ss.image}` : '/placeholder-image.png')} 
+                        alt={ss.name} 
+                        onError={(e) => { e.target.src = '/placeholder-image.png'; }}
+                      />
+                    </div>
+                    <span className="luna-subcat-label">{ss.name}</span>
+                  </button>
+                ))}
+              </>
+            ) : (
+              // Default: Show Sub-categories
+              category.subCategories.map((sub, idx) => (
+                <button
+                  key={idx}
+                  className={`luna-subcat-card ${selectedSubcategory === sub.name ? 'active' : ''}`}
+                  onClick={() => setSelectedSubcategory(sub.name)}
+                >
+                  <div className="luna-subcat-img-wrapper">
+                    <img 
+                      src={sub.image?.startsWith('http') ? sub.image : `${BACKEND_URL}/${sub.image}`} 
+                      alt={sub.name} 
+                      onError={(e) => { e.target.src = '/placeholder-image.png'; }}
+                    />
+                  </div>
+                  <span className="luna-subcat-label">{sub.name}</span>
+                </button>
+              ))
+            )
           ) : (
             <button
               className={`luna-subcat-card ${selectedSubcategory === 'all' ? 'active' : ''}`}
               onClick={() => setSelectedSubcategory('all')}
             >
               <div className="luna-subcat-img-wrapper">
-                <img src={category.image} alt="All" />
+                <img src={category.image?.startsWith('http') ? category.image : `${BACKEND_URL}/${category.image}`} alt="All" />
               </div>
               <span className="luna-subcat-label">All Products</span>
             </button>
           )}
-        </div>
-
-        {/* Page Title & Count */}
-        <div className="luna-page-header">
-          <h1 className="luna-category-title">{category.name}</h1>
-          <p className="luna-product-count">{products.length} products found</p>
         </div>
 
         {/* Toolbar */}
