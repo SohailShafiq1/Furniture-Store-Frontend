@@ -90,22 +90,17 @@ export default function ProductDetailPage() {
   const currentPrice = getCurrentPrice();
 
   const handleAddToCart = async () => {
-    if (!user) {
-      setModal({
-        isOpen: true,
-        title: 'Login Required',
-        message: 'Please log in to your account to add items to cart.',
-        type: 'warning'
-      });
-      return;
-    }
-
     const variationName = selectedVariation !== null && product.variations 
       ? product.variations[selectedVariation].name 
       : null;
     
     setAddingToCart(true);
-    const success = await addToCart(product._id, variationName, quantity, currentPrice);
+    // Pass product details for guest checkout display
+    const productDetails = {
+      name: product.name,
+      image: product.images?.[0]
+    };
+    const success = await addToCart(product._id, variationName, quantity, currentPrice, productDetails);
     setAddingToCart(false);
 
     if (success) {

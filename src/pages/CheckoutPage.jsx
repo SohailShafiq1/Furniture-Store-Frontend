@@ -10,9 +10,10 @@ import './CheckoutPage.css';
 
 const CheckoutPage = () => {
   const { cart, clearCart, removeFromCart } = useCart();
-  const { token } = useUserAuth();
+  const { user, token } = useUserAuth();
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('Stripe');
+  const [guestEmail, setGuestEmail] = useState('');
   const [modal, setModal] = useState({ isOpen: false, title: '', message: '', type: 'info', action: null });
   const [pendingRemoveId, setPendingRemoveId] = useState(null);
   const [shippingAddress, setShippingAddress] = useState({
@@ -61,15 +62,57 @@ const CheckoutPage = () => {
       return;
     }
 
+    // Validate email for guest users
+    if (!user && !guestEmail) {
+      setModal({
+        isOpen: true,
+        title: 'Email Required',
+        message: 'Please enter your email address to proceed with checkout.',
+        type: 'warning'
+      });
+      return;
+    }
+
+    // Validate shipping address fields
+    const requiredFields = ['firstName', 'lastName', 'address', 'city', 'state', 'zipCode', 'phone'];
+    const missingFields = requiredFields.filter(field => !shippingAddress[field] || shippingAddress[field].trim() === '');
+    
+    if (missingFields.length > 0) {
+      setModal({
+        isOpen: true,
+        title: 'Incomplete Address',
+        message: `Please fill in all shipping address fields: ${missingFields.join(', ')}`,
+        type: 'warning'
+      });
+      return;
+    }
+
     try {
       setLoading(true);
+      console.log('Submitting checkout with:', {
+        hasUser: !!user,
+        hasGuestEmail: !!guestEmail,
+        cartItemsCount: cart.items.length,
+        paymentMethod,
+        shippingAddress
+      });
+
+      const orderDetails = {
+        shippingAddress,
+        paymentMethod
+      };
+
+      // For guest users, include email and cart items
+      if (!user) {
+        orderDetails.guestEmail = guestEmail;
+        orderDetails.items = cart.items;
+        orderDetails.totalPrice = cart.totalPrice;
+      }
+
       const res = await axios.post(`${API_BASE_URL}/orders/checkout`, {
-        orderDetails: {
-          shippingAddress,
-          paymentMethod
-        }
+        orderDetails
       }, {
-        headers: { Authorization: `Bearer ${token}` }
+        ...(user && token && { headers: { Authorization: `Bearer ${token}` } })
       });
 
       if (res.data.success) {
@@ -87,7 +130,12 @@ const CheckoutPage = () => {
         }
       }
     } catch (err) {
-      const errorMessage = err.response?.data?.message || err.message || 'An error occurred';
+      console.error('Checkout error:', err);
+      const errorMessage = err.response?.data?.message || 
+                          err.response?.data?.error ||
+                          err.message || 
+                          'An error occurred during checkout';
+      
       setModal({
         isOpen: true,
         title: 'Checkout Failed',
@@ -115,6 +163,23 @@ const CheckoutPage = () => {
         <h1>Checkout</h1>
         <div className="checkout-layout">
           <form className="checkout-form" onSubmit={handleCheckout}>
+            {/* Email field for guest users */}
+            {!user && (
+              <section className="form-section">
+                <h3>Your Email</h3>
+                <input 
+                  type="email" 
+                  placeholder="Enter your email address" 
+                  value={guestEmail}
+                  onChange={(e) => setGuestEmail(e.target.value)}
+                  required={!user}
+                />
+                <p style={{ fontSize: '12px', color: '#999', marginTop: '8px' }}>
+                  We'll send your order confirmation to this email address.
+                </p>
+              </section>
+            )}
+
             <section className="form-section">
               <h3>Shipping Address</h3>
               <div className="form-row">
@@ -212,26 +277,34 @@ const CheckoutPage = () => {
           <aside className="order-summary">
             <h3>Order Summary</h3>
             <div className="summary-items">
-              {cart.items.map((item, idx) => (
-                <div key={idx} className="summary-product-card">
-                  <div className="summary-product-img">
-                    <img src={getImageUrl(item.product.images?.[0] || item.product.image)} alt={item.product.name} />
+              {cart.items.map((item, idx) => {
+                // Handle both logged-in user items (item.product is object) and guest items (item.productDetails)
+                const product = typeof item.product === 'object' ? item.product : null;
+                const details = item.productDetails || product || {};
+                const productName = details.name || 'Product';
+                const productImage = details.image || product?.images?.[0];
+                
+                return (
+                  <div key={idx} className="summary-product-card">
+                    <div className="summary-product-img">
+                      {productImage && <img src={getImageUrl(productImage)} alt={productName} />}
+                    </div>
+                    <div className="summary-product-info">
+                      <p className="summary-product-name">{productName}</p>
+                      {item.variation && <p className="summary-product-variant">Variation: {item.variation}</p>}
+                      <p className="summary-product-qty">Qty: {item.quantity}</p>
+                      <p className="summary-product-price">${(item.price * item.quantity).toFixed(2)}</p>
+                      <button 
+                        type="button"
+                        className="remove-item-btn"
+                        onClick={() => handleRemoveItem(item._id)}
+                      >
+                        ✕ Remove
+                      </button>
+                    </div>
                   </div>
-                  <div className="summary-product-info">
-                    <p className="summary-product-name">{item.product.name}</p>
-                    {item.variation && <p className="summary-product-variant">Variation: {item.variation}</p>}
-                    <p className="summary-product-qty">Qty: {item.quantity}</p>
-                    <p className="summary-product-price">${(item.price * item.quantity).toFixed(2)}</p>
-                    <button 
-                      type="button"
-                      className="remove-item-btn"
-                      onClick={() => handleRemoveItem(item._id)}
-                    >
-                      ✕ Remove
-                    </button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
             <div className="summary-totals-box">
               <div className="summary-line">
