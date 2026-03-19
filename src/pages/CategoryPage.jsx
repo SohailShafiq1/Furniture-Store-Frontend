@@ -58,6 +58,7 @@ export default function CategoryPage() {
   const subCategory = category?.subCategories?.find(s => s.name === subcategoryName);
   
   const [products, setProducts] = useState([]);
+  const [activeSubSub, setActiveSubSub] = useState(null);
   const [viewMode, setViewMode] = useState('grid');
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState({
@@ -69,47 +70,110 @@ export default function CategoryPage() {
 
   // Update products when categoryProducts change or subcategory changes
   useEffect(() => {
+    setActiveSubSub(null); // Reset sub-sub filter when changing sub-category
+    setAppliedFilters({
+      productType: [],
+      availability: [],
+      color: [],
+      price: { min: '', max: '' }
+    });
+
     if (!subcategoryName) {
       setProducts(categoryProducts);
     } else {
       // Filter products by sub-category
       const filtered = categoryProducts.filter(
-        p => p.subCategoryName === subcategoryName
+        p => p.subCategoryName?.trim().toLowerCase() === subcategoryName.trim().toLowerCase()
       );
       setProducts(filtered);
     }
   }, [categoryProducts, subcategoryName]);
 
   const handleFilterChange = (filterType, value) => {
+    // Determine the base set of products to filter from
+    // If we have a subcategory, we only filter within that subcategory
+    let baseProducts = categoryProducts;
+    if (subcategoryName) {
+      baseProducts = categoryProducts.filter(
+        p => p.subCategoryName?.trim().toLowerCase() === subcategoryName.trim().toLowerCase()
+      );
+    }
+    // If we have an active sub-sub-category, further narrow the base
+    if (activeSubSub) {
+      baseProducts = baseProducts.filter(
+        p => p.subSubCategoryName?.trim().toLowerCase() === activeSubSub.trim().toLowerCase()
+      );
+    }
+
     if (filterType === 'clearAll') {
-      setAppliedFilters({
+      const newFilters = {
         productType: [],
         availability: [],
         color: [],
         price: { min: '', max: '' }
-      });
-    } else if (filterType === 'clear') {
-      setAppliedFilters(prev => ({
-        ...prev,
-        [value]: []
-      }));
+      };
+      setAppliedFilters(newFilters);
+      setProducts(baseProducts);
+      return;
+    }
+
+    // Update filters state
+    let newFilters = { ...appliedFilters };
+    if (filterType === 'clear') {
+      newFilters[value] = [];
     } else if (filterType === 'price') {
-      setAppliedFilters(prev => ({
-        ...prev,
-        price: value
-      }));
+      newFilters.price = value;
     } else {
-      setAppliedFilters(prev => {
-        const currentValues = prev[filterType] || [];
-        const newValues = currentValues.includes(value)
-          ? currentValues.filter(v => v !== value)
-          : [...currentValues, value];
-        
-        return {
-          ...prev,
-          [filterType]: newValues
-        };
-      });
+      const currentValues = appliedFilters[filterType] || [];
+      const newValues = currentValues.includes(value)
+        ? currentValues.filter(v => v !== value)
+        : [...currentValues, value];
+      newFilters[filterType] = newValues;
+    }
+    setAppliedFilters(newFilters);
+
+    // Apply filters to the base set
+    let filtered = [...baseProducts];
+
+    // Filter by type (this is tricky because Sidebar has hardcoded values currently)
+    if (newFilters.productType.length > 0 && !newFilters.productType.includes('All')) {
+      // For now, if Sidebar is hardcoded, we might not match actual product attributes
+      // But we apply it anyway
+      filtered = filtered.filter(p => newFilters.productType.includes(p.name) || newFilters.productType.some(t => p.description?.includes(t)));
+    }
+
+    // Filter by price
+    if (newFilters.price.min) filtered = filtered.filter(p => p.price >= Number(newFilters.price.min));
+    if (newFilters.price.max) filtered = filtered.filter(p => p.price <= Number(newFilters.price.max));
+
+    setProducts(filtered);
+  };
+
+  // Handle Sub-Sub-Category Filtering logic separately to simplify clicks
+  const handleSubSubFilter = (ssName) => {
+    setActiveSubSub(ssName);
+    const subNameFromUrl = subcategoryName;
+
+    // Reset applied filters when switching sub-sub categories to avoid conflicts
+    setAppliedFilters({
+      productType: [],
+      availability: [],
+      color: [],
+      price: { min: '', max: '' }
+    });
+
+    if (!ssName) {
+      // Reset to all products in sub-category
+      const filtered = categoryProducts.filter(
+        p => p.subCategoryName?.trim().toLowerCase() === subNameFromUrl?.trim().toLowerCase()
+      );
+      setProducts(filtered);
+    } else {
+      const filtered = categoryProducts.filter(
+        p => p.subCategoryName?.trim().toLowerCase() === subNameFromUrl?.trim().toLowerCase() && 
+             p.subSubCategoryName?.trim().toLowerCase() === ssName.trim().toLowerCase()
+      );
+      setProducts(filtered);
     }
   };
 
@@ -175,8 +239,8 @@ export default function CategoryPage() {
             <>
               {/* "All" Circle to reset sub-sub filter */}
               <button
-                className="luna-subcat-card"
-                onClick={() => setProducts(categoryProducts.filter(p => p.subCategoryName === subcategoryName))}
+                className={`luna-subcat-card ${!activeSubSub ? 'active' : ''}`}
+                onClick={() => handleSubSubFilter(null)}
               >
                 <div className="luna-subcat-img-wrapper" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#eee' }}>
                   <span style={{ fontWeight: '700', fontSize: '12px' }}>ALL</span>
@@ -188,13 +252,8 @@ export default function CategoryPage() {
                 category.subCategories.find(s => s.name === subcategoryName).subSubCategories.map((ss, idx) => (
                   <button
                     key={idx}
-                    className="luna-subcat-card"
-                    onClick={() => {
-                      const filtered = categoryProducts.filter(
-                        p => p.subCategoryName === subcategoryName && p.subSubCategoryName === ss.name
-                      );
-                      setProducts(filtered);
-                    }}
+                    className={`luna-subcat-card ${activeSubSub === ss.name ? 'active' : ''}`}
+                    onClick={() => handleSubSubFilter(ss.name)}
                   >
                     <div className="luna-subcat-img-wrapper">
                       <img 

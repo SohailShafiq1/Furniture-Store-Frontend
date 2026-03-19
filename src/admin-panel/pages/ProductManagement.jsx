@@ -15,11 +15,12 @@ const ProductManagement = () => {
     const [filterSubCat, setFilterSubCat] = useState('');
     const [priceSort, setPriceSort] = useState(''); // 'low', 'high', ''
 
-    // Form and Editing State
+    // Use separate states for editing to avoid trigger resets
     const [isEditing, setIsEditing] = useState(false);
     const [currentProductId, setCurrentProductId] = useState(null);
     const [subCategories, setSubCategories] = useState([]);
     const [subSubCategories, setSubSubCategories] = useState([]);
+    
     const [formData, setFormData] = useState({
         name: '',
         sku: 'SKU-' + Math.random().toString(36).substr(2, 9).toUpperCase(),
@@ -66,29 +67,28 @@ const ProductManagement = () => {
         }
     };
 
-    // Update subcategories when parent category changes
-    useEffect(() => {
-        if (formData.categoryId) {
-            const selected = categories.find(c => c._id === formData.categoryId);
-            setSubCategories(selected ? selected.subCategories : []);
-        } else {
-            setSubCategories([]);
-        }
-        // Reset dependent fields
-        setFormData(prev => ({ ...prev, subCategoryName: '', subSubCategoryName: '' }));
-    }, [formData.categoryId, categories]);
+    const handleCategoryChange = (catId) => {
+        const selected = categories.find(c => c._id === catId);
+        setSubCategories(selected ? selected.subCategories : []);
+        setFormData(prev => ({ 
+            ...prev, 
+            categoryId: catId, 
+            subCategoryName: '', 
+            subSubCategoryName: '' 
+        }));
+        setSubSubCategories([]);
+    };
 
-    // Update sub-sub-categories when sub-category changes
-    useEffect(() => {
-        if (formData.subCategoryName && formData.categoryId) {
-            const parent = categories.find(c => c._id === formData.categoryId);
-            const sub = parent?.subCategories.find(s => s.name === formData.subCategoryName);
-            setSubSubCategories(sub?.subSubCategories || []);
-        } else {
-            setSubSubCategories([]);
-        }
-        setFormData(prev => ({ ...prev, subSubCategoryName: '' }));
-    }, [formData.subCategoryName, categories, formData.categoryId]);
+    const handleSubCategoryChange = (subName) => {
+        const parent = categories.find(c => c._id === formData.categoryId);
+        const sub = parent?.subCategories.find(s => s.name === subName);
+        setSubSubCategories(sub?.subSubCategories || []);
+        setFormData(prev => ({ 
+            ...prev, 
+            subCategoryName: subName, 
+            subSubCategoryName: '' 
+        }));
+    };
 
     const handleAddSpecTitle = () => {
         setSpecifications([...specifications, { title: '', fields: [{ name: '', values: [''] }] }]);
@@ -153,7 +153,7 @@ const ProductManagement = () => {
 
     const handleVariationChange = (index, key, value) => {
         const updated = [...variations];
-        updated[index][key] = value;
+        updated[index][key] = value === null ? '' : value;
         setVariations(updated);
     };
 
@@ -161,6 +161,18 @@ const ProductManagement = () => {
         setIsEditing(true);
         setCurrentProductId(prod._id);
         
+        // Populate categories/subs first so the dropdowns have options to match against
+        if (prod.category?._id) {
+            const selected = categories.find(c => c._id === prod.category._id);
+            const subs = selected ? selected.subCategories : [];
+            setSubCategories(subs);
+            
+            if (prod.subCategoryName) {
+                const sub = subs.find(s => s.name === prod.subCategoryName);
+                setSubSubCategories(sub?.subSubCategories || []);
+            }
+        }
+
         // Populate form with product data
         setFormData({
             name: prod.name || '',
@@ -175,13 +187,6 @@ const ProductManagement = () => {
             collectionName: prod.collectionName || '',
             brandId: prod.brandId || ''
         });
-
-        // Set sub-sub-categories for editing
-        if (prod.category?._id && prod.subCategoryName) {
-            const selected = categories.find(c => c._id === prod.category._id);
-            const sub = selected?.subCategories.find(s => s.name === prod.subCategoryName);
-            setSubSubCategories(sub?.subSubCategories || []);
-        }
         
         // Handle specifications safely
         let specs = [];
@@ -290,6 +295,7 @@ const ProductManagement = () => {
             description: '',
             categoryId: '',
             subCategoryName: '',
+            subSubCategoryName: '',
             collectionName: '',
             brandId: ''
         });
@@ -391,8 +397,8 @@ const ProductManagement = () => {
                                 <label>Parent Category</label>
                                 <select 
                                     className="form-control"
-                                    value={formData.categoryId} 
-                                    onChange={e => setFormData({...formData, categoryId: e.target.value})} 
+                                    value={formData.categoryId || ''} 
+                                    onChange={e => handleCategoryChange(e.target.value)} 
                                     required
                                 >
                                     <option value="">Select Category</option>
@@ -403,8 +409,8 @@ const ProductManagement = () => {
                                 <label>Sub-category</label>
                                 <select 
                                     className="form-control"
-                                    value={formData.subCategoryName} 
-                                    onChange={e => setFormData({...formData, subCategoryName: e.target.value})} 
+                                    value={formData.subCategoryName || ''} 
+                                    onChange={e => handleSubCategoryChange(e.target.value)} 
                                     required
                                     disabled={!formData.categoryId}
                                 >
@@ -416,7 +422,7 @@ const ProductManagement = () => {
                                 <label>Sub-Sub-Category</label>
                                 <select 
                                     className="form-control"
-                                    value={formData.subSubCategoryName} 
+                                    value={formData.subSubCategoryName || ''} 
                                     onChange={e => setFormData({...formData, subSubCategoryName: e.target.value})} 
                                     disabled={!formData.subCategoryName}
                                 >

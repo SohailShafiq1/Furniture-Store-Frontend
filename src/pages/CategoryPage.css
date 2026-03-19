@@ -87,6 +87,11 @@
   border-width: 3px;
 }
 
+.luna-subcat-card.active .luna-subcat-label {
+  color: var(--luna-orange);
+  font-weight: 600;
+}
+
 .luna-subcat-img-wrapper img {
   width: 100%;
   height: 100%;
