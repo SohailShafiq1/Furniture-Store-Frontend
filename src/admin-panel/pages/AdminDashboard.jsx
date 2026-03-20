@@ -33,6 +33,10 @@ const AdminDashboard = () => {
             <h3>Home Page Content</h3>
             <p>Manage promotion photos and featured products</p>
           </Link>
+          <Link to="/admin/brands" className="dashboard-card">
+            <h3>Manage Brands</h3>
+            <p>Add, edit, and manage furniture brands</p>
+          </Link>
           <Link to="/admin/categories" className="dashboard-card">
             <h3>Manage Categories</h3>
             <p>Add and manage categories and sub-categories</p>
