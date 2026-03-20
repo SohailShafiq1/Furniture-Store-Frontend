@@ -27,6 +27,28 @@ const ChevronRight = () => (
   </svg>
 );
 
+const ChevronDown = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="6 9 12 15 18 9"></polyline>
+    </svg>
+);
+
+const ChevronUp = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="18 15 12 9 6 15"></polyline>
+    </svg>
+);
+
+const AccordionItem = ({ title, isOpen, onClick, children }) => (
+  <div className="pd-accordion-item">
+    <button className="pd-accordion-header" onClick={onClick}>
+      <span>{title}</span>
+      {isOpen ? <ChevronUp /> : <ChevronDown />}
+    </button>
+    {isOpen && <div className="pd-accordion-content">{children}</div>}
+  </div>
+);
+
 export default function ProductDetailPage() {
   const { categoryId, productId } = useParams();
   const navigate = useNavigate();
@@ -41,6 +63,7 @@ export default function ProductDetailPage() {
   const [selectedVariation, setSelectedVariation] = useState(null);
   const [addingToCart, setAddingToCart] = useState(false);
   const [modal, setModal] = useState({ isOpen: false, title: '', message: '', type: 'info' });
+  const [openAccordion, setOpenAccordion] = useState('Overview');
 
   if (!product) {
     return (
@@ -172,6 +195,134 @@ export default function ProductDetailPage() {
             </div>
 
             <p className="pd-disclaimer">Actual item may be lighter/darker than pictured.</p>
+
+            {/* Description & Specifications Section */}
+            <div className="pd-description-section">
+              <h2 className="pd-section-title">Description</h2>
+              
+              {/* Product Overview Accordion */}
+              <AccordionItem 
+                title="OVERVIEW" 
+                isOpen={openAccordion === 'Overview'} 
+                onClick={() => setOpenAccordion(openAccordion === 'Overview' ? '' : 'Overview')}
+              >
+                <div className="pd-overview-content">
+                   <ul className="pd-overview-list">
+                    <li><strong>Item Name:</strong> {product.name}</li>
+                    <li><strong>SKU:</strong> {product.sku}</li>
+                    {product.collectionName && <li><strong>Collection Name:</strong> {product.collectionName}</li>}
+                    {product.brandId && <li><strong>Brand:</strong> {product.brandId}</li>}
+                  </ul>
+                  <div className="pd-description-text" dangerouslySetInnerHTML={{ __html: product.description }} />
+                </div>
+              </AccordionItem>
+
+              {/* Dynamic Specifications */}
+              {product.specifications && product.specifications.map((spec, index) => (
+                <AccordionItem 
+                  key={index}
+                  title={spec.title.toUpperCase()} 
+                  isOpen={openAccordion === spec.title} 
+                  onClick={() => setOpenAccordion(openAccordion === spec.title ? '' : spec.title)}
+                >
+                  <div className="pd-spec-grid">
+                    {spec.fields.map((field, fIdx) => (
+                      <div key={fIdx} className="pd-spec-row">
+                        <span className="pd-spec-name">{field.name}:</span>
+                        <span className="pd-spec-value">{field.values.join(', ')}</span>
+                      </div>
+                    ))}
+                  </div>
+                </AccordionItem>
+              ))}
+
+              <AccordionItem 
+                title="DELIVERY" 
+                isOpen={openAccordion === 'Delivery'} 
+                onClick={() => setOpenAccordion(openAccordion === 'Delivery' ? '' : 'Delivery')}
+              >
+                <div className="pd-faq-content">
+                  <div className="pd-faq-item">
+                    <p className="pd-faq-question">How long will it take to receive my order?</p>
+                    <p className="pd-faq-answer">Delivery times vary based on the item and your location. Most orders are processed and shipped within 1-2 weeks.</p>
+                  </div>
+                  <div className="pd-faq-item">
+                    <p className="pd-faq-question">Which delivery method should I select?</p>
+                    <p className="pd-faq-answer">We offer various delivery methods from standard curbside to white-glove assembly. Choose the one that best fits your needs during checkout.</p>
+                  </div>
+                  <div className="pd-faq-item">
+                    <p className="pd-faq-question">I want to know the exact time of when the delivery will occur!</p>
+                    <p className="pd-faq-answer">Once your order is ready for delivery, our team will contact you to schedule a specific window. You'll receive updates as the date approaches.</p>
+                  </div>
+                  <div className="pd-faq-item">
+                    <p className="pd-faq-question">How can I help to ensure a smooth delivery process?</p>
+                    <p className="pd-faq-answer">Ensure the delivery path is clear, measure doorways/hallways in advance, and have someone over 18 available to sign for the delivery.</p>
+                  </div>
+                  <div className="pd-faq-item">
+                    <p className="pd-faq-question">I was not home when the delivery team showed up. What can I do?</p>
+                    <p className="pd-faq-answer">Please contact our customer service team immediately to reschedule. Re-delivery fees may apply.</p>
+                  </div>
+                </div>
+              </AccordionItem>
+
+              <AccordionItem 
+                title="FINANCING / LEASE TO OWN" 
+                isOpen={openAccordion === 'Financing'} 
+                onClick={() => setOpenAccordion(openAccordion === 'Financing' ? '' : 'Financing')}
+              >
+                <div className="pd-faq-content">
+                  <div className="pd-faq-item">
+                    <p className="pd-faq-question">Do you offer Financing?</p>
+                    <p className="pd-faq-answer">Yes! We offer various financing and lease-to-own options through partners like Shop Pay, Affirm, and others. You can see available options at checkout.</p>
+                  </div>
+                  <div className="pd-faq-item">
+                    <p className="pd-faq-question">What are the accepted payment methods?</p>
+                    <p className="pd-faq-answer">We accept all major credit cards, PayPal, and various financing options.</p>
+                  </div>
+                </div>
+              </AccordionItem>
+
+              <AccordionItem 
+                title="FREQUENTLY ASKED QUESTIONS" 
+                isOpen={openAccordion === 'FAQ'} 
+                onClick={() => setOpenAccordion(openAccordion === 'FAQ' ? '' : 'FAQ')}
+              >
+                <div className="pd-faq-content">
+                  <div className="pd-faq-item">
+                    <p className="pd-faq-question">What is my order number?</p>
+                    <p className="pd-faq-answer">Your order number can be found in your confirmation email or by logging into your account.</p>
+                  </div>
+                  <div className="pd-faq-item">
+                    <p className="pd-faq-question">How do I know if the item is available/ in stock?</p>
+                    <p className="pd-faq-answer">Stock status is updated in real-time on each product page. If an item is out of stock, it will be labeled accordingly.</p>
+                  </div>
+                  <div className="pd-faq-item">
+                    <p className="pd-faq-question">Can I see the furniture in person?</p>
+                    <p className="pd-faq-answer">Luna Furniture is primarily an online retailer, but we have select showroom locations. Please check our store locator for details.</p>
+                  </div>
+                  <div className="pd-faq-item">
+                    <p className="pd-faq-question">Will you take my old furniture?</p>
+                    <p className="pd-faq-answer">We generally do not offer furniture removal services. We recommend contacting local charities or waste management for disposal.</p>
+                  </div>
+                  <div className="pd-faq-item">
+                    <p className="pd-faq-question">Will the item look the same as in the picture?</p>
+                    <p className="pd-faq-answer">While we strive for color accuracy, actual items may vary slightly due to lighting and monitor settings. Fabric samples may be available upon request.</p>
+                  </div>
+                  <div className="pd-faq-item">
+                    <p className="pd-faq-question">I have received a defective/damaged item. What can I do?</p>
+                    <p className="pd-faq-answer">Please report any damage within 24 hours of delivery. Take photos and contact our support team immediately.</p>
+                  </div>
+                  <div className="pd-faq-item">
+                    <p className="pd-faq-question">Can I cancel my order?</p>
+                    <p className="pd-faq-answer">Orders can be canceled within 24 hours of placement without penalty. After that, cancellation fees may apply if the item has already shipped.</p>
+                  </div>
+                  <div className="pd-faq-item">
+                    <p className="pd-faq-question">What should I do if I receive the wrong item?</p>
+                    <p className="pd-faq-answer">Please report the error within 24 hours. Do not assemble or use the item, and keep all original packaging.</p>
+                  </div>
+                </div>
+              </AccordionItem>
+            </div>
           </div>
 
           {/* Right: Product Details */}
