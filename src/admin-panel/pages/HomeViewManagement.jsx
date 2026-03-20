@@ -11,12 +11,14 @@ const HomeViewManagement = () => {
     ],
     selectedCategory: '',
     selectedSubCategory: '',
+    selectedSubSubCategory: '',
     selectedProducts: [],
     isVisible: true,
   });
 
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
+  const [subSubCategories, setSubSubCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -64,32 +66,59 @@ const HomeViewManagement = () => {
       const category = categories.find(cat => cat._id === homeContent.selectedCategory);
       if (category) {
         setSubCategories(category.subCategories || []);
+        setSubSubCategories([]);
+        setHomeContent(prev => ({
+          ...prev,
+          selectedSubCategory: '',
+          selectedSubSubCategory: '',
+          selectedProducts: []
+        }));
       }
     }
   }, [homeContent.selectedCategory, categories]);
 
-  // Fetch products when a sub-category is selected
+  // Fetch sub-sub-categories when a sub-category is selected
+  useEffect(() => {
+    if (homeContent.selectedCategory && homeContent.selectedSubCategory) {
+      const category = categories.find(cat => cat._id === homeContent.selectedCategory);
+      if (category) {
+        const subCat = category.subCategories?.find(s => s.name === homeContent.selectedSubCategory);
+        if (subCat) {
+          setSubSubCategories(subCat.subSubCategories || []);
+          setHomeContent(prev => ({
+            ...prev,
+            selectedSubSubCategory: '',
+            selectedProducts: []
+          }));
+        }
+      }
+    }
+  }, [homeContent.selectedCategory, homeContent.selectedSubCategory, categories]);
+
+  // Fetch products when a sub-category is selected (and optionally sub-sub-category)
   useEffect(() => {
     const fetchProducts = async () => {
       if (homeContent.selectedCategory && homeContent.selectedSubCategory) {
         try {
           setLoading(true);
-          const res = await axios.get(`${apiEndpoint}/products/all`);
-          // Filter products by category ID and sub-category name
+          const res = await axios.get(`${apiEndpoint}/products/all?t=${Date.now()}`);
+          // Filter products by category ID, sub-category name, and optionally sub-sub-category name
           const filtered = res.data.filter(
-            p => p.category._id === homeContent.selectedCategory && 
-                 p.subCategoryName === homeContent.selectedSubCategory
+            p => p.category && p.category._id === homeContent.selectedCategory && 
+                 p.subCategoryName === homeContent.selectedSubCategory &&
+                 (!homeContent.selectedSubSubCategory || p.subSubCategoryName === homeContent.selectedSubSubCategory)
           );
           setProducts(filtered);
         } catch (err) {
           setError('Failed to fetch products');
+          setProducts([]);
         } finally {
           setLoading(false);
         }
       }
     };
     fetchProducts();
-  }, [homeContent.selectedCategory, homeContent.selectedSubCategory]);
+  }, [homeContent.selectedCategory, homeContent.selectedSubCategory, homeContent.selectedSubSubCategory]);
 
   // Handle promotion photo image upload
   const handlePromotionImageChange = (index, file) => {
@@ -243,6 +272,7 @@ const HomeViewManagement = () => {
       ],
       selectedCategory: '',
       selectedSubCategory: '',
+      selectedSubSubCategory: '',
       selectedProducts: [],
       isVisible: true,
     });
@@ -256,9 +286,10 @@ const HomeViewManagement = () => {
     setEditingId(content._id);
     setHomeContent({
       promotionPhotos: content.promotionPhotos,
-      selectedCategory: content.selectedCategory._id,
-      selectedSubCategory: content.selectedSubCategoryName,
-      selectedProducts: content.selectedProducts.map(p => p._id),
+      selectedCategory: content.selectedCategory?._id || '',
+      selectedSubCategory: content.selectedSubCategoryName || '',
+      selectedSubSubCategory: content.selectedSubSubCategoryName || '',
+      selectedProducts: content.selectedProducts?.map(p => p._id) || [],
       isVisible: content.isVisible !== false,
     });
     setImagePreview([
@@ -407,6 +438,7 @@ const HomeViewManagement = () => {
                 onChange={(e) => setHomeContent(prev => ({
                   ...prev,
                   selectedSubCategory: e.target.value,
+                  selectedSubSubCategory: '',
                   selectedProducts: []
                 }))}
                 required
@@ -415,6 +447,27 @@ const HomeViewManagement = () => {
                 {subCategories.map(subCat => (
                   <option key={subCat._id} value={subCat.name}>
                     {subCat.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {homeContent.selectedSubCategory && subSubCategories.length > 0 && (
+            <div className="form-group">
+              <label>Sub-Sub-Category (Optional)</label>
+              <select
+                value={homeContent.selectedSubSubCategory}
+                onChange={(e) => setHomeContent(prev => ({
+                  ...prev,
+                  selectedSubSubCategory: e.target.value,
+                  selectedProducts: []
+                }))}
+              >
+                <option value="">All Sub-Categories</option>
+                {subSubCategories.map(subSubCat => (
+                  <option key={subSubCat._id} value={subSubCat.name}>
+                    {subSubCat.name}
                   </option>
                 ))}
               </select>
