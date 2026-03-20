@@ -150,12 +150,6 @@ const MyOrdersPage = () => {
                     >
                       {order.orderStatus}
                     </span>
-                    <span 
-                      className="payment-badge"
-                      style={{ backgroundColor: getPaymentStatusColor(order.paymentStatus) }}
-                    >
-                      {order.paymentStatus}
-                    </span>
                   </div>
                 </div>
 
@@ -171,7 +165,7 @@ const MyOrdersPage = () => {
                   </div>
                   <div className="summary-item">
                     <label>Payment Method</label>
-                    <span>{order.paymentMethod}</span>
+                    <span>{order.paymentMethod === 'Stripe' ? 'Card' : order.paymentMethod}</span>
                   </div>
                 </div>
 
