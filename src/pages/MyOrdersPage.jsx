@@ -50,8 +50,10 @@ const MyOrdersPage = () => {
   const getStatusColor = (status) => {
     const colors = {
       'Pending': '#ff9800',
+      'Confirmed': '#17a2b8',
       'Processing': '#2196f3',
-      'Shipped': '#673ab7',
+      'Shipped': '#495057',
+      'Out for Delivery': '#fd7e14',
       'Delivered': '#4caf50',
       'Cancelled': '#f44336'
     };
@@ -67,7 +69,7 @@ const MyOrdersPage = () => {
     return colors[status] || '#999';
   };
 
-  const statuses = ['All', 'Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
+  const statuses = ['All', 'Pending', 'Confirmed', 'Processing', 'Shipped', 'Out for Delivery', 'Delivered', 'Cancelled'];
 
   return (
     <div className="my-orders-page">
