@@ -17,6 +17,8 @@ import OrderManagement from './admin-panel/pages/OrderManagement';
 import ProtectedRoute from './admin-panel/components/ProtectedRoute';
 import CheckoutPage from './pages/CheckoutPage';
 import OrderSuccessPage from './pages/OrderSuccessPage';
+import MyOrdersPage from './pages/MyOrdersPage';
+import ProfileSettingsPage from './pages/ProfileSettingsPage';
 
 function App() {
   return (
@@ -28,6 +30,8 @@ function App() {
         <Route path="/product/:categoryId/:productId" element={<ProductDetailPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/order-success/:sessionId" element={<OrderSuccessPage />} />
+        <Route path="/my-orders" element={<MyOrdersPage />} />
+        <Route path="/profile-settings" element={<ProfileSettingsPage />} />
         <Route path="/admin" element={<AdminLogin />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         

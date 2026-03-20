@@ -65,8 +65,18 @@ export default function Header() {
                     <strong>{user.name}</strong>
                     <p>{user.email}</p>
                   </div>
-                  <button className="dropdown-item">My Orders</button>
-                  <button className="dropdown-item">Profile Settings</button>
+                  <button 
+                    className="dropdown-item"
+                    onClick={() => navigate('/my-orders')}
+                  >
+                    My Orders
+                  </button>
+                  <button 
+                    className="dropdown-item"
+                    onClick={() => navigate('/profile-settings')}
+                  >
+                    Profile Settings
+                  </button>
                   <button 
                     className="dropdown-item logout-btn" 
                     onClick={(e) => {
