@@ -237,10 +237,10 @@ const DynamicSubcategoryComponent = ({ subcategoryName, selectedProducts, catego
               }}>
                 <div style={{ display: 'flex', gap: '2px' }}>
                   {[...Array(5)].map((_, i) => (
-                    <StarIcon key={i} filled={i < 4} />
+                    <StarIcon key={i} filled={i < (product.numReviews === 0 ? 5 : Math.round(product.rating || 0))} />
                   ))}
                 </div>
-                <span style={{ fontSize: '14px', color: '#999' }}>(0)</span>
+                <span style={{ fontSize: '14px', color: '#999' }}>({product.numReviews || 0})</span>
               </div>
 
               {/* Price */}
