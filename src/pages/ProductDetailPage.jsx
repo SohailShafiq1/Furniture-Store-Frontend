@@ -376,7 +376,7 @@ export default function ProductDetailPage() {
             <div className="pd-rating">
               <div className="pd-stars">
                 {[...Array(5)].map((_, i) => (
-                  <StarIcon key={i} filled={i < Math.round(product.rating || 0)} />
+                  <StarIcon key={i} filled={i < (product.numReviews === 0 ? 5 : Math.round(product.rating || 0))} />
                 ))}
               </div>
               <span className="pd-review-count">({product.numReviews || 0} review{product.numReviews !== 1 ? 's' : ''})</span>

@@ -110,6 +110,7 @@ export default function ReviewSection({ product, onReviewAdded }) {
   };
 
   const averageRating = product.numReviews > 0 ? product.rating : 0;
+  const displayRating = product.numReviews === 0 ? 5 : Math.round(averageRating);
 
   return (
     <div className="rs-section">
@@ -119,7 +120,7 @@ export default function ReviewSection({ product, onReviewAdded }) {
         <div className="rs-rating-summary">
           <div className="rs-stars-large">
             {[...Array(5)].map((_, i) => (
-              <StarIcon key={i} filled={i < Math.round(averageRating)} size={24} color="#FFB800" />
+              <StarIcon key={i} filled={i < displayRating} size={24} color="#FFB800" />
             ))}
           </div>
           <p className="rs-count-text">

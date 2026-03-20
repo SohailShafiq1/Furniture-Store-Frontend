@@ -3,8 +3,10 @@ import './ProductCarousel.css';
 export default function ProductCarousel({ title, products }) {
   const renderStars = (rating) => {
     const stars = [];
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 !== 0;
+    // If no rating (0 stars), show 5 full stars by default
+    const displayRating = rating === 0 ? 5 : rating;
+    const fullStars = Math.floor(displayRating);
+    const hasHalfStar = displayRating % 1 !== 0;
 
     for (let i = 0; i < fullStars; i++) {
       stars.push(<span key={i} className="star filled">★</span>);
@@ -12,7 +14,7 @@ export default function ProductCarousel({ title, products }) {
     if (hasHalfStar) {
       stars.push(<span key="half" className="star half">★</span>);
     }
-    const emptyStars = 5 - Math.ceil(rating);
+    const emptyStars = 5 - Math.ceil(displayRating);
     for (let i = 0; i < emptyStars; i++) {
       stars.push(<span key={`empty-${i}`} className="star empty">★</span>);
     }

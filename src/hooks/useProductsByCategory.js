@@ -16,7 +16,8 @@ export const useProductsByCategory = (categoryId) => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${API_BASE_URL}/products/all`);
+        // Add timestamp to bypass cache
+        const response = await fetch(`${API_BASE_URL}/products/all?t=${Date.now()}`);
         
         if (!response.ok) {
           throw new Error(`API error: ${response.status}`);

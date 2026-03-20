@@ -385,10 +385,10 @@ export default function CategoryPage() {
                       <div className="luna-rating-row">
                         <div className="luna-stars">
                           {[...Array(5)].map((_, i) => (
-                            <StarIcon key={i} filled={i < 4} />
+                            <StarIcon key={i} filled={i < (product.numReviews === 0 ? 5 : Math.round(product.rating || 0))} />
                           ))}
                         </div>
-                        <span className="luna-review-text">(0)</span>
+                        <span className="luna-review-text">({product.numReviews || 0})</span>
                       </div>
 
                       <div className="luna-price-row">

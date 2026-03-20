@@ -1,68 +1,45 @@
+import { useState, useEffect } from 'react';
+import { BACKEND_URL } from '../../config/api';
 import ProductCarousel from '../ProductCarousel/ProductCarousel';
 
 export default function Sectionals() {
-  const products = [
-    {
-      id: 1,
-      image: '/download.jpeg',
-      brand: 'Ashley',
-      name: 'Emilia Caramel Leather 4-Piece Modular Sectional',
-      rating: 5,
-      reviews: 23,
-      currentPrice: '$2,619.00',
-      originalPrice: '$4,709.00',
-      badge: 'Spring Sale',
-      stockStatus: null,
-    },
-    {
-      id: 2,
-      image: '/download (1).jpeg',
-      brand: 'Ashley',
-      name: 'Emilia Black 5-Piece Leather Modular Sectional',
-      rating: 5,
-      reviews: 11,
-      currentPrice: '$3,119.00',
-      originalPrice: '$5,729.00',
-      badge: 'Spring Sale',
-      stockStatus: 'In Stock',
-    },
-    {
-      id: 3,
-      image: '/download (2).jpeg',
-      brand: 'Ashley',
-      name: 'Midnight-Madness Onyx 3-Piece Double Chaise Sectional',
-      rating: 4.5,
-      reviews: 21,
-      currentPrice: '$1,359.00',
-      originalPrice: '$2,439.00',
-      badge: 'Spring Sale',
-      stockStatus: null,
-    },
-    {
-      id: 4,
-      image: '/download (3).jpeg',
-      brand: 'Nova Furniture',
-      name: 'Bedlington Ivory Boucle RAF Curved Sectional',
-      rating: 5,
-      reviews: 9,
-      currentPrice: '$999.00',
-      originalPrice: '$3,819.00',
-      badge: 'Spring Sale',
-      stockStatus: 'In Stock | Ready to Go',
-    },
-    {
-      id: 5,
-      image: '/images.jpeg',
-      brand: 'Ashley',
-      name: 'Lindyn Ivory 2-Piece RAF Chaise Sectional',
-      rating: 4.5,
-      reviews: 12,
-      currentPrice: '$1,089.00',
-      originalPrice: '$1,949.00',
-      badge: 'Spring Sale',
-      stockStatus: 'In Stock',
-    },
-  ];
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSectionals = async () => {
+      try {
+        const response = await fetch(`${BACKEND_URL}/api/products/all?t=${Date.now()}`);
+        const data = await response.json();
+        
+        // Filter sectional products and map to carousel format
+        const sectionals = data
+          .filter(p => p.subCategoryName?.toLowerCase().includes('sectional'))
+          .slice(0, 5)
+          .map(p => ({
+            id: p._id,
+            name: p.name,
+            brand: p.brandId || 'Luna',
+            currentPrice: `$${p.price}`,
+            originalPrice: p.discount > 0 ? `$${(p.price / (1 - p.discount / 100)).toFixed(2)}` : '',
+            image: p.images?.[0] || p.image,
+            rating: p.rating || 0,
+            reviews: p.numReviews || 0,
+            badge: p.discount > 0 ? 'Spring Sale' : 'In Stock'
+          }));
+        
+        setProducts(sectionals);
+      } catch (err) {
+        console.error('Failed to fetch sectionals:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSectionals();
+  }, []);
+
+  if (loading || products.length === 0) return null;
 
   return <ProductCarousel title="Sectionals" products={products} />;
 }
