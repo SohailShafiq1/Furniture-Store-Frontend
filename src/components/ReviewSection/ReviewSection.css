@@ -1,0 +1,361 @@
+.rs-section {
+    padding: 60px 0;
+    margin-top: 40px;
+    border-top: 1px solid #eee;
+}
+
+.rs-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 40px;
+    text-align: center;
+    color: #1a1a1a;
+}
+
+.rs-summary-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 40px;
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    margin-bottom: 40px;
+}
+
+.rs-rating-summary {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.rs-stars-large {
+    display: flex;
+    gap: 8px;
+}
+
+.rs-stars-large svg polygon {
+    filter: drop-shadow(0 0 2px rgba(0,0,0,0.1));
+}
+
+.rs-count-text {
+    font-size: 14px;
+    color: #666;
+}
+
+.rs-divider {
+    width: 1px;
+    height: 60px;
+    background: #eee;
+    margin: 0 40px;
+}
+
+.rs-action {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.rs-write-btn {
+    padding: 14px 40px;
+    background: #4a4a4a;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.rs-write-btn:hover {
+    background: #1a1a1a;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.rs-form {
+    background: #fdfdfd;
+    padding: 40px;
+    border-radius: 12px;
+    border: 1px solid #f0f0f0;
+    margin-bottom: 40px;
+    animation: slideDown 0.4s ease;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.rs-form h3 {
+    margin: 0 0 32px 0;
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.rs-form-group {
+    margin-bottom: 28px;
+}
+
+.rs-form-group label {
+    display: block;
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 12px;
+    color: #1a1a1a;
+}
+
+.rs-star-input {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.rs-form-group input,
+.rs-form-group textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: all 0.2s;
+    outline: none;
+}
+
+.rs-form-group input:focus,
+.rs-form-group textarea:focus {
+    border-color: #1a1a1a;
+    box-shadow: 0 0 0 3px rgba(26, 26, 26, 0.05);
+}
+
+.rs-upload-area {
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.rs-upload-area:hover {
+    border-color: #1a1a1a;
+    background: #f9f9f9;
+}
+
+.rs-upload-icon {
+    margin-bottom: 12px;
+    color: #999;
+}
+
+.rs-upload-area p {
+    margin: 0 0 8px 0;
+    color: #1a1a1a;
+    font-weight: 600;
+}
+
+.rs-upload-label {
+    color: #999;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.rs-image-preview {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+}
+
+.rs-image-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.rs-file-input {
+    display: none;
+}
+
+.rs-disclaimer {
+    background: #f9f9f9;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+}
+
+.rs-disclaimer p {
+    margin: 0;
+    font-size: 13px;
+    color: #666;
+    line-height: 1.6;
+}
+
+.rs-form-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.rs-cancel-btn {
+    padding: 12px 36px;
+    background: transparent;
+    color: #1a1a1a;
+    border: 2px solid #1a1a1a;
+    border-radius: 25px;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.rs-cancel-btn:hover {
+    background: #f9f9f9;
+}
+
+.rs-submit-btn {
+    padding: 12px 36px;
+    background: #4a4a4a;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.rs-submit-btn:hover:not(:disabled) {
+    background: #1a1a1a;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.rs-submit-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.rs-error {
+    color: #e74c3c;
+    font-size: 14px;
+    margin-bottom: 16px;
+    padding: 12px;
+    background: #fadbd8;
+    border-radius: 8px;
+    border-left: 3px solid #e74c3c;
+}
+
+.rs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-top: 40px;
+}
+
+.rs-item {
+    padding: 24px;
+    border-bottom: 1px solid #eee;
+}
+
+.rs-item:last-child {
+    border-bottom: none;
+}
+
+.rs-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.rs-item-stars {
+    display: flex;
+    gap: 4px;
+}
+
+.rs-item-date {
+    font-size: 12px;
+    color: #999;
+}
+
+.rs-item-title {
+    font-weight: 700;
+    font-size: 16px;
+    color: #1a1a1a;
+    margin: 0 0 4px 0;
+}
+
+.rs-item-name {
+    font-weight: 700;
+    font-size: 14px;
+    color: #1a1a1a;
+    margin: 0 0 8px 0;
+}
+
+.rs-item-comment {
+    font-size: 15px;
+    color: #4a4a4a;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.rs-item-image {
+    margin-top: 16px;
+    border-radius: 8px;
+    overflow: hidden;
+    max-width: 300px;
+}
+
+.rs-item-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.rs-item-video {
+    margin-top: 16px;
+}
+
+.rs-video-link {
+    color: #FF6B35;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.rs-video-link:hover {
+    text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .rs-summary-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 24px;
+        padding: 20px;
+    }
+    
+    .rs-divider {
+        display: none;
+    }
+
+    .rs-form {
+        padding: 20px;
+    }
+
+    .rs-form-actions {
+        flex-direction: column;
+    }
+
+    .rs-cancel-btn,
+    .rs-submit-btn {
+        width: 100%;
+    }
+}

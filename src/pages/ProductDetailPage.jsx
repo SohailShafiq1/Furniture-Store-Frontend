@@ -7,6 +7,8 @@ import { BACKEND_URL } from '../config/api';
 import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
 import Modal from '../components/Modal/Modal';
+import ReviewSection from '../components/ReviewSection/ReviewSection';
+import ProductCarousel from '../components/ProductCarousel/ProductCarousel';
 import './ProductDetailPage.css';
 
 const StarIcon = ({ filled }) => (
@@ -56,7 +58,26 @@ export default function ProductDetailPage() {
   const { user } = useUserAuth();
   const { addToCart } = useCart();
   
-  const product = categoryProducts.find(p => p._id === productId);
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  
+  const fetchProductData = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(`${BACKEND_URL}/api/products/all`);
+      const allProducts = await res.json();
+      const foundProduct = allProducts.find(p => p._id === productId);
+      setProduct(foundProduct);
+    } catch (err) {
+      console.error('Error fetching product details:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProductData();
+  }, [productId]);
   
   const [mainImageIndex, setMainImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
@@ -64,6 +85,18 @@ export default function ProductDetailPage() {
   const [addingToCart, setAddingToCart] = useState(false);
   const [modal, setModal] = useState({ isOpen: false, title: '', message: '', type: 'info' });
   const [openAccordion, setOpenAccordion] = useState('Overview');
+
+  if (loading) {
+    return (
+      <div className="pd-page">
+        <Header />
+        <div className="pd-container" style={{ textAlign: 'center', padding: '100px 0' }}>
+          <p>Loading product details...</p>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -343,10 +376,10 @@ export default function ProductDetailPage() {
             <div className="pd-rating">
               <div className="pd-stars">
                 {[...Array(5)].map((_, i) => (
-                  <StarIcon key={i} filled={i < 4} />
+                  <StarIcon key={i} filled={i < Math.round(product.rating || 0)} />
                 ))}
               </div>
-              <span className="pd-review-count">(0 reviews)</span>
+              <span className="pd-review-count">({product.numReviews || 0} review{product.numReviews !== 1 ? 's' : ''})</span>
             </div>
 
             {/* Variations Section */}
@@ -491,6 +524,33 @@ export default function ProductDetailPage() {
             </div>
           </div>
         </div>
+
+        {/* Similar Products Section */}
+        {categoryProducts && categoryProducts.filter(p => p._id !== product._id).length > 0 && (
+          <div className="pd-similar-section">
+            <ProductCarousel 
+              title="You may also like" 
+              products={categoryProducts
+                .filter(p => p._id !== productId)
+                .slice(0, 5)
+                .map(p => ({
+                  id: p._id,
+                  name: p.name,
+                  brand: p.brandId || 'Luna',
+                  currentPrice: `$${p.price}`,
+                  originalPrice: p.discount > 0 ? `$${(p.price / (1 - p.discount / 100)).toFixed(2)}` : '',
+                  image: getImageUrl(p.images?.[0] || p.image),
+                  rating: p.rating || 0,
+                  reviews: p.numReviews || 0,
+                  badge: p.discount > 0 ? 'Spring Sale' : ''
+                }))
+              } 
+            />
+          </div>
+        )}
+
+        {/* Customer Reviews Section */}
+        <ReviewSection product={product} onReviewAdded={fetchProductData} />
       </div>
 
       <Footer />
