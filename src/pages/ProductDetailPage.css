@@ -7,7 +7,7 @@
 }
 
 .pd-page {
-  background-color: #fff;
+  background-color: var(--color-background);
   min-height: 100vh;
 }
 
@@ -24,8 +24,8 @@
   gap: 8px;
   padding: 20px 0;
   font-size: 14px;
-  color: var(--luna-text-light);
-  border-bottom: 1px solid var(--luna-border);
+  color: var(--color-text-secondary);
+  border-bottom: 1px solid var(--color-border);
   margin-bottom: 40px;
 }
 
@@ -41,7 +41,7 @@
 }
 
 .pd-breadcrumb button:hover {
-  color: var(--luna-orange);
+  color: var(--color-accent);
 }
 
 /* Main Content Layout */
@@ -65,7 +65,7 @@
 .pd-main-image-wrapper {
   position: relative;
   aspect-ratio: 1 / 1;
-  background-color: var(--luna-bg);
+  background-color: var(--color-secondary);
   border-radius: 4px;
   overflow: hidden;
   display: flex;
@@ -94,7 +94,7 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: white;
+  background: var(--color-background);
   border: none;
   display: flex;
   align-items: center;
@@ -102,12 +102,12 @@
   cursor: pointer;
   z-index: 10;
   transition: all 0.2s;
-  color: var(--luna-text);
+  color: var(--color-primary);
   box-shadow: 0 2px 12px rgba(0,0,0,0.1);
 }
 
 .pd-nav-btn:hover {
-  background: var(--luna-text);
+  background: var(--color-primary);
   color: white;
 }
 
@@ -128,21 +128,21 @@
 
 .pd-thumbnail {
   aspect-ratio: 1 / 1;
-  border: 2px solid var(--luna-border);
+  border: 2px solid var(--color-border);
   border-radius: 4px;
   cursor: pointer;
   overflow: hidden;
-  background: var(--luna-bg);
+  background: var(--color-secondary);
   padding: 0;
   transition: all 0.2s;
 }
 
 .pd-thumbnail:hover {
-  border-color: var(--luna-text);
+  border-color: var(--color-primary);
 }
 
 .pd-thumbnail.active {
-  border-color: var(--luna-orange);
+  border-color: var(--color-accent);
   border-width: 3px;
 }
 
@@ -222,15 +222,15 @@
   margin: 0 0 12px 0;
   font-size: 14px;
   font-weight: 600;
-  color: var(--luna-text);
+  color: var(--color-primary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 /* Price Section */
 .pd-price-section {
-  border-top: 1px solid var(--luna-border);
-  border-bottom: 1px solid var(--luna-border);
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
   padding: 20px 0;
 }
 
@@ -244,23 +244,23 @@
 .pd-current-price {
   font-size: 28px;
   font-weight: 700;
-  color: var(--luna-text);
+  color: var(--color-primary);
 }
 
 .pd-original-price {
   font-size: 16px;
-  color: var(--luna-text-light);
+  color: var(--color-text-secondary);
   text-decoration: line-through;
 }
 
 .pd-discount-text {
   margin: 0;
   font-size: 13px;
-  color: var(--luna-text-light);
+  color: var(--color-text-secondary);
 }
 
 .pd-code {
-  background-color: var(--luna-orange);
+  background-color: var(--color-accent);
   color: white;
   padding: 2px 6px;
   border-radius: 2px;
@@ -272,7 +272,7 @@
 .pd-add-cart-btn {
   width: 100%;
   padding: 16px;
-  background-color: var(--luna-orange);
+  background-color: var(--color-accent);
   color: white;
   border: none;
   border-radius: 4px;
@@ -285,9 +285,9 @@
 }
 
 .pd-add-cart-btn:hover {
-  background-color: #FF5520;
+  background-color: var(--color-accent-hover);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+  box-shadow: 0 4px 12px rgba(193, 18, 31, 0.3);
 }
 
 /* Shop Pay */
@@ -335,14 +335,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--luna-text);
+  color: var(--color-primary);
 }
 
 .pd-benefit-title {
   margin: 0;
   font-size: 14px;
   font-weight: 600;
-  color: var(--luna-text);
+  color: var(--color-primary);
 }
 
 /* Shipping Info */
@@ -355,11 +355,11 @@
 .pd-shipping-info p {
   margin: 0;
   font-size: 14px;
-  color: var(--luna-text);
+  color: var(--color-primary);
 }
 
 .pd-location {
-  color: var(--luna-orange);
+  color: var(--color-accent);
   font-weight: 700;
   text-decoration: underline;
 }
@@ -372,20 +372,20 @@
 
 .pd-ship-date svg {
   flex-shrink: 0;
-  color: var(--luna-text);
+  color: var(--color-primary);
 }
 
 .pd-ship-label {
   margin: 0;
   font-size: 12px;
-  color: var(--luna-text-light);
+  color: var(--color-text-secondary);
 }
 
 .pd-ship-value {
   margin: 4px 0 0 0;
   font-size: 14px;
   font-weight: 600;
-  color: var(--luna-text);
+  color: var(--color-primary);
 }
 
 /* Policy Disclaimer */

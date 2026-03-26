@@ -6,13 +6,13 @@
 
 .brand-header {
   margin-bottom: 30px;
-  border-bottom: 2px solid #007bff;
+  border-bottom: 2px solid var(--color-accent);
   padding-bottom: 15px;
 }
 
 .brand-header h1 {
   margin: 0;
-  color: #333;
+  color: var(--color-primary);
   font-size: 2rem;
 }
 
@@ -38,7 +38,7 @@
 
 /* Brand Form Section */
 .brand-form-section {
-  background: #f9f9f9;
+  background: var(--color-secondary);
   padding: 25px;
   border-radius: 8px;
   margin-bottom: 40px;
@@ -47,7 +47,7 @@
 
 .brand-form-section h2 {
   margin-top: 0;
-  color: #333;
+  color: var(--color-primary);
   margin-bottom: 20px;
 }
 
@@ -65,25 +65,27 @@
 .form-group label {
   font-weight: 600;
   margin-bottom: 8px;
-  color: #333;
+  color: var(--color-primary);
 }
 
 .form-group input[type="text"],
 .form-group input[type="file"],
 .form-group textarea {
   padding: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   border-radius: 5px;
   font-size: 14px;
   font-family: inherit;
+  background-color: var(--color-background);
+  color: var(--color-primary);
 }
 
 .form-group input[type="text"]:focus,
 .form-group input[type="file"]:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+  border-color: var(--color-accent);
+  box-shadow: 0 0 5px rgba(193, 18, 31, 0.3);
 }
 
 .form-group textarea {
@@ -93,7 +95,7 @@
 
 .file-name {
   font-size: 12px;
-  color: #666;
+  color: var(--color-secondary);
   margin-top: 5px;
 }
 
@@ -115,23 +117,23 @@
 }
 
 .btn-submit {
-  background-color: #007bff;
+  background-color: var(--color-accent);
   color: white;
 }
 
 .btn-submit:hover {
-  background-color: #0056b3;
+  background-color: var(--color-accent-hover);
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 86, 179, 0.3);
+  box-shadow: 0 4px 8px rgba(193, 18, 31, 0.3);
 }
 
 .btn-cancel {
-  background-color: #6c757d;
+  background-color: var(--color-primary);
   color: white;
 }
 
 .btn-cancel:hover {
-  background-color: #5a6268;
+  background-color: #333;
 }
 
 /* Brands List Section */

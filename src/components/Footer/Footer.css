@@ -1,7 +1,7 @@
 .benefits-strip {
   display: flex;
   gap: 16px;
-  background: #0d5448;
+  background: var(--color-primary);
   color: #fff;
   padding: 20px 24px;
   justify-content: center;
@@ -13,7 +13,7 @@
 .benefit .text strong { display:block; font-weight:600; margin-bottom:2px }
 .benefit .text .sub { font-size:13px; color: #d6e7e2; font-weight:400 }
 
-.back-to-top { text-align:center; padding:16px 0; font-weight:600; font-size:14px; cursor:pointer; background:#fff }
+.back-to-top { text-align:center; padding:16px 0; font-weight:600; font-size:14px; cursor:pointer; background:var(--color-background); color: var(--color-primary); }
 
 .footer-main {
   display: flex;
@@ -21,31 +21,32 @@
   padding: 48px 40px;
   max-width: 100%;
   margin: 0;
-  background: #f5f5f5;
+  background: var(--color-secondary);
   align-items:flex-start;
+  color: var(--color-primary);
 }
 .footer-col { flex:1; }
-.footer-col h4 { margin: 0 0 16px; font-size:16px; font-weight:700 }
+.footer-col h4 { margin: 0 0 16px; font-size:16px; font-weight:700; color: var(--color-primary); }
 .footer-col ul { list-style:none; padding:0; margin:0 }
-.footer-col ul li { margin-bottom:10px; font-size:14px; color:#333; cursor:pointer }
-.footer-col ul li:hover { text-decoration:underline }
-.footer-col p { margin:0 0 10px; font-size:14px; color:#333 }
+.footer-col ul li { margin-bottom:10px; font-size:14px; color:var(--color-text-secondary); cursor:pointer }
+.footer-col ul li:hover { text-decoration:underline; color: var(--color-accent); }
+.footer-col p { margin:0 0 10px; font-size:14px; color:var(--color-text-secondary) }
 .footer-logo { width:180px; display:block; margin-bottom:20px }
-.about-text { color:#555; font-size:13px; line-height:1.7; margin-bottom:20px }
+.about-text { color:var(--color-text-secondary); font-size:13px; line-height:1.7; margin-bottom:20px }
 .footer-col.about { flex:1.3 }
 
 .payment-icons { margin-top:20px; display:flex; gap:6px; flex-wrap:wrap; align-items:center }
-.pay-pill { background:#fff; border-radius:4px; padding:8px 10px; border:1px solid #ddd; font-size:11px; font-weight:600; color:#333 }
+.pay-pill { background:var(--color-background); border-radius:4px; padding:8px 10px; border:1px solid var(--color-border); font-size:11px; font-weight:600; color:var(--color-primary) }
 
 .social-row { margin-top:20px; display:flex; gap:14px; align-items:center }
-.social { width:36px; height:36px; display:inline-flex; align-items:center; justify-content:center; border-radius:50%; background:#222; color:#fff; font-size:18px; cursor:pointer }
-.social:hover { background:#444 }
+.social { width:36px; height:36px; display:inline-flex; align-items:center; justify-content:center; border-radius:50%; background:var(--color-primary); color:#fff; font-size:18px; cursor:pointer; transition: background 0.3s ease; }
+.social:hover { background:var(--color-accent) }
 
-.footer-bottom { display:flex; justify-content:space-between; align-items:center; padding:20px 40px; color:#666; font-size:13px; background:#fff; border-top:1px solid #e0e0e0 }
-.footer-bottom .left { color:#333 }
+.footer-bottom { display:flex; justify-content:space-between; align-items:center; padding:20px 40px; color:var(--color-text-secondary); font-size:13px; background:var(--color-background); border-top:1px solid var(--color-border) }
+.footer-bottom .left { color:var(--color-primary) }
 .footer-bottom .right { display:flex; gap:20px }
-.footer-bottom .right a { color:#333; text-decoration:none }
-.footer-bottom .right a:hover { text-decoration:underline }
+.footer-bottom .right a { color:var(--color-primary); text-decoration:none }
+.footer-bottom .right a:hover { text-decoration:underline; color: var(--color-accent); }
 
 /* Responsive Styles */
 @media (max-width: 1024px) {

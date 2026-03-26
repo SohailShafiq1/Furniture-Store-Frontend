@@ -331,7 +331,7 @@ export default function ProductDetailPage() {
                   </div>
                   <div className="pd-faq-item">
                     <p className="pd-faq-question">Can I see the furniture in person?</p>
-                    <p className="pd-faq-answer">Luna Furniture is primarily an online retailer, but we have select showroom locations. Please check our store locator for details.</p>
+                    <p className="pd-faq-answer">Furniture Store is primarily an online retailer, but we have select showroom locations. Please check our store locator for details.</p>
                   </div>
                   <div className="pd-faq-item">
                     <p className="pd-faq-question">Will you take my old furniture?</p>

@@ -3,46 +3,51 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #f5f5f5;
+  background-color: var(--color-secondary);
 }
 
 .admin-login-form {
-  background: white;
+  background: var(--color-background);
   padding: 40px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   width: 100%;
   max-width: 400px;
+  border: 1px solid var(--color-border);
 }
 
 .admin-login-form h2 {
   margin-bottom: 24px;
   text-align: center;
   font-family: 'Poppins', sans-serif;
+  color: var(--color-primary);
 }
 
 .admin-login-form input, .admin-form input {
   width: 100%;
   padding: 12px;
   margin-bottom: 16px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   box-sizing: border-box;
+  background-color: var(--color-secondary);
+  color: var(--color-primary);
 }
 
 .admin-login-form button, .admin-form button {
   width: 100%;
   padding: 12px;
-  background-color: #000;
+  background-color: var(--color-accent);
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-weight: 600;
+  transition: background-color 0.3s ease;
 }
 
 .admin-login-form button:hover, .admin-form button:hover {
-  background-color: #333;
+  background-color: var(--color-accent-hover);
 }
 
 /* --- Professional Grid & Form Elements --- */
@@ -68,7 +73,7 @@
 
 .form-group label {
   font-weight: 600;
-  color: #444;
+  color: var(--color-primary);
   font-size: 0.9rem;
   letter-spacing: 0.01em;
 }
@@ -77,32 +82,32 @@
   width: 100%;
   padding: 12px 16px;
   border-radius: 10px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
   font-size: 0.95rem;
   line-height: 1.5;
-  color: #1a202c;
-  background-color: #ffffff;
+  color: var(--color-primary);
+  background-color: var(--color-background);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   box-sizing: border-box;
 }
 
 .form-control:focus {
   outline: none;
-  border-color: #4f46e5;
-  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
-  background-color: #fff;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 4px rgba(193, 18, 31, 0.1);
+  background-color: var(--color-background);
 }
 
 .form-control::placeholder {
-  color: #a0aec0;
+  color: var(--color-secondary);
 }
 
 .image-upload-wrapper {
-  border: 2px dashed #e2e8f0;
+  border: 2px dashed var(--color-border);
   height: 146px;
   border-radius: 14px;
   text-align: center;
-  background: #f8fafc;
+  background: var(--color-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -112,17 +117,17 @@
 }
 
 .image-upload-wrapper:hover {
-  border-color: #cbd5e1;
-  background: #f1f5f9;
+  border-color: var(--color-accent);
+  background: var(--color-background);
 }
 
 /* --- Section Cards --- */
 .admin-card {
-  background: white;
+  background: var(--color-background);
   padding: 2.5rem;
   border-radius: 20px;
   box-shadow: 0 10px 40px rgba(0,0,0,0.03);
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--color-border);
   width: 100%;
   box-sizing: border-box;
   margin-bottom: 2rem;
@@ -132,8 +137,8 @@
   margin-bottom: 2rem;
   font-size: 1.5rem;
   font-weight: 700;
-  color: #1e293b;
-  border-bottom: 1px solid #f1f5f9;
+  color: var(--color-primary);
+  border-bottom: 1px solid var(--color-border);
   padding-bottom: 15px;
   display: flex;
   justify-content: space-between;
@@ -144,17 +149,17 @@
 .spec-container {
   margin-top: 40px;
   padding: 35px;
-  background: #f8fafc;
+  background: var(--color-secondary);
   border-radius: 20px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
 }
 
 .spec-group-card {
-  background: white;
+  background: var(--color-background);
   padding: 25px;
   margin-bottom: 25px;
   border-radius: 16px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
@@ -163,7 +168,7 @@
   gap: 15px;
   margin-bottom: 20px;
   align-items: center;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--color-border);
   padding-bottom: 15px;
 }
 
@@ -173,9 +178,9 @@
   gap: 20px;
   align-items: start;
   padding: 24px;
-  background: #f8fafc;
+  background: var(--color-secondary);
   border-radius: 14px;
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--color-border);
   margin-bottom: 12px;
 }
 

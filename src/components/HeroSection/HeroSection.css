@@ -39,7 +39,7 @@
 }
 
 .cta-button {
-  background-color: #2d7a5e;
+  background-color: var(--color-accent);
   color: white;
   border: none;
   padding: 14px 44px;
@@ -54,7 +54,7 @@
 }
 
 .cta-button:hover {
-  background-color: #235f48;
+  background-color: var(--color-accent-hover);
   transform: scale(1.03);
 }
 

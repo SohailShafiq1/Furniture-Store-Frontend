@@ -1,6 +1,6 @@
 .shop-by-category {
   padding: 40px 60px 50px;
-  background-color: #fff;
+  background-color: var(--color-background);
   width: 100%;
   box-sizing: border-box;
 }
@@ -8,7 +8,7 @@
 .category-heading {
   font-size: 28px;
   font-weight: 800;
-  color: #1a1a1a;
+  color: var(--color-primary);
   margin: 0 0 40px 0;
   letter-spacing: -0.5px;
 }
@@ -34,7 +34,7 @@
   width: 100%;
   aspect-ratio: 1 / 1;
   border-radius: 50%;
-  background-color: #f7f7f7;
+  background-color: var(--color-secondary);
   overflow: hidden;
   transition: transform 0.3s cubic-bezier(0.2, 0, 0.2, 1), box-shadow 0.3s ease;
   display: flex;
@@ -59,7 +59,7 @@
 .category-label {
   font-size: 18px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--color-primary);
   text-align: center;
 }
 

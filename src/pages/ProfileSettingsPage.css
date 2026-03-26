@@ -1,29 +1,29 @@
 /* Profile Settings Page Styles */
 .profile-settings-page {
   min-height: 100vh;
-  background-color: #f9f8f6;
+  background-color: var(--color-background);
 }
 
 /* Header */
 .profile-header {
-  background: white;
+  background: var(--color-background);
   padding: 50px 20px;
   text-align: center;
-  border-bottom: 1px solid #e8e3dd;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .profile-header h1 {
   margin: 0 0 10px 0;
   font-size: 2.2rem;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--color-primary);
   letter-spacing: -0.5px;
 }
 
 .header-subtitle {
   margin: 0;
   font-size: 1rem;
-  color: #888;
+  color: var(--color-text-secondary);
   font-weight: 400;
 }
 
@@ -50,7 +50,7 @@
 
 /* Sidebar */
 .profile-sidebar {
-  background: white;
+  background: var(--color-background);
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -67,7 +67,7 @@
 
 /* Avatar Section */
 .profile-avatar-section {
-  background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
+  background: var(--color-primary);
   color: white;
   padding: 32px 20px;
   text-align: center;
@@ -77,14 +77,15 @@
   width: 90px;
   height: 90px;
   border-radius: 50%;
-  background: rgba(212, 165, 116, 0.15);
+  background: rgba(193, 18, 31, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 20px;
   font-size: 2.5rem;
   font-weight: 700;
-  border: 2px solid rgba(212, 165, 116, 0.3);
+  border: 2px solid var(--color-accent);
+  color: var(--color-accent);
 }
 
 .profile-avatar-section h2 {
@@ -142,7 +143,7 @@
 /* Sidebar Menu */
 .sidebar-menu {
   padding: 0;
-  border-bottom: 1px solid #e8e8e8;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .menu-item {
@@ -150,7 +151,7 @@
   align-items: center;
   gap: 12px;
   padding: 15px 20px;
-  color: #666;
+  color: var(--color-text-secondary);
   text-decoration: none;
   font-weight: 600;
   font-size: 0.95rem;
@@ -160,14 +161,14 @@
 }
 
 .menu-item:hover {
-  background: #faf7f2;
-  color: #d4a574;
+  background: var(--color-secondary);
+  color: var(--color-accent);
 }
 
 .menu-item.active {
-  color: #d4a574;
-  background: #faf7f2;
-  border-left-color: #d4a574;
+  color: var(--color-accent);
+  background: var(--color-secondary);
+  border-left-color: var(--color-accent);
 }
 
 .menu-item svg {
@@ -184,13 +185,13 @@
   justify-content: center;
   gap: 10px;
   padding: 15px 20px;
-  background: white;
+  background: var(--color-background);
   border: none;
-  color: #f44336;
+  color: var(--color-accent);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  border-top: 1px solid #e8e8e8;
+  border-top: 1px solid var(--color-border);
   font-size: 0.95rem;
 }
 
@@ -212,11 +213,11 @@
 
 /* Content Section */
 .content-section {
-  background: white;
+  background: var(--color-background);
   border-radius: 8px;
   padding: 28px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  border: 1px solid #f0f0f0;
+  border: 1px solid var(--color-border);
 }
 
 .section-header {
@@ -225,19 +226,19 @@
   align-items: center;
   margin-bottom: 24px;
   padding-bottom: 16px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .section-header h3 {
   margin: 0;
   font-size: 1.1rem;
-  color: #1a1a1a;
+  color: var(--color-primary);
   font-weight: 700;
   letter-spacing: -0.2px;
 }
 
 .edit-button {
-  background: #d4a574;
+  background: var(--color-accent);
   color: white;
   border: none;
   padding: 10px 20px;
@@ -249,9 +250,9 @@
 }
 
 .edit-button:hover {
-  background: #c19860;
+  background: var(--color-accent-hover);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(212, 165, 116, 0.3);
+  box-shadow: 0 4px 12px rgba(193, 18, 31, 0.3);
 }
 
 /* Messages */
@@ -290,24 +291,26 @@
 
 .form-group label {
   margin-bottom: 8px;
-  color: #333;
+  color: var(--color-primary);
   font-weight: 700;
   font-size: 0.95rem;
 }
 
 .form-group input {
   padding: 12px 15px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   border-radius: 6px;
   font-size: 1rem;
   font-family: inherit;
   transition: all 0.3s ease;
+  background-color: var(--color-secondary);
+  color: var(--color-primary);
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: #d4a574;
-  box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.1);
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(193, 18, 31, 0.1);
 }
 
 /* Password Input Wrapper */
@@ -334,6 +337,7 @@
   align-items: center;
   justify-content: center;
   transition: all 0.2s;
+  color: var(--color-text-secondary);
 }
 
 .password-toggle:hover {
@@ -360,14 +364,14 @@
 }
 
 .btn-primary {
-  background: #d4a574;
+  background: var(--color-accent);
   color: white;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: #c19860;
+  background: var(--color-accent-hover);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(212, 165, 116, 0.3);
+  box-shadow: 0 4px 12px rgba(193, 18, 31, 0.3);
 }
 
 .btn-primary:disabled {
@@ -376,12 +380,13 @@
 }
 
 .btn-secondary {
-  background: #e8e8e8;
-  color: #333;
+  background: var(--color-secondary);
+  color: var(--color-primary);
+  border: 1px solid var(--color-border);
 }
 
 .btn-secondary:hover {
-  background: #d0d0d0;
+  background: var(--color-border);
 }
 
 /* Profile Info Display */
@@ -394,9 +399,9 @@
 
 .info-field {
   padding: 15px;
-  background: #faf7f2;
+  background: var(--color-secondary);
   border-radius: 6px;
-  border-left: 3px solid #d4a574;
+  border-left: 3px solid var(--color-accent);
 }
 
 .info-field label {

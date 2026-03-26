@@ -1,29 +1,29 @@
 /* My Orders Page Styles */
 .my-orders-page {
   min-height: 100vh;
-  background-color: #f9f8f6;
+  background-color: var(--color-background);
 }
 
 /* Header */
 .orders-header {
-  background: white;
+  background: var(--color-background);
   padding: 50px 20px;
   text-align: center;
-  border-bottom: 1px solid #e8e3dd;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .orders-header h1 {
   margin: 0 0 10px 0;
   font-size: 2.2rem;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--color-primary);
   letter-spacing: -0.5px;
 }
 
 .header-subtitle {
   margin: 0;
   font-size: 1rem;
-  color: #888;
+  color: var(--color-text-secondary);
   font-weight: 400;
 }
 
@@ -36,7 +36,7 @@
 
 /* Filter Section */
 .filter-section {
-  background: white;
+  background: var(--color-background);
   padding: 25px;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -54,27 +54,27 @@
 
 .filter-tab {
   padding: 10px 20px;
-  border: 2px solid #e0e0e0;
-  background: white;
+  border: 2px solid var(--color-border);
+  background: var(--color-background);
   border-radius: 25px;
   cursor: pointer;
   font-weight: 600;
   font-size: 14px;
   transition: all 0.3s ease;
   position: relative;
-  color: #666;
+  color: var(--color-text-secondary);
 }
 
 .filter-tab:hover {
-  border-color: #d4a574;
-  color: #d4a574;
-  background-color: #faf7f2;
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background-color: var(--color-secondary);
 }
 
 .filter-tab.active {
-  background-color: #d4a574;
+  background-color: var(--color-accent);
   color: white;
-  border-color: #d4a574;
+  border-color: var(--color-accent);
 }
 
 .filter-count {
@@ -97,7 +97,7 @@
   flex-direction: column;
   align-items: center;
   padding: 80px 40px;
-  background: white;
+  background: var(--color-background);
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
@@ -105,8 +105,8 @@
 .spinner {
   width: 50px;
   height: 50px;
-  border: 4px solid #e0e0e0;
-  border-top-color: #d4a574;
+  border: 4px solid var(--color-border);
+  border-top-color: var(--color-accent);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 20px;
@@ -117,7 +117,7 @@
 }
 
 .loading-container p {
-  color: #666;
+  color: var(--color-text-secondary);
   font-size: 16px;
   margin: 0;
 }
@@ -128,7 +128,7 @@
   flex-direction: column;
   align-items: center;
   padding: 60px 20px;
-  background: white;
+  background: var(--color-background);
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   border: 1px solid #ffebee;
@@ -137,25 +137,25 @@
 .error-icon {
   width: 60px;
   height: 60px;
-  stroke: #f44336;
+  stroke: var(--color-accent);
   margin-bottom: 15px;
 }
 
 .error-container h3 {
-  color: #f44336;
+  color: var(--color-accent);
   margin: 10px 0;
   font-size: 1.3rem;
 }
 
 .error-container p {
-  color: #d32f2f;
+  color: var(--color-accent);
   margin: 5px 0 25px 0;
   text-align: center;
   max-width: 400px;
 }
 
 .retry-button {
-  background-color: #f44336;
+  background-color: var(--color-accent);
   color: white;
   border: none;
   padding: 10px 30px;
@@ -166,9 +166,9 @@
 }
 
 .retry-button:hover {
-  background-color: #d32f2f;
+  background-color: var(--color-accent-hover);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+  box-shadow: 0 4px 12px rgba(193, 18, 31, 0.3);
 }
 
 /* Empty State */
@@ -177,7 +177,7 @@
   flex-direction: column;
   align-items: center;
   padding: 100px 40px;
-  background: white;
+  background: var(--color-background);
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   text-align: center;
@@ -186,21 +186,21 @@
 .empty-icon {
   width: 100px;
   height: 100px;
-  stroke: #d4a574;
+  stroke: var(--color-accent);
   stroke-width: 1;
   margin-bottom: 30px;
   opacity: 0.6;
 }
 
 .empty-state h3 {
-  color: #1a1a1a;
+  color: var(--color-primary);
   margin: 0 0 10px 0;
   font-size: 1.6rem;
   font-weight: 700;
 }
 
 .empty-state p {
-  color: #888;
+  color: var(--color-text-secondary);
   margin: 0 0 35px 0;
   text-align: center;
   max-width: 400px;
@@ -208,7 +208,7 @@
 }
 
 .shop-button {
-  background-color: #d4a574;
+  background-color: var(--color-accent);
   color: white;
   border: none;
   padding: 14px 45px;
@@ -221,9 +221,9 @@
 }
 
 .shop-button:hover {
-  background-color: #c19860;
+  background-color: var(--color-accent-hover);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(212, 165, 116, 0.25);
+  box-shadow: 0 4px 12px rgba(193, 18, 31, 0.25);
 }
 
 /* Orders Grid */
@@ -235,7 +235,7 @@
 
 /* Order Card */
 .order-card {
-  background: white;
+  background: var(--color-background);
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   overflow: hidden;
@@ -250,7 +250,7 @@
 /* Card Header */
 .order-card-header {
   padding: 24px;
-  border-bottom: 1px solid #f5f5f5;
+  border-bottom: 1px solid var(--color-border);
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -259,7 +259,7 @@
 
 .order-info h3 {
   margin: 0 0 6px 0;
-  color: #1a1a1a;
+  color: var(--color-primary);
   font-size: 1rem;
   font-weight: 700;
   letter-spacing: -0.2px;
@@ -267,7 +267,7 @@
 
 .order-date {
   margin: 0;
-  color: #999;
+  color: var(--color-text-secondary);
   font-size: 0.9rem;
   font-weight: 400;
 }
@@ -292,11 +292,11 @@
 /* Order Summary */
 .order-summary {
   padding: 18px 24px;
-  background-color: #faf7f2;
+  background-color: var(--color-secondary);
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .summary-item {
@@ -306,7 +306,7 @@
 }
 
 .summary-item label {
-  color: #999;
+  color: var(--color-text-secondary);
   font-size: 0.8rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -314,13 +314,13 @@
 }
 
 .summary-item span {
-  color: #1a1a1a;
+  color: var(--color-primary);
   font-size: 0.95rem;
   font-weight: 600;
 }
 
 .summary-item .amount {
-  color: #d4a574;
+  color: var(--color-accent);
   font-size: 1.1rem;
   font-weight: 700;
 }
@@ -329,10 +329,10 @@
 .expand-button {
   width: 100%;
   padding: 12px 24px;
-  background: white;
+  background: var(--color-background);
   border: none;
   cursor: pointer;
-  color: #d4a574;
+  color: var(--color-accent);
   font-weight: 600;
   font-size: 0.85rem;
   transition: all 0.2s ease;
@@ -344,8 +344,8 @@
 }
 
 .expand-button:hover {
-  background-color: #faf7f2;
-  color: #c19860;
+  background-color: var(--color-secondary);
+  color: var(--color-accent-hover);
 }
 
 .expand-button::before {
@@ -356,14 +356,14 @@
 /* Expanded Details */
 .order-details-expanded {
   padding: 24px;
-  border-top: 1px solid #f0f0f0;
-  background-color: #faf7f2;
+  border-top: 1px solid var(--color-border);
+  background-color: var(--color-secondary);
 }
 
 .details-section {
   margin-bottom: 28px;
   padding-bottom: 28px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .details-section:last-child {
@@ -374,7 +374,7 @@
 
 .details-section h4 {
   margin: 0 0 16px 0;
-  color: #d4a574;
+  color: var(--color-accent);
   font-size: 0.9rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -383,16 +383,16 @@
 
 /* Address Box */
 .address-box {
-  background: white;
+  background: var(--color-background);
   padding: 16px;
   border-radius: 4px;
-  border-left: 3px solid #d4a574;
+  border-left: 3px solid var(--color-accent);
   line-height: 1.8;
 }
 
 .address-box p {
   margin: 0;
-  color: #555;
+  color: var(--color-primary);
   font-size: 0.95rem;
 }
 
@@ -402,10 +402,10 @@
 
 /* Items List */
 .items-list {
-  background: white;
+  background: var(--color-background);
   border-radius: 6px;
   overflow: hidden;
-  border: 1px solid #f0f0f0;
+  border: 1px solid var(--color-border);
 }
 
 .item-row {
@@ -413,7 +413,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 14px 16px;
-  border-bottom: 1px solid #f5f5f5;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .item-row:last-child {
@@ -426,27 +426,27 @@
 
 .item-name {
   margin: 0;
-  color: #1a1a1a;
+  color: var(--color-primary);
   font-weight: 600;
   font-size: 0.95rem;
 }
 
 .item-name .variation {
-  color: #999;
+  color: var(--color-text-secondary);
   font-weight: 400;
   font-size: 0.85rem;
 }
 
 .item-price {
   margin: 5px 0 0 0;
-  color: #888;
+  color: var(--color-text-secondary);
   font-size: 0.85rem;
   font-weight: 400;
 }
 
 .item-row .item-price {
   margin: 0;
-  color: #d4a574;
+  color: var(--color-accent);
   font-weight: 700;
   font-size: 0.95rem;
   min-width: 100px;
@@ -455,10 +455,10 @@
 
 /* Cost Breakdown */
 .cost-breakdown {
-  background: white;
+  background: var(--color-background);
   padding: 16px;
   border-radius: 4px;
-  border: 1px solid #f0f0f0;
+  border: 1px solid var(--color-border);
 }
 
 .cost-row {
@@ -466,8 +466,8 @@
   justify-content: space-between;
   padding: 8px 0;
   font-size: 0.95rem;
-  color: #666;
-  border-bottom: 1px solid #f5f5f5;
+  color: var(--color-primary);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .cost-row:last-child {
@@ -476,11 +476,11 @@
 
 .cost-row.total {
   padding: 12px 0;
-  border-top: 1px solid #ddd;
+  border-top: 1px solid var(--color-border);
   border-bottom: none;
   font-size: 1rem;
   font-weight: 700;
-  color: #d4a574;
+  color: var(--color-accent);
   margin-top: 4px;
 }
 

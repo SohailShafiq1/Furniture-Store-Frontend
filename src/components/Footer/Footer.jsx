@@ -1,6 +1,6 @@
+import { Link } from 'react-router-dom';
 import './Footer.css';
 import StayInTouch from './StayInTouch';
-
 export default function Footer() {
   return (
     <footer className="site-footer">
@@ -52,8 +52,10 @@ export default function Footer() {
 
       <div className="footer-main">
         <div className="footer-col about">
-          <img src="/logo.avif" alt="Luna Furniture" className="footer-logo" />
-          <p className="about-text">Luna Furniture, a top 100 U.S. furniture retailer, offers stylish and affordable furniture with fast delivery and a seamless shopping experience. Shop our wide selection of high-quality furniture, including sofas, beds, dining sets, and more.</p>
+          <Link to="/">
+            <img src="/logo.svg" alt="Furniture Store" className="footer-logo" />
+          </Link>
+          <p className="about-text">Our Furniture Store, a top 100 U.S. furniture retailer, offers stylish and affordable furniture with fast delivery and a seamless shopping experience. Shop our wide selection of high-quality furniture, including sofas, beds, dining sets, and more.</p>
 
           <div className="payment-icons" aria-label="Accepted payment methods">
             <span className="pay-pill">Amazon</span>
@@ -108,7 +110,7 @@ export default function Footer() {
       </div>
 
       <div className="footer-bottom">
-        <div className="left">© 2026 Luna Furniture.</div>
+        <div className="left">© 2026 Furniture Store.</div>
         <div className="right">
           <a href="#">Privacy Policy</a>
           <a href="#">Terms Of Use</a>

@@ -5,11 +5,11 @@
 }
 
 .home-view-management h1 {
-  color: #333;
+  color: var(--color-primary);
   margin-bottom: 30px;
   font-size: 28px;
   text-align: center;
-  border-bottom: 3px solid #8B4513;
+  border-bottom: 3px solid var(--color-accent);
   padding-bottom: 15px;
 }
 
@@ -57,7 +57,7 @@
 
 .home-content-form > button[type="submit"],
 .home-content-form > button[type="button"] {
-  background: #8B4513;
+  background: var(--color-accent);
   color: white;
   padding: 12px 30px;
   border: none;
@@ -72,32 +72,34 @@
 
 .home-content-form > button[type="submit"]:hover:not(:disabled),
 .home-content-form > button[type="button"]:hover:not(:disabled) {
-  background: #6b3410;
-  box-shadow: 0 4px 12px rgba(139, 69, 19, 0.2);
+  background: var(--color-accent-hover);
+  box-shadow: 0 4px 12px rgba(193, 18, 31, 0.2);
   transform: translateY(-2px);
 }
 
 .home-content-form > button[type="submit"]:disabled {
-  background: #ccc;
+  background: var(--color-secondary);
+  color: var(--color-primary);
   cursor: not-allowed;
   opacity: 0.6;
 }
 
 .home-content-form section {
-  background: #f9f7f4;
+  background: var(--color-secondary);
   padding: 25px;
   border-radius: 8px;
-  border-left: 4px solid #8B4513;
+  border-left: 4px solid var(--color-accent);
 }
 
 .home-content-form h2 {
-  color: #333;
+  color: var(--color-primary);
   margin-bottom: 10px;
   font-size: 20px;
 }
 
 .section-subtitle {
-  color: #666;
+  color: var(--color-primary);
+  opacity: 0.7;
   font-size: 14px;
   margin-bottom: 20px;
   font-style: italic;
@@ -112,14 +114,14 @@
 }
 
 .promotion-item {
-  background: white;
+  background: var(--color-background);
   padding: 20px;
   border-radius: 8px;
-  border: 1px solid #e0d4c4;
+  border: 1px solid var(--color-border);
 }
 
 .promotion-item h3 {
-  color: #8B4513;
+  color: var(--color-accent);
   margin-bottom: 15px;
   font-size: 16px;
 }
@@ -133,7 +135,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f0ede5;
+  background: var(--color-secondary);
 }
 
 .image-preview img {

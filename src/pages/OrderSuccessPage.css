@@ -1,5 +1,5 @@
 .order-success-page {
-  background-color: #f8f9fa;
+  background-color: var(--color-background);
   min-height: 100vh;
 }
 
@@ -10,18 +10,19 @@
 }
 
 .success-content {
-  background-color: #fff;
+  background-color: var(--color-background);
   border-radius: 16px;
   padding: 60px 40px;
   text-align: center;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--color-border);
 }
 
 .success-icon {
   width: 80px;
   height: 80px;
   margin: 0 auto 30px;
-  background: linear-gradient(135deg, #28a745, #20c997);
+  background: var(--color-accent);
   color: white;
   border-radius: 50%;
   display: flex;
@@ -34,20 +35,20 @@
 .success-content h1 {
   font-size: 2rem;
   font-weight: 700;
-  color: #333;
+  color: var(--color-primary);
   margin-bottom: 15px;
 }
 
 .success-message {
   font-size: 1.05rem;
-  color: #666;
+  color: var(--color-text-secondary);
   margin-bottom: 35px;
   line-height: 1.6;
 }
 
 .order-details-box {
-  background-color: #f0f9ff;
-  border-left: 4px solid #0066cc;
+  background-color: var(--color-secondary);
+  border-left: 4px solid var(--color-accent);
   padding: 20px;
   margin: 30px 0;
   border-radius: 8px;
@@ -56,11 +57,11 @@
 
 .order-details-box p {
   margin: 8px 0;
-  color: #333;
+  color: var(--color-primary);
 }
 
 .order-details-box strong {
-  color: #0066cc;
+  color: var(--color-accent);
 }
 
 .success-actions {
@@ -82,34 +83,35 @@
 }
 
 .btn-primary {
-  background-color: #333;
+  background-color: var(--color-accent);
   color: white;
 }
 
 .btn-primary:hover {
-  background-color: #000;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  background-color: var(--color-accent-hover);
+  box-shadow: 0 4px 12px rgba(193, 18, 31, 0.2);
 }
 
 .btn-secondary {
-  background-color: #e0e0e0;
-  color: #333;
+  background-color: var(--color-secondary);
+  color: var(--color-primary);
+  border: 1px solid var(--color-border);
 }
 
 .btn-secondary:hover {
-  background-color: #d0d0d0;
+  background-color: var(--color-border);
 }
 
 .next-steps {
   margin-top: 50px;
   padding-top: 30px;
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--color-border);
   text-align: left;
 }
 
 .next-steps h3 {
   font-size: 1.2rem;
-  color: #333;
+  color: var(--color-primary);
   margin-bottom: 20px;
 }
 
@@ -120,7 +122,7 @@
 
 .next-steps li {
   padding: 12px 0;
-  color: #666;
+  color: var(--color-text-secondary);
   font-size: 0.95rem;
 }
 
@@ -132,9 +134,9 @@
 
 .items-section h3 {
   font-size: 1.3rem;
-  color: #333;
+  color: var(--color-primary);
   margin-bottom: 20px;
-  border-bottom: 2px solid #0066cc;
+  border-bottom: 2px solid var(--color-accent);
   padding-bottom: 10px;
 }
 
@@ -145,8 +147,8 @@
 }
 
 .item-card {
-  background-color: #fafafa;
-  border: 1px solid #e0e0e0;
+  background-color: var(--color-secondary);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 15px;
   transition: all 0.2s ease;

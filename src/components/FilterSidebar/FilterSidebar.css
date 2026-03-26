@@ -1,13 +1,13 @@
 .filter-sidebar {
   width: 100%;
-  background-color: white;
+  background-color: var(--color-background);
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
 }
 
 .filter-section {
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--color-border);
   padding: 1.25rem 0;
 }
 
@@ -27,7 +27,7 @@
 .section-header h3 {
   font-size: 1rem;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--color-primary);
   margin: 0;
 }
 
@@ -36,13 +36,13 @@
   border: none;
   font-size: 1.2rem;
   cursor: pointer;
-  color: #666;
+  color: var(--color-text-secondary);
   padding: 0.5rem;
   transition: color 0.3s;
 }
 
 .collapse-btn:hover {
-  color: #1a1a1a;
+  color: var(--color-primary);
 }
 
 .filter-options {
@@ -58,20 +58,20 @@
   gap: 0.75rem;
   cursor: pointer;
   font-size: 0.95rem;
-  color: #333;
+  color: var(--color-primary);
   padding: 0.4rem 0;
   transition: color 0.2s;
 }
 
 .filter-option:hover {
-  color: #1a1a1a;
+  color: var(--color-accent);
 }
 
 .filter-option input[type="checkbox"] {
   width: 18px;
   height: 18px;
   cursor: pointer;
-  accent-color: #1a1a1a;
+  accent-color: var(--color-accent);
   flex-shrink: 0;
 }
 
@@ -85,7 +85,7 @@
 }
 
 .filter-option .count {
-  color: #999;
+  color: var(--color-text-secondary);
   font-size: 0.9rem;
   flex: 0;
   margin-left: auto;
@@ -104,20 +104,20 @@
   width: 80px;
   height: 32px;
   border-radius: 50px;
-  border: 2px solid #e0e0e0;
+  border: 2px solid var(--color-border);
   flex-shrink: 0;
   transition: all 0.2s;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .filter-option:hover .color-dot {
-  border-color: #ccc;
+  border-color: var(--color-text-secondary);
   transform: scale(1.02);
 }
 
 .clear-section-btn {
   margin-top: 0.5rem;
-  color: #ff6b35;
+  color: var(--color-accent);
   background: none;
   border: none;
   font-size: 0.9rem;
@@ -129,12 +129,12 @@
 }
 
 .clear-section-btn:hover {
-  color: #ff5520;
+  color: var(--color-accent-hover);
 }
 
 /* Applied Filters */
 .applied-filters-section {
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--color-border);
   padding-bottom: 1.25rem;
   margin-bottom: 1.25rem;
 }
@@ -150,17 +150,18 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background-color: #f5f5f5;
-  border: 1px solid #e0e0e0;
+  background-color: var(--color-secondary);
+  border: 1px solid var(--color-border);
   border-radius: 20px;
   padding: 0.4rem 0.8rem;
   font-size: 0.85rem;
   transition: all 0.2s;
+  color: var(--color-primary);
 }
 
 .applied-filter-tag:hover {
-  background-color: #eee;
-  border-color: #ccc;
+  background-color: var(--color-border);
+  border-color: var(--color-text-secondary);
 }
 
 .applied-filter-tag .remove-filter {
@@ -168,7 +169,7 @@
   border: none;
   cursor: pointer;
   font-size: 1rem;
-  color: #666;
+  color: var(--color-text-secondary);
   padding: 0;
   width: 16px;
   height: 16px;
@@ -180,11 +181,11 @@
 }
 
 .applied-filter-tag .remove-filter:hover {
-  color: #ff6b35;
+  color: var(--color-accent);
 }
 
 .clear-all-btn {
-  color: #ff6b35;
+  color: var(--color-accent);
   background: none;
   border: none;
   font-size: 0.9rem;
@@ -194,7 +195,7 @@
 }
 
 .clear-all-btn:hover {
-  color: #ff5520;
+  color: var(--color-accent-hover);
 }
 
 /* Price Inputs */

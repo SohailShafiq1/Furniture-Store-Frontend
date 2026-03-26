@@ -21,7 +21,7 @@ const DynamicPromoBanners = ({ homeContent }) => {
   }
 
   return (
-    <div style={{ width: '100%', padding: '60px 40px', backgroundColor: '#f8f8f8' }}>
+    <div style={{ width: '100%', padding: '60px 40px', backgroundColor: 'var(--color-secondary)' }}>
       <div style={{ maxWidth: '1480px', margin: '0 auto' }}>
         <div style={{
           display: 'grid',
@@ -32,18 +32,19 @@ const DynamicPromoBanners = ({ homeContent }) => {
             <div key={idx} style={{
               display: 'flex',
               flexDirection: 'column',
-              backgroundColor: '#ffffff',
+              backgroundColor: 'var(--color-background)',
               overflow: 'hidden',
               borderRadius: '4px',
               boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-              transition: 'transform 0.3s ease, box-shadow 0.3s ease'
+              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+              border: '1px solid var(--color-border)'
             }}>
               <div style={{
                 position: 'relative',
                 width: '100%',
                 paddingBottom: '66.67%',
                 overflow: 'hidden',
-                backgroundColor: '#f5f5f5'
+                backgroundColor: 'var(--color-secondary)'
               }}>
                 {banner.image && (
                   <img
@@ -63,12 +64,12 @@ const DynamicPromoBanners = ({ homeContent }) => {
               </div>
               <div style={{ padding: '24px' }}>
                 {banner.heading && (
-                  <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1a1a1a', margin: '0 0 8px 0' }}>
+                  <h3 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--color-primary)', margin: '0 0 8px 0' }}>
                     {banner.heading}
                   </h3>
                 )}
                 {banner.subHeading && (
-                  <p style={{ fontSize: '14px', color: '#666', margin: '0', lineHeight: '1.4' }}>
+                  <p style={{ fontSize: '14px', color: 'var(--color-text-secondary)', margin: '0', lineHeight: '1.4' }}>
                     {banner.subHeading}
                   </p>
                 )}
@@ -96,9 +97,9 @@ const DynamicSubcategoryComponent = ({ subcategoryName, selectedProducts, catego
   }
 
   return (
-    <section style={{ width: '100%', padding: '60px 40px', backgroundColor: '#ffffff' }}>
+    <section style={{ width: '100%', padding: '60px 40px', backgroundColor: 'var(--color-background)' }}>
       <div style={{ maxWidth: '1480px', margin: '0 auto' }}>
-        <h2 style={{ fontSize: '32px', fontWeight: '700', color: '#1a1a1a', marginBottom: '40px' }}>
+        <h2 style={{ fontSize: '32px', fontWeight: '700', color: 'var(--color-primary)', marginBottom: '40px' }}>
           {subcategoryName}
         </h2>
 
@@ -113,8 +114,8 @@ const DynamicSubcategoryComponent = ({ subcategoryName, selectedProducts, catego
               onClick={() => navigate(`/product/${product.category}/${product._id}`)}
               style={{
                 cursor: 'pointer',
-                backgroundColor: '#ffffff',
-                border: '1px solid #e5e5e5',
+                backgroundColor: 'var(--color-background)',
+                border: '1px solid var(--color-border)',
                 borderRadius: '4px',
                 padding: '12px',
                 transition: 'all 0.3s ease'
@@ -132,7 +133,7 @@ const DynamicSubcategoryComponent = ({ subcategoryName, selectedProducts, catego
                 width: '100%',
                 paddingBottom: '100%',
                 overflow: 'hidden',
-                backgroundColor: '#f5f5f5',
+                backgroundColor: 'var(--color-secondary)',
                 borderRadius: '4px',
                 marginBottom: '12px'
               }}>
@@ -161,7 +162,7 @@ const DynamicSubcategoryComponent = ({ subcategoryName, selectedProducts, catego
                   }}>
                     {product.badge && (
                       <span style={{
-                        backgroundColor: '#555',
+                        backgroundColor: 'var(--color-primary)',
                         color: 'white',
                         padding: '4px 8px',
                         borderRadius: '12px',
@@ -240,7 +241,7 @@ const DynamicSubcategoryComponent = ({ subcategoryName, selectedProducts, catego
                     <StarIcon key={i} filled={i < (product.numReviews === 0 ? 5 : Math.round(product.rating || 0))} />
                   ))}
                 </div>
-                <span style={{ fontSize: '14px', color: '#999' }}>({product.numReviews || 0})</span>
+                <span style={{ fontSize: '14px', color: 'var(--color-text-secondary)' }}>({product.numReviews || 0})</span>
               </div>
 
               {/* Price */}
@@ -252,14 +253,14 @@ const DynamicSubcategoryComponent = ({ subcategoryName, selectedProducts, catego
                 <span style={{
                   fontSize: '16px',
                   fontWeight: '700',
-                  color: '#FF6B35'
+                  color: 'var(--color-accent)'
                 }}>
                   ${parseFloat(product.price || 0).toFixed(2)}
                 </span>
                 {product.discount > 0 && (
                   <span style={{
                     fontSize: '14px',
-                    color: '#999',
+                    color: 'var(--color-text-secondary)',
                     textDecoration: 'line-through'
                   }}>
                     ${(parseFloat(product.price || 0) * (1 + product.discount / 100)).toFixed(2)}
@@ -273,6 +274,7 @@ const DynamicSubcategoryComponent = ({ subcategoryName, selectedProducts, catego
         {/* View All Button */}
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '40px' }}>
           <button
+            className="btn-primary"
             onClick={() => {
               // Navigate to category page
               if (categoryId) {
@@ -286,15 +288,10 @@ const DynamicSubcategoryComponent = ({ subcategoryName, selectedProducts, catego
             }}
             style={{
               padding: '12px 48px',
-              backgroundColor: '#FF6B35',
-              color: '#ffffff',
-              border: 'none',
               borderRadius: '4px',
               fontSize: '14px',
               fontWeight: '600',
               cursor: categoryId ? 'pointer' : 'not-allowed',
-              transition: 'all 0.3s ease',
-              letterSpacing: '0.5px',
               opacity: categoryId ? 1 : 0.6
             }}
             onMouseEnter={(e) => {

@@ -19,7 +19,7 @@
 .menu-toggle span {
   width: 24px;
   height: 2px;
-  background-color: #333;
+  background-color: var(--color-primary);
   border-radius: 2px;
   display: block;
   transition: all 0.3s ease;
@@ -47,7 +47,7 @@
   padding: 12px 10px;
   font-size: 13px;
   font-weight: 500;
-  color: #2c2c2c;
+  color: var(--color-primary);
   text-decoration: none;
   white-space: nowrap;
   transition: color 0.2s ease;
@@ -55,13 +55,13 @@
 }
 
 .nav-link:hover {
-  color: #111;
-  border-bottom-color: #1a1a1a;
+  color: var(--color-accent);
+  border-bottom-color: var(--color-accent);
 }
 
 .nav-link.active {
-  color: #111;
-  border-bottom-color: #1a1a1a;
+  color: var(--color-accent);
+  border-bottom-color: var(--color-accent);
 }
 
 .nav-link .chevron {
@@ -69,16 +69,18 @@
   height: 13px;
   flex-shrink: 0;
   stroke-width: 2.5;
-  color: #555;
+  color: var(--color-text-secondary);
   transition: transform 0.2s ease;
 }
 
 .nav-link:hover .chevron {
   transform: rotate(180deg);
+  color: var(--color-accent);
 }
 
 .nav-link.active .chevron {
   transform: rotate(180deg);
+  color: var(--color-accent);
 }
 
 /* Premium item */

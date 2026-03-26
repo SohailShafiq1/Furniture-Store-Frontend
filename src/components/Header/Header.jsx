@@ -40,9 +40,9 @@ export default function Header() {
       {/* Row 1: Logo | Search | Icons */}
       <div className="header-top-row">
         {/* Logo */}
-        <div className="logo-container">
-          <img src="/logo.avif" alt="Luna Furniture" className="logo" />
-        </div>
+        <Link to="/" className="logo-container">
+          <img src="/logo.svg" alt="Furniture Store" className="logo" />
+        </Link>
 
         {/* Search Bar */}
         <SearchBar />
