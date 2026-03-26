@@ -9,7 +9,7 @@ import Modal from '../components/Modal/Modal';
 import './CheckoutPage.css';
 
 const CheckoutPage = () => {
-  const { cart, clearCart, removeFromCart } = useCart();
+  const { cart, clearCart, removeFromCart, attribution } = useCart();
   const { user, token } = useUserAuth();
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('Stripe');
@@ -110,7 +110,8 @@ const CheckoutPage = () => {
       }
 
       const res = await axios.post(`${API_BASE_URL}/orders/checkout`, {
-        orderDetails
+        orderDetails,
+        attribution: attribution || cart.attribution
       }, {
         ...(user && token && { headers: { Authorization: `Bearer ${token}` } })
       });

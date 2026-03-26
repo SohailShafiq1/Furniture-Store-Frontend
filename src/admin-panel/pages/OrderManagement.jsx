@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { API_BASE_URL } from '../../config/api';
+import { API_BASE_URL, BACKEND_URL } from '../../config/api';
 import { useAdminAuth } from '../context/AdminAuthContext';
 import Modal from '../../components/Modal/Modal';
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
@@ -15,13 +15,28 @@ const OrderManagement = () => {
   const [modal, setModal] = useState({ isOpen: false, title: '', message: '', type: 'info' });
   const [cancelReason, setCancelReason] = useState('');
   const [filterStatus, setFilterStatus] = useState('All');
+  const [filterStore, setFilterStore] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
+  const [stores, setStores] = useState([]);
 
   useEffect(() => {
     if (token) {
       fetchOrders();
+      fetchStores();
     }
   }, [token]);
+
+  const fetchStores = async () => {
+    try {
+      // Changed from .replace('/orders', '/admin') to a cleaner manual string to ensure it hits /api/admin/stores
+      const res = await axios.get(`${BACKEND_URL}/api/admin/stores`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setStores(res.data);
+    } catch (err) {
+      console.error('Error fetching stores for filter:', err);
+    }
+  };
 
   const fetchOrders = async () => {
     if (!token) {
@@ -185,12 +200,18 @@ const OrderManagement = () => {
 
   const filteredOrders = orders.filter(order => {
     const statusMatch = filterStatus === 'All' || order.orderStatus === filterStatus;
+    
+    // Store Filter Match - Check both main order storeId and individual item storeIds
+    const storeMatch = filterStore === 'All' || 
+      (order.storeId?._id === filterStore || order.storeId === filterStore) ||
+      (order.items?.some(item => (item.storeId?._id === filterStore || item.storeId === filterStore)));
+
     const searchMatch = 
       (order._id?.toString() || '').includes(searchTerm) ||
       (order.user?.email?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
       (order.user?.firstName?.toLowerCase() || '').includes(searchTerm.toLowerCase());
     
-    return statusMatch && searchMatch;
+    return statusMatch && storeMatch && searchMatch;
   });
 
   const getStatusColor = (status) => {
@@ -233,14 +254,30 @@ const OrderManagement = () => {
         <div className="om-filter-group">
           <label>Filter by Status:</label>
           <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="om-select">
-            <option>All</option>
-            <option>Pending</option>
-            <option>Confirmed</option>
-            <option>Processing</option>
-            <option>Shipped</option>
-            <option>Out for Delivery</option>
-            <option>Delivered</option>
-            <option>Cancelled</option>
+            <option value="All">All Statuses</option>
+            <option value="Pending">Pending</option>
+            <option value="Confirmed">Confirmed</option>
+            <option value="Processing">Processing</option>
+            <option value="Shipped">Shipped</option>
+            <option value="Out for Delivery">Out for Delivery</option>
+            <option value="Delivered">Delivered</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+        </div>
+
+        <div className="om-filter-group">
+          <label>Filter by Store:</label>
+          <select 
+            value={filterStore} 
+            onChange={(e) => setFilterStore(e.target.value)} 
+            className="om-select"
+          >
+            <option value="All">All Stores</option>
+            {stores.map(store => (
+              <option key={store._id} value={store._id}>
+                {store.name}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -263,7 +300,7 @@ const OrderManagement = () => {
             <tr>
               <th>Order ID</th>
               <th>Customer</th>
-              <th>Email</th>
+              <th>Store</th>
               <th>Items</th>
               <th>Total</th>
               <th>Status</th>
@@ -277,8 +314,15 @@ const OrderManagement = () => {
               filteredOrders.map((order) => (
                 <tr key={order._id} className="om-row">
                   <td className="om-order-id">{order._id.substring(0, 8)}...</td>
-                  <td>{(order.user?.firstName || '-')} {(order.user?.lastName || '')}</td>
-                  <td>{order.user?.email || 'N/A'}</td>
+                  <td>
+                    <strong>{(order.user?.firstName || 'Guest')} {(order.user?.lastName || '')}</strong>
+                    <div style={{ fontSize: '11px', color: '#666' }}>{order.user?.email || order.guestEmail || 'N/A'}</div>
+                  </td>
+                  <td>
+                    <span className="om-store-name">
+                      {order.storeId?.name || (typeof order.storeId === 'string' ? 'Loading...' : 'Unknown')}
+                    </span>
+                  </td>
                   <td className="om-items-count">{order.items?.length || 0} item(s)</td>
                   <td className="om-amount">${(order.totalAmount || 0).toFixed(2)}</td>
                   <td>

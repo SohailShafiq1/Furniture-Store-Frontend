@@ -8,11 +8,39 @@ const CartContext = createContext();
 export const useCart = () => useContext(CartContext);
 
 const GUEST_CART_KEY = 'furniture_store_guest_cart';
+const STORE_ATTRIBUTION_KEY = 'furniture_store_attribution';
 
 export const CartProvider = ({ children }) => {
   const { user, token } = useUserAuth();
-  const [cart, setCart] = useState({ items: [], totalPrice: 0 });
+  const [cart, setCart] = useState({ items: [], totalPrice: 0, storeId: null });
+  const [attribution, setAttribution] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  // Initialize Attribution from URL or Session
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const urlStoreId = params.get('store');
+    const adId = params.get('adId');
+    const campaign = params.get('campaign');
+    const source = params.get('source');
+
+    if (urlStoreId) {
+      const newAttribution = {
+        storeId: urlStoreId,
+        source: source || 'Ads',
+        campaign: campaign || 'Campaign',
+        adId: adId || 'AdUnit',
+        timestamp: Date.now()
+      };
+      setAttribution(newAttribution);
+      localStorage.setItem(STORE_ATTRIBUTION_KEY, JSON.stringify(newAttribution));
+    } else {
+      const saved = localStorage.getItem(STORE_ATTRIBUTION_KEY);
+      if (saved) {
+        setAttribution(JSON.parse(saved));
+      }
+    }
+  }, []);
 
   // Fetch cart when user logs in, or load guest cart from localStorage
   useEffect(() => {
@@ -31,11 +59,11 @@ export const CartProvider = ({ children }) => {
         const parsedCart = JSON.parse(savedCart);
         setCart(parsedCart);
       } else {
-        setCart({ items: [], totalPrice: 0 });
+        setCart({ items: [], totalPrice: 0, storeId: null });
       }
     } catch (err) {
       console.error('Error loading guest cart:', err);
-      setCart({ items: [], totalPrice: 0 });
+      setCart({ items: [], totalPrice: 0, storeId: null });
     }
   };
 
@@ -71,10 +99,26 @@ export const CartProvider = ({ children }) => {
     }
 
     try {
+      // RULE: Determine Store Attribution
+      let targetStoreId = attribution?.storeId;
+
+      if (!targetStoreId) {
+        // Fetch Priority 2: Highest Stock
+        const res = await axios.get(`${API_BASE_URL}/products/attribution/${productId}`);
+        targetStoreId = res.data.storeId;
+      }
+
+      // STRICT RULE: Cart is locked to ONE store
+      if (cart.storeId && cart.storeId !== targetStoreId && cart.items.length > 0) {
+        // Prevent mixing stores or trigger auto-reassignment logic
+        console.warn('Mixing stores not allowed. Reassigning to current store attribution.');
+        // Reassignment logic: We could ask user or just follow current attribution
+      }
+
       if (user && token) {
         // Logged-in user - save to database
         const res = await axios.post(`${API_BASE_URL}/cart/add`, {
-          productId, variation, quantity, price
+          productId, variation, quantity, price, storeId: targetStoreId
         }, {
           headers: { Authorization: `Bearer ${token}` }
         });
@@ -85,7 +129,7 @@ export const CartProvider = ({ children }) => {
         }
       } else {
         // Guest user - save to localStorage
-        const newCart = { ...cart };
+        const newCart = { ...cart, storeId: targetStoreId };
         const existingItemIndex = newCart.items.findIndex(
           item => item.product === productId && item.variation === variation
         );
@@ -98,6 +142,7 @@ export const CartProvider = ({ children }) => {
             product: productId,
             variation,
             quantity,
+            storeId: targetStoreId,
             price,
             ...(productDetails && { productDetails }) // Store product details for checkout display
           });

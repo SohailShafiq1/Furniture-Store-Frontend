@@ -251,6 +251,84 @@
   color: #f44336;
 }
 
+/* Store Performance Table */
+.store-performance-table {
+  background: white;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  margin-top: 16px;
+}
+
+.store-performance-table .table-header {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1.2fr 1.3fr;
+  gap: 16px;
+  padding: 16px;
+  background: #faf7f2;
+  border-bottom: 2px solid #f0f0f0;
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.store-performance-table .table-row {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1.2fr 1.3fr;
+  gap: 16px;
+  padding: 20px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  align-items: center;
+}
+
+.store-id-sub {
+  display: block;
+  font-size: 0.75rem;
+  color: #999;
+  font-family: monospace;
+  margin-top: 4px;
+}
+
+.order-stats, .revenue-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.total-orders, .total-revenue {
+  font-weight: 700;
+  color: #1a1a1a;
+  font-size: 0.95rem;
+}
+
+.completed-orders, .completed-revenue {
+  font-size: 0.8rem;
+  color: #2ea44f;
+  font-weight: 600;
+}
+
+.col-units {
+  font-weight: 600;
+  color: #444;
+}
+
+.source-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.source-tag {
+  background: #f6f8fa;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  color: #57606a;
+  font-weight: 600;
+  border: 1px solid #d0d7de;
+}
+
 /* Sales Trend */
 .sales-trend {
   display: flex;

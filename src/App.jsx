@@ -17,6 +17,7 @@ import CategoryDetailPage from './admin-panel/pages/CategoryDetailPage';
 import SubCategoryDetailPage from './admin-panel/pages/SubCategoryDetailPage';
 import HomeViewManagement from './admin-panel/pages/HomeViewManagement';
 import OrderManagement from './admin-panel/pages/OrderManagement';
+import StoreManagement from './admin-panel/pages/StoreManagement';
 import AnalyticsDashboard from './admin-panel/pages/AnalyticsDashboard';
 import ProtectedRoute from './admin-panel/components/ProtectedRoute';
 import CheckoutPage from './pages/CheckoutPage';
@@ -119,6 +120,14 @@ function App() {
           element={
             <ProtectedRoute>
               <OrderManagement />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/stores" 
+          element={
+            <ProtectedRoute>
+              <StoreManagement />
             </ProtectedRoute>
           } 
         />

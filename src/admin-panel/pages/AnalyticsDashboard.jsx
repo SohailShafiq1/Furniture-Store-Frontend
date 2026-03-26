@@ -133,6 +133,58 @@ const AnalyticsDashboard = () => {
           </div>
         </div>
 
+        {/* Store Performance Analytics */}
+        <div className="analytics-section">
+          <h2>Store Performance & Attribution</h2>
+          {analytics.storePerformance && analytics.storePerformance.length > 0 ? (
+            <div className="store-performance-table">
+              <div className="table-header">
+                <div className="col-name">Store Name</div>
+                <div className="col-orders">Orders</div>
+                <div className="col-units">Units Sold</div>
+                <div className="col-revenue">Revenue</div>
+                <div className="col-sources">Top Conversion Sources</div>
+              </div>
+              {analytics.storePerformance.map((store) => (
+                <div key={store._id} className="table-row">
+                  <div className="col-name">
+                    <strong>{store.name}</strong>
+                    <span className="store-id-sub">{store._id.substring(0, 8)}...</span>
+                  </div>
+                  <div className="col-orders">
+                    <div className="order-stats">
+                      <span className="total-orders">{store.totalOrders} total</span>
+                      <span className="completed-orders">{store.completedOrders} completed</span>
+                    </div>
+                  </div>
+                  <div className="col-units">{store.itemsSold} units</div>
+                  <div className="col-revenue">
+                    <div className="revenue-stats">
+                      <span className="total-revenue">{formatCurrency(store.revenue)}</span>
+                      <span className="completed-revenue">Paid: {formatCurrency(store.completedRevenue)}</span>
+                    </div>
+                  </div>
+                  <div className="col-sources">
+                    <div className="source-tags">
+                      {Object.entries(store.conversionSource)
+                        .filter(([_, count]) => count > 0)
+                        .sort((a, b) => b[1] - a[1])
+                        .slice(0, 3)
+                        .map(([source, count]) => (
+                          <span key={source} className="source-tag">
+                            {source}: {count}
+                          </span>
+                        ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="no-data">No store performance data available</p>
+          )}
+        </div>
+
         {/* Order Status Distribution */}
         <div className="analytics-section">
           <h2>Order Status Distribution</h2>

@@ -9,6 +9,7 @@ const ProductManagement = () => {
     const [products, setProducts] = useState([]);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
+    const [stores, setStores] = useState([]);
     
     // Search and Filter State
     const [searchTerm, setSearchTerm] = useState('');
@@ -26,7 +27,6 @@ const ProductManagement = () => {
         sku: 'SKU-' + Math.random().toString(36).substr(2, 9).toUpperCase(),
         price: '',
         discount: '0',
-        quantity: '0',
         description: '',
         categoryId: '',
         subCategoryName: '',
@@ -34,6 +34,8 @@ const ProductManagement = () => {
         collectionName: '',
         brandId: ''
     });
+    const [stockType, setStockType] = useState('Universal');
+    const [stockDistribution, setStockDistribution] = useState({ total: '0' });
     const [productImages, setProductImages] = useState([]); // Array for multiple images
 
     // Dynamic Fields (Specifications)
@@ -56,12 +58,14 @@ const ProductManagement = () => {
 
     const fetchInitialData = async () => {
         try {
-            const [catsRes, productsRes] = await Promise.all([
+            const [catsRes, productsRes, storesRes] = await Promise.all([
                 axios.get(`${apiBase}/categories/all`, config),
-                axios.get(`${apiBase}/products/all`, config)
+                axios.get(`${apiBase}/products/all`, config),
+                axios.get(`${apiBase}/admin/stores`, config)
             ]);
             setCategories(catsRes.data);
             setProducts(productsRes.data);
+            setStores(storesRes.data);
         } catch (err) {
             setError('Failed to load data');
         }
@@ -179,7 +183,6 @@ const ProductManagement = () => {
             sku: prod.sku || '',
             price: prod.price || '',
             discount: prod.discount || '0',
-            quantity: prod.quantity || '0',
             description: prod.description || '',
             categoryId: prod.category?._id || '',
             subCategoryName: prod.subCategoryName || '',
@@ -187,6 +190,20 @@ const ProductManagement = () => {
             collectionName: prod.collectionName || '',
             brandId: prod.brandId || ''
         });
+
+        // Populate stock attribution
+        setStockType(prod.stockType || 'Universal');
+        let dist = { total: prod.stockDistribution?.total || '0' };
+        if (prod.stockType === 'Manual' && prod.stockDistribution) {
+            try {
+                dist = typeof prod.stockDistribution === 'string' 
+                    ? JSON.parse(prod.stockDistribution) 
+                    : prod.stockDistribution;
+            } catch (e) {
+                dist = {};
+            }
+        }
+        setStockDistribution(dist);
         
         // Handle specifications safely
         let specs = [];
@@ -261,6 +278,9 @@ const ProductManagement = () => {
             }
             
             // Always send variations for both new and edit
+            fd.append('stockType', stockType);
+            fd.append('stockDistribution', JSON.stringify(stockDistribution));
+            
             const variationsJSON = JSON.stringify(variations);
             fd.append('specifications', JSON.stringify(specifications));
             fd.append('variations', variationsJSON);
@@ -303,6 +323,8 @@ const ProductManagement = () => {
         setExistingImages([]);
         setSpecifications([]);
         setVariations([]);
+        setStockType('Universal');
+        setStockDistribution({ total: '0' });
     };
 
     const handleDelete = async (id) => {
@@ -385,15 +407,6 @@ const ProductManagement = () => {
                                 />
                             </div>
                             <div className="form-group">
-                                <label>Available Stock</label>
-                                <input 
-                                    type="number" 
-                                    className="form-control"
-                                    value={formData.quantity} 
-                                    onChange={e => setFormData({...formData, quantity: e.target.value})}
-                                />
-                            </div>
-                            <div className="form-group">
                                 <label>Parent Category</label>
                                 <select 
                                     className="form-control"
@@ -460,6 +473,103 @@ const ProductManagement = () => {
                                onChange={e => setFormData({...formData, description: e.target.value})} 
                                required 
                             />
+                        </div>
+
+                        {/* Professional Store Stock Attribution System */}
+                        <div className="admin-stock-card">
+                            <div className="admin-card-header">
+                                <div className="header-icon-wrapper">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                                </div>
+                                <div>
+                                    <h3>Inventory & Store Attribution</h3>
+                                    <p>Configure how stock is distributed and tracked across your physical or digital locations.</p>
+                                </div>
+                            </div>
+
+                            <div className="stock-type-selector">
+                                <div className="selector-options">
+                                    <label className={`selector-btn ${stockType === 'Universal' ? 'active' : ''}`}>
+                                        <input 
+                                            type="radio" 
+                                            name="stockType" 
+                                            value="Universal" 
+                                            checked={stockType === 'Universal'} 
+                                            onChange={() => {
+                                                setStockType('Universal');
+                                                setStockDistribution({ total: '0' });
+                                            }}
+                                        />
+                                        <div className="selector-content">
+                                            <span className="title">Universal Distribution</span>
+                                            <span className="desc">Divide total stock automatically across all stores.</span>
+                                        </div>
+                                    </label>
+
+                                    <label className={`selector-btn ${stockType === 'Manual' ? 'active' : ''}`}>
+                                        <input 
+                                            type="radio" 
+                                            name="stockType" 
+                                            value="Manual" 
+                                            checked={stockType === 'Manual'} 
+                                            onChange={() => {
+                                                setStockType('Manual');
+                                                const initial = {};
+                                                stores.forEach(s => initial[s._id] = '0');
+                                                setStockDistribution(initial);
+                                            }}
+                                        />
+                                        <div className="selector-content">
+                                            <span className="title">Manual Attribution</span>
+                                            <span className="desc">Assign specific inventory levels to individual store locations.</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div className="stock-distribution-panel">
+                                {stockType === 'Universal' ? (
+                                    <div className="universal-stock-input">
+                                        <div className="form-group">
+                                            <label>Total Global Inventory</label>
+                                            <div className="input-with-icon">
+                                                <input 
+                                                    type="number" 
+                                                    className="form-control" 
+                                                    placeholder="Enter total units"
+                                                    value={stockDistribution.total || ''}
+                                                    onChange={(e) => setStockDistribution({ total: e.target.value })}
+                                                />
+                                                <span className="unit-tag">Units</span>
+                                            </div>
+                                            <p className="helper-text">This will be split equally among {stores.length} stores.</p>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="store-grid">
+                                        {stores.map(store => (
+                                            <div key={store._id} className="store-stock-item">
+                                                <div className="store-info">
+                                                    <span className="store-name">{store.name}</span>
+                                                    <span className="store-id">{store._id.substring(0, 8)}...</span>
+                                                </div>
+                                                <div className="input-with-icon mini">
+                                                    <input 
+                                                        type="number" 
+                                                        className="form-control" 
+                                                        placeholder="0"
+                                                        value={stockDistribution[store._id] || ''}
+                                                        onChange={(e) => setStockDistribution({
+                                                            ...stockDistribution,
+                                                            [store._id]: e.target.value
+                                                        })}
+                                                    />
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </section>
 
