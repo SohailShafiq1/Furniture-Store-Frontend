@@ -23,15 +23,17 @@ export default function ShopByCategory() {
 
   return (
     <section className="shop-by-category">
-      <h2 className="category-heading">Shop by Category</h2>
+      <h2 className="category-heading" data-aos="fade-up">Shop by Category</h2>
       <div className="category-grid">
-        {categories.map((cat) => {
+        {categories.map((cat, idx) => {
           const imageUrl = cat.image?.startsWith('http') ? cat.image : `${BACKEND_URL}/${cat.image}`;
           return (
             <Link 
               key={cat._id} 
               to={`/category/${cat._id}`} 
               className="category-item"
+              data-aos="zoom-in"
+              data-aos-delay={idx * 50}
             >
               <div className="category-circle">
                 <img 

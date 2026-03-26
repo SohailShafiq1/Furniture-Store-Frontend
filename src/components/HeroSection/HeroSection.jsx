@@ -2,8 +2,8 @@ import './HeroSection.css';
 
 export default function HeroSection() {
   return (
-    <section className="hero-section">
-      <div className="hero-container">
+    <section className="hero-section" data-aos="fade-in">
+      <div className="hero-container" data-aos="zoom-out" data-aos-delay="200">
         {/* Desktop Hero Image */}
         <picture className="hero-image-picture">
           <source 

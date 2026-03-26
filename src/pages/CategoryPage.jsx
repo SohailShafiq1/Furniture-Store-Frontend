@@ -339,10 +339,12 @@ export default function CategoryPage() {
           <main className="luna-products-area">
             <div className={`luna-products-grid ${viewMode}`}>
               {products.length > 0 ? (
-                products.map((product) => (
+                products.map((product, idx) => (
                   <div 
                     key={product._id} 
                     className="luna-product-card-btn"
+                    data-aos="fade-up"
+                    data-aos-delay={(idx % 4) * 100}
                     onClick={() => navigate(`/product/${categoryId}/${product._id}`)}
                     role="button"
                     tabIndex={0}

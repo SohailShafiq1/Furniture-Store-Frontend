@@ -1,4 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 import HomePage from './pages/HomePage';
 import CategoryPage from './pages/CategoryPage';
 import ProductDetailPage from './pages/ProductDetailPage';
@@ -22,6 +25,16 @@ import MyOrdersPage from './pages/MyOrdersPage';
 import ProfileSettingsPage from './pages/ProfileSettingsPage';
 
 function App() {
+  useEffect(() => {
+    AOS.init({
+      duration: 1000, // Slightly slower for more premium feel
+      easing: 'ease-in-out',
+      once: true,
+      offset: 150, // Higher offset so it doesn't trigger too early while scrolling
+      delay: 50 // Adds a tiny base delay for stability
+    });
+  }, []);
+
   return (
     <div className="app">
       <Routes>

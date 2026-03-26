@@ -22,16 +22,16 @@ export default function ProductCarousel({ title, products }) {
   };
 
   return (
-    <section className="product-carousel">
+    <section className="product-carousel" data-aos="fade-up">
       <div className="product-carousel-container">
         <div className="product-carousel-header">
-          <h2 className="product-carousel-title">{title}</h2>
+          <h2 className="product-carousel-title" data-aos="fade-right">{title}</h2>
           <a href="#" className="view-all-link">View all</a>
         </div>
         <div className="products-scroll-container">
           <div className="products-grid">
-            {products.map((product) => (
-              <div key={product.id} className="product-card">
+            {products.map((product, idx) => (
+              <div key={product.id} className="product-card" data-aos="fade-up" data-aos-delay={idx * 100}>
                 <div className="product-image-wrapper">
                   <img 
                     src={product.image} 

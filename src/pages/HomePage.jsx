@@ -29,7 +29,7 @@ const DynamicPromoBanners = ({ homeContent }) => {
           gap: '24px'
         }}>
           {homeContent.promotionPhotos.map((banner, idx) => (
-            <div key={idx} style={{
+            <div key={idx} data-aos="fade-up" data-aos-delay={idx * 100} style={{
               display: 'flex',
               flexDirection: 'column',
               backgroundColor: 'var(--color-background)',
