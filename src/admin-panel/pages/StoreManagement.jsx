@@ -2,17 +2,24 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAdminAuth } from '../context/AdminAuthContext';
 import { BACKEND_URL } from '../../config/api';
+import Modal from '../../components/Modal/Modal';
 import './StoreManagement.css';
 
 const StoreManagement = () => {
   const [stores, setStores] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [loadingProducts, setLoadingProducts] = useState(false);
+  const [selectedStore, setSelectedStore] = useState(null);
+  const [showProductModal, setShowProductModal] = useState(false);
+  const [copyStatus, setCopyStatus] = useState({});
+  
   const [name, setName] = useState('');
   const [location, setLocation] = useState('');
   const [isDefault, setIsDefault] = useState(false);
   const { token: adminToken } = useAdminAuth();
 
   const fetchStores = async () => {
-    if (!adminToken) return; // Prevent extra calls without token
+    if (!adminToken) return;
     try {
       const res = await axios.get(`${BACKEND_URL}/api/admin/stores`, {
         headers: { 
@@ -29,6 +36,41 @@ const StoreManagement = () => {
   useEffect(() => {
     fetchStores();
   }, [adminToken]);
+
+  const handleCopyProductLink = (product, storeId) => {
+    const frontendUrl = window.location.origin;
+    // Fix route mismatch by including category ID as required by App.jsx
+    const link = `${frontendUrl}/product/${product.category}/${product._id}?store=${storeId}`;
+    
+    // Create temporary input for cross-browser copy support
+    const el = document.createElement('textarea');
+    el.value = link;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+
+    setCopyStatus({ ...copyStatus, [product._id]: true });
+    setTimeout(() => {
+      setCopyStatus({ ...copyStatus, [product._id]: false });
+    }, 2000);
+  };
+
+  const openStoreProducts = async (store) => {
+    setSelectedStore(store);
+    setShowProductModal(true);
+    setLoadingProducts(true);
+    try {
+      const res = await axios.get(`${BACKEND_URL}/api/admin/store-products/${store._id}`, {
+        headers: { Authorization: `Bearer ${adminToken}` }
+      });
+      setProducts(res.data);
+    } catch (err) {
+      console.error('Error fetching store products:', err);
+    } finally {
+      setLoadingProducts(false);
+    }
+  };
 
   const handleAddStore = async (e) => {
     e.preventDefault();
@@ -117,7 +159,7 @@ const StoreManagement = () => {
           <tbody>
             {stores.length > 0 ? (
               stores.map(store => (
-                <tr key={store._id}>
+                <tr key={store._id} className="store-row clickable" onClick={() => openStoreProducts(store)}>
                   <td><strong>{store.name}</strong></td>
                   <td>{store.location || 'N/A'}</td>
                   <td style={{ textAlign: 'center' }}>
@@ -128,11 +170,26 @@ const StoreManagement = () => {
                     )}
                   </td>
                   <td style={{ textAlign: 'center' }}>
-                    <span className="attribution-code">?store={store._id}</span>
+                    <div className="link-group">
+                      <span className="attribution-code">?store={store._id}</span>
+                      <button 
+                        className="copy-mini-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const frontendUrl = window.location.origin;
+                          navigator.clipboard.writeText(`${frontendUrl}?store=${store._id}`);
+                        }}
+                      >
+                        Copy Home Link
+                      </button>
+                    </div>
                   </td>
                   <td style={{ textAlign: 'right' }}>
                     <button 
-                      onClick={() => handleDeleteStore(store._id)} 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteStore(store._id);
+                      }} 
                       className="store-delete-btn"
                     >
                       Delete
@@ -150,6 +207,49 @@ const StoreManagement = () => {
           </tbody>
         </table>
       </div>
+
+      {showProductModal && selectedStore && (
+        <div className="store-products-overlay" onClick={() => setShowProductModal(false)}>
+          <div className="store-products-modal" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Ad Links for: {selectedStore.name}</h2>
+              <button className="close-btn" onClick={() => setShowProductModal(false)}>×</button>
+            </div>
+            <div className="modal-body">
+              <p className="modal-instruction">Copy these direct product links to track attribution for specific product ads.</p>
+              <div className="product-links-list">
+                {loadingProducts ? (
+                  <div className="modal-loading">Loading store products...</div>
+                ) : products.length > 0 ? (
+                  products.map(product => (
+                    <div key={product._id} className="product-link-item">
+                      <div className="product-info">
+                        <img 
+                          src={product.images && product.images[0] ? (product.images[0].startsWith('http') ? product.images[0] : `${BACKEND_URL}/${product.images[0]}`) : '/placeholder.png'} 
+                          alt={product.name} 
+                          className="product-mini-img"
+                        />
+                        <div className="product-details">
+                          <span className="product-name">{product.name}</span>
+                          <span className="product-price">${product.price} ({product.stock} in stock)</span>
+                        </div>
+                      </div>
+                      <button 
+                        className={`copy-link-btn ${copyStatus[product._id] ? 'copied' : ''}`}
+                        onClick={() => handleCopyProductLink(product, selectedStore._id)}
+                      >
+                        {copyStatus[product._id] ? '✓ Link Copied' : 'Copy Ad Link'}
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <p className="no-products">No stock assigned to this store yet.</p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
