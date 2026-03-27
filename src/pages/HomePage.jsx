@@ -16,35 +16,37 @@ import Footer from '../components/Footer/Footer';
 
 // Dynamic PromoBanners Component that accepts custom data
 const DynamicPromoBanners = ({ homeContent }) => {
+  const navigate = useNavigate();
+  
   if (!homeContent?.promotionPhotos || homeContent.promotionPhotos.length === 0) {
     return null;
   }
 
   return (
-    <div style={{ width: '100%', padding: '60px 40px', backgroundColor: 'var(--color-secondary)' }}>
+    <div style={{ width: '100%', padding: '60px 40px', backgroundColor: 'var(--color-background)' }}>
       <div style={{ maxWidth: '1480px', margin: '0 auto' }}>
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(2, 1fr)',
-          gap: '24px'
+          gap: '32px'
         }}>
           {homeContent.promotionPhotos.map((banner, idx) => (
             <div key={idx} data-aos="fade-up" data-aos-delay={idx * 100} style={{
               display: 'flex',
               flexDirection: 'column',
-              backgroundColor: 'var(--color-background)',
               overflow: 'hidden',
-              borderRadius: '4px',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-              border: '1px solid var(--color-border)'
+              borderRadius: '8px',
+              transition: 'all 0.3s ease',
+              height: '100%'
             }}>
+              {/* Banner Image */}
               <div style={{
                 position: 'relative',
                 width: '100%',
-                paddingBottom: '66.67%',
+                paddingBottom: '75%',
                 overflow: 'hidden',
-                backgroundColor: 'var(--color-secondary)'
+                backgroundColor: 'var(--color-secondary)',
+                borderRadius: '8px 8px 0 0'
               }}>
                 {banner.image && (
                   <img
@@ -62,16 +64,79 @@ const DynamicPromoBanners = ({ homeContent }) => {
                   />
                 )}
               </div>
-              <div style={{ padding: '24px' }}>
+
+              {/* Banner Content */}
+              <div style={{
+                padding: '32px 24px',
+                backgroundColor: '#F5EFE7',
+                borderRadius: '0 0 8px 8px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '12px',
+                flex: 1,
+                alignItems: 'center',
+                textAlign: 'center'
+              }}>
                 {banner.heading && (
-                  <h3 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--color-primary)', margin: '0 0 8px 0' }}>
+                  <h3 style={{
+                    fontSize: '28px',
+                    fontWeight: '700',
+                    color: 'var(--color-primary)',
+                    margin: '0 0 8px 0',
+                    lineHeight: '1.2'
+                  }}>
                     {banner.heading}
                   </h3>
                 )}
+
                 {banner.subHeading && (
-                  <p style={{ fontSize: '14px', color: 'var(--color-text-secondary)', margin: '0', lineHeight: '1.4' }}>
+                  <p style={{
+                    fontSize: '16px',
+                    color: '#333',
+                    margin: '0 0 16px 0',
+                    lineHeight: '1.5'
+                  }}>
                     {banner.subHeading}
                   </p>
+                )}
+
+                {banner.buttonName && (
+                  <button
+                    onClick={() => {
+                      if (banner.buttonSubcategory) {
+                        navigate(`/category/${homeContent.selectedCategory}`, {
+                          state: { subcategoryFilter: banner.buttonSubcategory }
+                        });
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }
+                    }}
+                    style={{
+                      padding: '12px 32px',
+                      backgroundColor: 'var(--color-accent)',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '4px',
+                      fontSize: '15px',
+                      fontWeight: '700',
+                      cursor: banner.buttonSubcategory ? 'pointer' : 'default',
+                      transition: 'all 0.3s ease',
+                      marginTop: '8px'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (banner.buttonSubcategory) {
+                        e.currentTarget.style.backgroundColor = 'var(--color-accent-hover)';
+                        e.currentTarget.style.transform = 'translateY(-2px)';
+                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(193, 18, 31, 0.3)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'var(--color-accent)';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
+                  >
+                    {banner.buttonName}
+                  </button>
                 )}
               </div>
             </div>

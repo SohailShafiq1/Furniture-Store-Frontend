@@ -6,8 +6,8 @@ import './HomeViewManagement.css';
 const HomeViewManagement = () => {
   const [homeContent, setHomeContent] = useState({
     promotionPhotos: [
-      { image: null, heading: '', subHeading: '' },
-      { image: null, heading: '', subHeading: '' },
+      { image: null, heading: '', subHeading: '', buttonName: '', buttonSubcategory: '' },
+      { image: null, heading: '', subHeading: '', buttonName: '', buttonSubcategory: '' },
     ],
     selectedCategory: '',
     selectedSubCategory: '',
@@ -51,7 +51,7 @@ const HomeViewManagement = () => {
   useEffect(() => {
     const fetchSavedContent = async () => {
       try {
-        const res = await axios.get(`${apiEndpoint}/home/get-all-content`);
+        const res = await axios.get(`${apiEndpoint}/home-content/get-all-content`);
         setSavedContent(res.data || []);
       } catch (err) {
         console.log('No saved content yet');
@@ -209,12 +209,16 @@ const HomeViewManagement = () => {
       }
       formData.append('promotionHeading1', homeContent.promotionPhotos[0].heading);
       formData.append('promotionSubHeading1', homeContent.promotionPhotos[0].subHeading);
+      formData.append('promotionButtonName1', homeContent.promotionPhotos[0].buttonName);
+      formData.append('promotionButtonSubcategory1', homeContent.promotionPhotos[0].buttonSubcategory);
 
       if (homeContent.promotionPhotos[1].image instanceof File) {
         formData.append('promotionPhoto2', homeContent.promotionPhotos[1].image);
       }
       formData.append('promotionHeading2', homeContent.promotionPhotos[1].heading);
       formData.append('promotionSubHeading2', homeContent.promotionPhotos[1].subHeading);
+      formData.append('promotionButtonName2', homeContent.promotionPhotos[1].buttonName);
+      formData.append('promotionButtonSubcategory2', homeContent.promotionPhotos[1].buttonSubcategory);
 
       // Add category, sub-category, and products
       formData.append('selectedCategory', homeContent.selectedCategory);
@@ -228,8 +232,8 @@ const HomeViewManagement = () => {
       }
 
       const url = editingId 
-        ? `${apiEndpoint}/home/update-content/${editingId}`
-        : `${apiEndpoint}/home/save-content`;
+        ? `${apiEndpoint}/home-content/update-content/${editingId}`
+        : `${apiEndpoint}/home-content/save-content`;
       const method = editingId ? 'put' : 'post';
 
       await axios[method](url, formData, {
@@ -256,7 +260,7 @@ const HomeViewManagement = () => {
   // Fetch saved content
   const fetchSavedContent = async () => {
     try {
-      const res = await axios.get(`${apiEndpoint}/home/get-all-content`);
+      const res = await axios.get(`${apiEndpoint}/home-content/get-all-content`);
       setSavedContent(res.data || []);
     } catch (err) {
       console.log('No saved content yet');
@@ -306,7 +310,7 @@ const HomeViewManagement = () => {
     
     try {
       setLoading(true);
-      await axios.delete(`${apiEndpoint}/home/delete-content/${contentId}`, {
+      await axios.delete(`${apiEndpoint}/home-content/delete-content/${contentId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setMessage('Content deleted successfully!');
@@ -357,7 +361,7 @@ const HomeViewManagement = () => {
         <section className="promotion-section">
           <h2>Promotion Photos (Banner Items)</h2>
           <p className="section-subtitle">
-            Add 2 promotion items with photo, heading, and sub-heading
+            Add 2 promotion items with photo, heading, sub-heading, button name, and target sub-category
             {editingId && <span> (Photos are optional - existing ones will be kept)</span>}
           </p>
 
@@ -400,6 +404,31 @@ const HomeViewManagement = () => {
                     value={photo.subHeading}
                     onChange={(e) => handlePromotionTextChange(index, 'subHeading', e.target.value)}
                   />
+                </div>
+
+                <div className="form-group">
+                  <label>Button Name</label>
+                  <input
+                    type="text"
+                    placeholder="e.g., Shop Mattresses"
+                    value={photo.buttonName}
+                    onChange={(e) => handlePromotionTextChange(index, 'buttonName', e.target.value)}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Button Redirects to Sub-Category</label>
+                  <select
+                    value={photo.buttonSubcategory}
+                    onChange={(e) => handlePromotionTextChange(index, 'buttonSubcategory', e.target.value)}
+                  >
+                    <option value="">Select a sub-category (optional)</option>
+                    {subCategories.map(subCat => (
+                      <option key={subCat._id} value={subCat.name}>
+                        {subCat.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
             ))}
