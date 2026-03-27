@@ -4,6 +4,7 @@ import { useAdminAuth } from '../context/AdminAuthContext';
 import { BACKEND_URL } from '../../config/api';
 import Modal from '../../components/Modal/Modal';
 import InspirationManagement from './InspirationManagement';
+import NewsManagement from './NewsManagement';
 import './StoreManagement.css';
 
 const StoreManagement = () => {
@@ -13,7 +14,7 @@ const StoreManagement = () => {
   const [selectedStore, setSelectedStore] = useState(null);
   const [showProductModal, setShowProductModal] = useState(false);
   const [copyStatus, setCopyStatus] = useState({});
-  const [activeTab, setActiveTab] = useState('stores'); // 'stores' or 'inspirations'
+  const [activeTab, setActiveTab] = useState('stores'); // 'stores', 'inspirations' or 'news'
   
   const [name, setName] = useState('');
   const [location, setLocation] = useState('');
@@ -128,6 +129,12 @@ const StoreManagement = () => {
           onClick={() => setActiveTab('inspirations')}
         >
           Add Inspiration
+        </button>
+        <button
+          className={`store-mgmt-tab ${activeTab === 'news' ? 'active' : ''}`}
+          onClick={() => setActiveTab('news')}
+        >
+          Add News
         </button>
       </div>
 
@@ -277,6 +284,11 @@ const StoreManagement = () => {
       {/* Inspirations Tab */}
       {activeTab === 'inspirations' && (
         <InspirationManagement />
+      )}
+
+      {/* News Tab */}
+      {activeTab === 'news' && (
+        <NewsManagement />
       )}
     </div>
   );

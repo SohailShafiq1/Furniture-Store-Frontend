@@ -7,6 +7,8 @@ import CategoryPage from './pages/CategoryPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import InspirationPage from './pages/InspirationPage';
 import InspirationDetailPage from './pages/InspirationDetailPage';
+import NewsPage from './pages/NewsPage';
+import NewsDetailPage from './pages/NewsDetailPage';
 import './App.css';
 import './admin-panel/admin-panel.css';
 import AdminLogin from './admin-panel/pages/AdminLogin';
@@ -47,6 +49,8 @@ function App() {
         <Route path="/product/:categoryId/:productId" element={<ProductDetailPage />} />
         <Route path="/inspiration" element={<InspirationPage />} />
         <Route path="/inspiration/:inspirationId" element={<InspirationDetailPage />} />
+        <Route path="/news" element={<NewsPage />} />
+        <Route path="/news/:newsId" element={<NewsDetailPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/order-success/:sessionId" element={<OrderSuccessPage />} />
         <Route path="/my-orders" element={<MyOrdersPage />} />
