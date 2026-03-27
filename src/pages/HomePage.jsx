@@ -341,7 +341,7 @@ export default function HomePage() {
     const fetchHomeContent = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`${API_BASE_URL}/home/get-all-content`);
+        const res = await axios.get(`${API_BASE_URL}/home-content/get-all-content`);
         // Filter only visible content and sort by createdAt
         const visibleContent = (res.data || [])
           .filter(item => item.isVisible)
