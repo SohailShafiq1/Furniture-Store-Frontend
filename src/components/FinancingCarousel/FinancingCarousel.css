@@ -1,0 +1,187 @@
+.financing-carousel {
+  width: 100%;
+  padding: 60px 20px;
+  background-color: var(--color-secondary);
+  overflow: hidden;
+}
+
+.financing-carousel-container {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.financing-carousel-header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 40px;
+  max-width: 1480px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 20px;
+}
+
+.financing-carousel-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+.financing-carousel-track {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.financing-carousel-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  animation: slideLeft 45s linear infinite;
+  width: max-content;
+  padding: 0 20px;
+}
+
+@keyframes slideLeft {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-33.333%);
+  }
+}
+
+.financing-carousel-content:hover {
+  animation-play-state: paused;
+}
+
+.financing-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  background-color: var(--color-background);
+  padding: 32px 24px;
+  border-radius: 14px;
+  border: 2px solid var(--color-border);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  min-width: 200px;
+  flex-shrink: 0;
+}
+
+.financing-carousel-content:hover .financing-card {
+  transform: none;
+}
+
+.financing-logo-wrapper {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80px;
+}
+
+.financing-logo {
+  font-size: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1;
+}
+
+.financing-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  text-align: center;
+  margin: 0;
+  word-break: break-word;
+  line-height: 1.3;
+}
+
+.financing-description {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  text-align: center;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .financing-card {
+    padding: 24px 16px;
+    gap: 12px;
+    min-width: 170px;
+  }
+
+  .financing-logo {
+    font-size: 2.8rem;
+  }
+
+  .financing-name {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .financing-carousel {
+    padding: 40px 16px;
+  }
+
+  .financing-carousel-title {
+    font-size: 1.6rem;
+  }
+
+  .financing-carousel-header {
+    margin-bottom: 30px;
+  }
+
+  .financing-card {
+    padding: 20px 12px;
+    gap: 10px;
+    min-width: 140px;
+  }
+
+  .financing-logo {
+    font-size: 2.2rem;
+    min-height: 60px;
+  }
+
+  .financing-name {
+    font-size: 0.8rem;
+  }
+
+  .financing-description {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .financing-carousel {
+    padding: 30px 12px;
+  }
+
+  .financing-carousel-title {
+    font-size: 1.4rem;
+  }
+
+  .financing-card {
+    padding: 16px 10px;
+    gap: 8px;
+    min-width: 120px;
+  }
+
+  .financing-logo {
+    font-size: 2rem;
+    min-height: 50px;
+  }
+
+  .financing-name {
+    font-size: 0.75rem;
+  }
+}

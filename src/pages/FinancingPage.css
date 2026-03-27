@@ -1,0 +1,462 @@
+.financing-page {
+  background-color: var(--color-background);
+  min-height: 100vh;
+}
+
+/* Hero Section */
+.financing-hero {
+  background: url('/banner-hero.webp') center/cover no-repeat;
+  padding: 100px 40px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  min-height: 350px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.financing-hero-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.financing-hero h1 {
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: #FF6B35;
+  margin-bottom: 30px;
+  letter-spacing: -1px;
+  text-transform: capitalize;
+}
+
+.financing-hero-icon {
+  font-size: 4rem;
+  opacity: 0.9;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+/* Easy Financing Section */
+.easy-financing {
+  max-width: 1000px;
+  margin: 80px auto;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.section-tag {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--color-accent);
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+.easy-financing h2 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin-bottom: 30px;
+  line-height: 1.3;
+}
+
+.easy-financing p {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  line-height: 1.8;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Financing Options */
+/* Now handled by FinancingCarousel component */
+
+/* How It Works */
+.how-it-works {
+  max-width: 1200px;
+  margin: 80px auto;
+  padding: 0 20px;
+}
+
+.how-it-works h2 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.step-card {
+  background-color: var(--color-background);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.step-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+}
+
+.step-image-wrapper {
+  width: 100%;
+  aspect-ratio: 1 / 0.7;
+  background-color: #F5EFE7;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.step-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.step-bottom {
+  padding: 32px 24px;
+  background-color: var(--color-accent);
+}
+
+.step-card h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin-bottom: 12px;
+}
+
+.step-card p {
+  color: #FFFFFF;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0;
+  opacity: 0.95;
+}
+
+/* Snap Finance Section */
+.snap-finance-section {
+  background-color: var(--color-secondary);
+  padding: 80px 20px;
+  margin: 80px 0;
+}
+
+.snap-header {
+  max-width: 1000px;
+  margin: 0 auto 60px;
+  text-align: center;
+}
+
+.snap-header h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1F4C4C;
+  margin-bottom: 20px;
+}
+
+.snap-header p {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  line-height: 1.8;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.snap-details {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.snap-left {
+  display: flex;
+  justify-content: center;
+}
+
+.snap-logo-box {
+  background-color: var(--color-background);
+  border: 3px solid var(--color-border);
+  border-radius: 16px;
+  padding: 60px 40px;
+  width: 100%;
+  max-width: 350px;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.snap-logo-placeholder {
+  font-size: 5rem;
+  text-align: center;
+}
+
+.snap-right h3 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin-bottom: 20px;
+  line-height: 1.3;
+}
+
+.location-label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.snap-features {
+  list-style: none;
+  margin-bottom: 30px;
+}
+
+.snap-features li {
+  padding: 12px 0;
+  color: var(--color-primary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.snap-features li:before {
+  content: '●';
+  color: var(--color-accent);
+  font-weight: bold;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.apply-now-btn {
+  padding: 14px 32px;
+  background-color: var(--color-background);
+  color: var(--color-primary);
+  border: 2px solid var(--color-primary);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+}
+
+.apply-now-btn:hover {
+  background-color: var(--color-primary);
+  color: var(--color-background);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Conditions Section */
+.conditions-section {
+  max-width: 1000px;
+  margin: 80px auto;
+  padding: 0 20px;
+}
+
+.condition-item {
+  margin-bottom: 16px;
+  background-color: var(--color-background);
+  border: 2px solid var(--color-border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.condition-item:hover {
+  border-color: var(--color-accent);
+}
+
+.condition-toggle {
+  width: 100%;
+  padding: 20px 24px;
+  background-color: var(--color-background);
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+  position: relative;
+}
+
+.condition-toggle:hover {
+  background-color: var(--color-secondary);
+}
+
+.condition-toggle.active {
+  background-color: var(--color-secondary);
+  color: var(--color-accent);
+}
+
+.condition-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.toggle-arrow {
+  margin-left: auto;
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.condition-toggle.active .toggle-arrow {
+  transform: rotate(180deg);
+}
+
+.condition-content {
+  padding: 0 24px 24px;
+  background-color: var(--color-secondary);
+  border-top: 1px solid var(--color-border);
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.condition-content p {
+  color: var(--color-text-secondary);
+  line-height: 1.8;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .financing-hero h1 {
+    font-size: 2rem;
+  }
+
+  .financing-hero-icon {
+    font-size: 2.5rem;
+  }
+
+  .easy-financing h2 {
+    font-size: 1.8rem;
+  }
+
+  .options-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 15px;
+  }
+
+  .how-it-works h2 {
+    font-size: 1.6rem;
+  }
+
+  .steps-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .snap-details {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .snap-logo-box {
+    max-width: 280px;
+    padding: 40px 30px;
+  }
+
+  .snap-right h3 {
+    font-size: 1.4rem;
+  }
+
+  .financing-options {
+    padding: 40px 20px;
+  }
+
+  .conditions-section {
+    margin: 40px auto;
+  }
+
+  .snap-finance-section {
+    padding: 60px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .financing-hero {
+    padding: 50px 20px;
+  }
+
+  .financing-hero h1 {
+    font-size: 1.6rem;
+  }
+
+  .easy-financing {
+    margin: 40px auto;
+  }
+
+  .easy-financing h2 {
+    font-size: 1.4rem;
+  }
+
+  .section-tag {
+    font-size: 0.75rem;
+  }
+
+  .options-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .option-logo {
+    font-size: 2rem;
+  }
+
+  .step-card h3 {
+    font-size: 1rem;
+  }
+
+  .snap-right h3 {
+    font-size: 1.2rem;
+  }
+
+  .condition-toggle {
+    padding: 16px 16px;
+    font-size: 0.9rem;
+  }
+
+  .condition-content {
+    padding: 0 16px 16px;
+  }
+}

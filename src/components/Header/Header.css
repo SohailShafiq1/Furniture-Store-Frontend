@@ -212,10 +212,19 @@
   flex-shrink: 0;
 }
 
-.financing-text {
+.financing-link {
   font-size: 13px;
   color: #555;
   white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  font-weight: 500;
+}
+
+.financing-link:hover {
+  color: var(--color-accent);
+  text-decoration: underline;
 }
 
 .luna-premium-btn {

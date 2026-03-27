@@ -128,7 +128,7 @@ export default function Header() {
       <div className="header-nav-row">
         <Navigation activeMenu={activeMenu} onCategoryHover={setActiveMenu} />
         <div className="nav-row-right">
-          <span className="financing-text">Financing / Lease to Own</span>
+          <Link to="/financing" className="financing-link">Financing / Lease to Own</Link>
           <button className="luna-premium-btn">Luna Premium</button>
         </div>
       </div>
