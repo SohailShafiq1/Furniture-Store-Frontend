@@ -49,6 +49,10 @@ const CheckoutPage = () => {
     closeModal();
   };
 
+  const handleShopPayRedirect = () => {
+    window.location.href = 'https://shop.app/checkout/70294831400/cn/hWNALQaLzoPDaXKClxvrGQZo/en-us/shoppay_login?_cs=3.AMPS&_r=AQABhJnE0Q6d8xdadaJ9zbkvPQ7O_-5J9WDqTwN3WoXeaXU&redirect_source=direct_checkout_cart&tracking_unique=54d14bfd-b392-4631-80c3-7d52a566ccbf&tracking_visit=bc86648d-209a-4fa6-9a98-8d2296b8d750';
+  };
+
   const handleCheckout = async (e) => {
     e.preventDefault();
     
@@ -220,21 +224,6 @@ const CheckoutPage = () => {
                 </div>
 
                 <div 
-                  className={`payment-group-option ${paymentMethod === 'GooglePay' ? 'selected' : ''}`}
-                  onClick={() => setPaymentMethod('GooglePay')}
-                >
-                  <div className="payment-radio-wrapper">
-                    <input type="radio" name="paymentMethod" value="GooglePay" checked={paymentMethod === 'GooglePay'} readOnly />
-                    <div className="payment-labels">
-                      <span className="payment-main-label">Google Pay</span>
-                    </div>
-                  </div>
-                  <div className="payment-logos">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/f/f2/Google_Pay_Logo.svg" alt="Google Pay" />
-                  </div>
-                </div>
-
-                <div 
                   className={`payment-group-option ${paymentMethod === 'ApplePay' ? 'selected' : ''}`}
                   onClick={() => setPaymentMethod('ApplePay')}
                 >
@@ -321,6 +310,13 @@ const CheckoutPage = () => {
                 <span>${cart.totalPrice.toFixed(2)}</span>
               </div>
             </div>
+            <button 
+              type="button" 
+              className="shop-pay-btn"
+              onClick={handleShopPayRedirect}
+            >
+              <span style={{ color: 'white', fontWeight: '600' }}>shop</span> Pay
+            </button>
           </aside>
         </div>
 

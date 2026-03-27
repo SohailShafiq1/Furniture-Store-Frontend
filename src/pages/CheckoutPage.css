@@ -334,6 +334,36 @@
   cursor: not-allowed;
 }
 
+.shop-pay-btn {
+  width: 100%;
+  padding: 16px 32px;
+  background-color: #5A31F4;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 12px;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.shop-pay-btn:hover {
+  background-color: #4a27d1;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(90, 49, 244, 0.3);
+}
+
+.shop-pay-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(90, 49, 244, 0.2);
+}
+
 @media (max-width: 900px) {
   .checkout-layout {
     flex-direction: column-reverse;
