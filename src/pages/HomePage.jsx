@@ -103,8 +103,8 @@ const DynamicPromoBanners = ({ homeContent }) => {
                 {banner.buttonName && (
                   <button
                     onClick={() => {
-                      if (banner.buttonSubcategory) {
-                        navigate(`/category/${homeContent.selectedCategory}`, {
+                      if (banner.buttonSubcategory && homeContent.selectedCategory) {
+                        navigate(`/category/${homeContent.selectedCategory._id}`, {
                           state: { subcategoryFilter: banner.buttonSubcategory }
                         });
                         window.scrollTo({ top: 0, behavior: 'smooth' });
