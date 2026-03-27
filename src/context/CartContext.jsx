@@ -91,7 +91,7 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  const addToCart = async (productId, variation, quantity, price, productDetails = null) => {
+  const addToCart = async (productId, variation, quantity, price, productDetails = null, selectedColor = null) => {
     // Allow both logged-in and guest users
     if (!productId) {
       console.error('Invalid product');
@@ -118,7 +118,7 @@ export const CartProvider = ({ children }) => {
       if (user && token) {
         // Logged-in user - save to database
         const res = await axios.post(`${API_BASE_URL}/cart/add`, {
-          productId, variation, quantity, price, storeId: targetStoreId
+          productId, variation, quantity, price, storeId: targetStoreId, color: selectedColor
         }, {
           headers: { Authorization: `Bearer ${token}` }
         });
@@ -131,7 +131,7 @@ export const CartProvider = ({ children }) => {
         // Guest user - save to localStorage
         const newCart = { ...cart, storeId: targetStoreId };
         const existingItemIndex = newCart.items.findIndex(
-          item => item.product === productId && item.variation === variation
+          item => item.product === productId && item.variation === variation && item.color === selectedColor
         );
 
         if (existingItemIndex > -1) {
@@ -141,6 +141,7 @@ export const CartProvider = ({ children }) => {
             _id: `guest_${Date.now()}`,
             product: productId,
             variation,
+            color: selectedColor,
             quantity,
             storeId: targetStoreId,
             price,

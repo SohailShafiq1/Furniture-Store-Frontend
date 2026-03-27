@@ -41,6 +41,54 @@ const ProductManagement = () => {
     // Dynamic Fields (Specifications)
     const [specifications, setSpecifications] = useState([]);
     
+    // Global Specifications - Colors (with hex codes)
+    const predefinedColors = {
+        'Red': '#C1121F',
+        'Blue': '#007AFF',
+        'Green': '#34C759',
+        'Yellow': '#FFCC00',
+        'Orange': '#FF9500',
+        'Purple': '#AF52DE',
+        'Pink': '#FF1493',
+        'Brown': '#8B4513',
+        'Black': '#000000',
+        'White': '#FFFFFF',
+        'Gray': '#A9A9A9',
+        'Beige': '#F5F5DC',
+        'Navy': '#000080',
+        'Teal': '#008080',
+        'Gold': '#FFD700',
+        'Silver': '#C0C0C0',
+        'Cream': '#FFFDD0',
+        'Charcoal': '#36454F',
+        'Burgundy': '#800020',
+        'Olive': '#808000'
+    };
+    
+    const [customColors, setCustomColors] = useState([]);
+    const [newColorName, setNewColorName] = useState('');
+    const [newColorHex, setNewColorHex] = useState('#000000');
+    const [selectedColors, setSelectedColors] = useState([]);
+    
+    // Global Specifications - Dimensions
+    const [dimensions, setDimensions] = useState({
+        overallDimensions: '',
+        itemWeight: '',
+        unitWidth: '',
+        unitDepth: '',
+        unitHeight: '',
+        itemsPerCase: '',
+        shippingWeight: '',
+        cartonDepth: '',
+        cartonHeight: '',
+        cartonWidth: ''
+    });
+    
+    // Custom Dimensions
+    const [customDimensions, setCustomDimensions] = useState([]);
+    const [newDimensionLabel, setNewDimensionLabel] = useState('');
+    const [newDimensionValue, setNewDimensionValue] = useState('');
+    
     // Product Variations
     const [variations, setVariations] = useState([]);
     
@@ -227,6 +275,74 @@ const ProductManagement = () => {
         }
         setVariations(vars);
         
+        // Handle selectedColors safely
+        let colors = [];
+        try {
+            colors = typeof prod.selectedColors === 'string' 
+                ? JSON.parse(prod.selectedColors) 
+                : (prod.selectedColors || []);
+        } catch (e) {
+            colors = [];
+        }
+        setSelectedColors(colors);
+        
+        // Handle customColors safely
+        let customCols = [];
+        try {
+            customCols = typeof prod.customColors === 'string' 
+                ? JSON.parse(prod.customColors) 
+                : (prod.customColors || []);
+            console.log('Loaded customColors from product:', customCols);
+        } catch (e) {
+            console.log('Error parsing customColors:', e);
+            customCols = [];
+        }
+        setCustomColors(customCols);
+        
+        // Handle dimensions safely
+        let dims = {
+            overallDimensions: '',
+            itemWeight: '',
+            unitWidth: '',
+            unitDepth: '',
+            unitHeight: '',
+            itemsPerCase: '',
+            shippingWeight: '',
+            cartonDepth: '',
+            cartonHeight: '',
+            cartonWidth: ''
+        };
+        try {
+            dims = typeof prod.dimensions === 'string' 
+                ? JSON.parse(prod.dimensions) 
+                : (prod.dimensions || dims);
+        } catch (e) {
+            dims = {
+                overallDimensions: '',
+                itemWeight: '',
+                unitWidth: '',
+                unitDepth: '',
+                unitHeight: '',
+                itemsPerCase: '',
+                shippingWeight: '',
+                cartonDepth: '',
+                cartonHeight: '',
+                cartonWidth: ''
+            };
+        }
+        setDimensions(dims);
+        
+        // Handle customDimensions safely
+        let customDims = [];
+        try {
+            customDims = typeof prod.customDimensions === 'string' 
+                ? JSON.parse(prod.customDimensions) 
+                : (prod.customDimensions || []);
+        } catch (e) {
+            customDims = [];
+        }
+        setCustomDimensions(customDims);
+        
         // Load existing images
         const existingImgs = prod.images && prod.images.length > 0 
             ? prod.images 
@@ -283,7 +399,15 @@ const ProductManagement = () => {
             
             const variationsJSON = JSON.stringify(variations);
             fd.append('specifications', JSON.stringify(specifications));
+            fd.append('selectedColors', JSON.stringify(selectedColors));
+            fd.append('customColors', JSON.stringify(customColors));
+            fd.append('dimensions', JSON.stringify(dimensions));
+            fd.append('customDimensions', JSON.stringify(customDimensions));
             fd.append('variations', variationsJSON);
+            
+            console.log('Submitting customColors:', customColors);
+            console.log('Submitting selectedColors:', selectedColors);
+            console.log('Submitting customDimensions:', customDimensions);
             
             console.log('Submitting with variations:', variations, 'JSON:', variationsJSON);
 
@@ -323,6 +447,25 @@ const ProductManagement = () => {
         setExistingImages([]);
         setSpecifications([]);
         setVariations([]);
+        setSelectedColors([]);
+        setNewColorName('');
+        setNewColorHex('#000000');
+        setCustomColors([]);
+        setDimensions({
+            overallDimensions: '',
+            itemWeight: '',
+            unitWidth: '',
+            unitDepth: '',
+            unitHeight: '',
+            itemsPerCase: '',
+            shippingWeight: '',
+            cartonDepth: '',
+            cartonHeight: '',
+            cartonWidth: ''
+        });
+        setCustomDimensions([]);
+        setNewDimensionLabel('');
+        setNewDimensionValue('');
         setStockType('Universal');
         setStockDistribution({ total: '0' });
     };
@@ -572,6 +715,349 @@ const ProductManagement = () => {
                             </div>
                         </div>
                     </section>
+
+                    {/* Colors Section */}
+                    <div className="spec-container" style={{ marginBottom: '2rem', padding: '30px', background: '#f8f8f8', borderRadius: '12px', border: '1px solid #e0e0e0' }}>
+                        <div style={{ marginBottom: '1.5rem' }}>
+                            <h3 style={{ margin: 0, color: '#0f172a', fontSize: '1.4rem', fontWeight: '800', marginBottom: '8px' }}>Available Colors</h3>
+                            <p style={{ margin: 0, color: '#64748b', fontSize: '0.9rem' }}>Select all colors available for this product</p>
+                        </div>
+
+                        {/* Predefined Colors */}
+                        <div style={{ marginBottom: '2rem' }}>
+                            <h4 style={{ margin: '0 0 12px 0', color: '#475569', fontSize: '0.95rem', fontWeight: '600' }}>Predefined Colors</h4>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '12px' }}>
+                                {Object.entries(predefinedColors).map(([colorName, hexCode]) => (
+                                    <label key={colorName} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '12px', background: 'white', borderRadius: '8px', border: selectedColors.includes(colorName) ? '2px solid #4f46e5' : '1px solid #e0e0e0', cursor: 'pointer', transition: 'all 0.2s' }}>
+                                        <div style={{
+                                            width: '50px',
+                                            height: '50px',
+                                            backgroundColor: hexCode,
+                                            borderRadius: '6px',
+                                            marginBottom: '8px',
+                                            border: hexCode === '#FFFFFF' ? '1px solid #d0d0d0' : 'none',
+                                            boxShadow: selectedColors.includes(colorName) ? '0 0 8px rgba(79, 70, 229, 0.5)' : 'none'
+                                        }} />
+                                        <input 
+                                            type="checkbox" 
+                                            checked={selectedColors.includes(colorName)}
+                                            onChange={(e) => {
+                                                if (e.target.checked) {
+                                                    setSelectedColors([...selectedColors, colorName]);
+                                                } else {
+                                                    setSelectedColors(selectedColors.filter(c => c !== colorName));
+                                                }
+                                            }}
+                                            style={{ marginBottom: '6px', cursor: 'pointer' }}
+                                        />
+                                        <span style={{ fontSize: '0.8rem', color: '#0f172a', fontWeight: '500', textAlign: 'center' }}>{colorName}</span>
+                                        <span style={{ fontSize: '0.7rem', color: '#94a3b8', marginTop: '2px' }}>{hexCode}</span>
+                                    </label>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Add Custom Color Section */}
+                        <div style={{ marginBottom: '2rem', padding: '20px', background: 'white', borderRadius: '8px', border: '2px dashed #cbd5e1' }}>
+                            <h4 style={{ margin: '0 0 12px 0', color: '#475569', fontSize: '0.95rem', fontWeight: '600' }}>Add Custom Color</h4>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 80px', gap: '12px', alignItems: 'flex-end' }}>
+                                <div className="form-group">
+                                    <label style={{ fontSize: '0.8rem', fontWeight: '600', color: '#475569', marginBottom: '4px', display: 'block' }}>Color Name</label>
+                                    <input 
+                                        type="text" 
+                                        className="form-control"
+                                        placeholder="e.g. Rose Gold"
+                                        value={newColorName}
+                                        onChange={(e) => {
+                                            console.log('Color name changed:', e.target.value);
+                                            setNewColorName(e.target.value);
+                                        }}
+                                        style={{ padding: '8px 12px' }}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label style={{ fontSize: '0.8rem', fontWeight: '600', color: '#475569', marginBottom: '4px', display: 'block' }}>Hex Code</label>
+                                    <div style={{ display: 'flex', gap: '8px' }}>
+                                        <input 
+                                            type="color" 
+                                            value={newColorHex}
+                                            onChange={(e) => {
+                                                setNewColorHex(e.target.value);
+                                            }}
+                                            style={{ padding: '4px', width: '60px', height: '40px', borderRadius: '4px', border: '1px solid #cbd5e1', cursor: 'pointer' }}
+                                        />
+                                        <input 
+                                            type="text" 
+                                            className="form-control"
+                                            placeholder="#000000"
+                                            value={newColorHex}
+                                            onChange={(e) => {
+                                                let val = e.target.value.trim();
+                                                console.log('Hex code changed:', e.target.value, 'trimmed:', val);
+                                                // Allow any input, validate on save
+                                                setNewColorHex(val);
+                                            }}
+                                            style={{ padding: '8px 12px', fontFamily: 'monospace' }}
+                                        />
+                                    </div>
+                                </div>
+                                <button 
+                                    type="button"
+                                    onClick={() => {
+                                        const trimmedName = newColorName.trim();
+                                        const trimmedHex = newColorHex.trim();
+                                        console.log('Add Color Button Clicked:');
+                                        console.log('  - newColorName:', newColorName, 'trimmed:', trimmedName, 'passes:', !!trimmedName);
+                                        console.log('  - newColorHex:', newColorHex, 'trimmed:', trimmedHex, 'passes:', !!trimmedHex);
+                                        console.log('  - Both fields valid:', !!trimmedName && !!trimmedHex);
+                                        
+                                        if (trimmedName && trimmedHex) {
+                                            console.log('✅ Adding custom color:', { name: trimmedName, hex: trimmedHex });
+                                            setCustomColors([...customColors, { name: trimmedName, hex: trimmedHex }]);
+                                            console.log('✅ Custom colors after add:', [...customColors, { name: trimmedName, hex: trimmedHex }]);
+                                            setNewColorName('');
+                                            setNewColorHex('#000000');
+                                        } else {
+                                            console.log('❌ Cannot add color - validation failed');
+                                        }
+                                    }}
+                                    style={{ padding: '8px 16px', backgroundColor: '#4f46e5', color: 'white', border: 'none', borderRadius: '4px', fontWeight: '600', cursor: 'pointer', fontSize: '0.9rem' }}
+                                >
+                                    Add
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Custom Colors Display */}
+                        {customColors.length > 0 && (
+                            <div>
+                                <h4 style={{ margin: '0 0 12px 0', color: '#475569', fontSize: '0.95rem', fontWeight: '600' }}>Custom Colors</h4>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '12px' }}>
+                                    {customColors.map((color, idx) => (
+                                        <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '12px', background: 'white', borderRadius: '8px', border: selectedColors.includes(color.name) ? '2px solid #4f46e5' : '1px solid #e0e0e0', position: 'relative' }}>
+                                            <div style={{
+                                                width: '50px',
+                                                height: '50px',
+                                                backgroundColor: color.hex,
+                                                borderRadius: '6px',
+                                                marginBottom: '8px',
+                                                border: color.hex === '#FFFFFF' ? '1px solid #d0d0d0' : 'none',
+                                                boxShadow: selectedColors.includes(color.name) ? '0 0 8px rgba(79, 70, 229, 0.5)' : 'none'
+                                            }} />
+                                            <input 
+                                                type="checkbox" 
+                                                checked={selectedColors.includes(color.name)}
+                                                onChange={(e) => {
+                                                    if (e.target.checked) {
+                                                        setSelectedColors([...selectedColors, color.name]);
+                                                    } else {
+                                                        setSelectedColors(selectedColors.filter(c => c !== color.name));
+                                                    }
+                                                }}
+                                                style={{ marginBottom: '6px', cursor: 'pointer' }}
+                                            />
+                                            <span style={{ fontSize: '0.8rem', color: '#0f172a', fontWeight: '500', textAlign: 'center', marginBottom: '4px' }}>{color.name}</span>
+                                            <span style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '8px' }}>{color.hex}</span>
+                                            <button 
+                                                type="button"
+                                                onClick={() => {
+                                                    setCustomColors(customColors.filter((_, i) => i !== idx));
+                                                    setSelectedColors(selectedColors.filter(c => c !== color.name));
+                                                }}
+                                                style={{ fontSize: '0.75rem', color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600' }}
+                                            >
+                                                Delete
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Dimensions Section */}
+                    <div className="spec-container" style={{ marginBottom: '2rem', padding: '30px', background: '#f8f8f8', borderRadius: '12px', border: '1px solid #e0e0e0' }}>
+                        <div style={{ marginBottom: '1.5rem' }}>
+                            <h3 style={{ margin: 0, color: '#0f172a', fontSize: '1.4rem', fontWeight: '800', marginBottom: '8px' }}>Dimensions</h3>
+                            <p style={{ margin: 0, color: '#64748b', fontSize: '0.9rem' }}>Enter product dimension details</p>
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
+                            <div className="form-group">
+                                <label style={{ fontSize: '0.85rem', fontWeight: '600', color: '#475569', marginBottom: '6px', display: 'block' }}>Overall Dimensions (Inches)</label>
+                                <input 
+                                    type="text" 
+                                    className="form-control"
+                                    placeholder="e.g. 92''W x 41''D x 39''H"
+                                    value={dimensions.overallDimensions}
+                                    onChange={(e) => setDimensions({...dimensions, overallDimensions: e.target.value})}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label style={{ fontSize: '0.85rem', fontWeight: '600', color: '#475569', marginBottom: '6px', display: 'block' }}>Item Weight (Lbs)</label>
+                                <input 
+                                    type="number" 
+                                    className="form-control"
+                                    placeholder="e.g. 148"
+                                    value={dimensions.itemWeight}
+                                    onChange={(e) => setDimensions({...dimensions, itemWeight: e.target.value})}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label style={{ fontSize: '0.85rem', fontWeight: '600', color: '#475569', marginBottom: '6px', display: 'block' }}>Unit Width (Inches)</label>
+                                <input 
+                                    type="number" 
+                                    className="form-control"
+                                    placeholder="e.g. 92"
+                                    value={dimensions.unitWidth}
+                                    onChange={(e) => setDimensions({...dimensions, unitWidth: e.target.value})}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label style={{ fontSize: '0.85rem', fontWeight: '600', color: '#475569', marginBottom: '6px', display: 'block' }}>Unit Depth (Inches)</label>
+                                <input 
+                                    type="number" 
+                                    className="form-control"
+                                    placeholder="e.g. 41"
+                                    value={dimensions.unitDepth}
+                                    onChange={(e) => setDimensions({...dimensions, unitDepth: e.target.value})}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label style={{ fontSize: '0.85rem', fontWeight: '600', color: '#475569', marginBottom: '6px', display: 'block' }}>Unit Height (Inches)</label>
+                                <input 
+                                    type="number" 
+                                    className="form-control"
+                                    placeholder="e.g. 39"
+                                    value={dimensions.unitHeight}
+                                    onChange={(e) => setDimensions({...dimensions, unitHeight: e.target.value})}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label style={{ fontSize: '0.85rem', fontWeight: '600', color: '#475569', marginBottom: '6px', display: 'block' }}>Items Per Case</label>
+                                <input 
+                                    type="number" 
+                                    className="form-control"
+                                    placeholder="e.g. 1"
+                                    value={dimensions.itemsPerCase}
+                                    onChange={(e) => setDimensions({...dimensions, itemsPerCase: e.target.value})}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label style={{ fontSize: '0.85rem', fontWeight: '600', color: '#475569', marginBottom: '6px', display: 'block' }}>Shipping Weight (Lbs)</label>
+                                <input 
+                                    type="number" 
+                                    className="form-control"
+                                    placeholder="e.g. 154"
+                                    value={dimensions.shippingWeight}
+                                    onChange={(e) => setDimensions({...dimensions, shippingWeight: e.target.value})}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label style={{ fontSize: '0.85rem', fontWeight: '600', color: '#475569', marginBottom: '6px', display: 'block' }}>Carton Depth (Inches)</label>
+                                <input 
+                                    type="number" 
+                                    className="form-control"
+                                    placeholder="e.g. 68"
+                                    value={dimensions.cartonDepth}
+                                    onChange={(e) => setDimensions({...dimensions, cartonDepth: e.target.value})}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label style={{ fontSize: '0.85rem', fontWeight: '600', color: '#475569', marginBottom: '6px', display: 'block' }}>Carton Height (Inches)</label>
+                                <input 
+                                    type="number" 
+                                    className="form-control"
+                                    placeholder="e.g. 38"
+                                    value={dimensions.cartonHeight}
+                                    onChange={(e) => setDimensions({...dimensions, cartonHeight: e.target.value})}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label style={{ fontSize: '0.85rem', fontWeight: '600', color: '#475569', marginBottom: '6px', display: 'block' }}>Carton Width (Inches)</label>
+                                <input 
+                                    type="number" 
+                                    className="form-control"
+                                    placeholder="e.g. 92"
+                                    value={dimensions.cartonWidth}
+                                    onChange={(e) => setDimensions({...dimensions, cartonWidth: e.target.value})}
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Custom Dimensions Section */}
+                    <div className="spec-container" style={{ marginBottom: '2rem', padding: '30px', background: '#f8f8f8', borderRadius: '12px', border: '1px solid #e0e0e0' }}>
+                        <div style={{ marginBottom: '1.5rem' }}>
+                            <h3 style={{ margin: 0, color: '#0f172a', fontSize: '1.4rem', fontWeight: '800', marginBottom: '8px' }}>Custom Dimensions</h3>
+                            <p style={{ margin: 0, color: '#64748b', fontSize: '0.9rem' }}>Add custom dimension fields specific to this product</p>
+                        </div>
+
+                        {/* Add Custom Dimension Form */}
+                        <div style={{ marginBottom: '2rem', padding: '20px', background: 'white', borderRadius: '8px', border: '2px dashed #cbd5e1' }}>
+                            <h4 style={{ margin: '0 0 12px 0', color: '#475569', fontSize: '0.95rem', fontWeight: '600' }}>Add New Dimension</h4>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 80px', gap: '12px', alignItems: 'flex-end' }}>
+                                <div className="form-group">
+                                    <label style={{ fontSize: '0.8rem', fontWeight: '600', color: '#475569', marginBottom: '4px', display: 'block' }}>Field Label</label>
+                                    <input 
+                                        type="text" 
+                                        className="form-control"
+                                        placeholder="e.g. Seat Height, Leg Height"
+                                        value={newDimensionLabel}
+                                        onChange={(e) => setNewDimensionLabel(e.target.value)}
+                                        style={{ padding: '8px 12px' }}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label style={{ fontSize: '0.8rem', fontWeight: '600', color: '#475569', marginBottom: '4px', display: 'block' }}>Value</label>
+                                    <input 
+                                        type="text" 
+                                        className="form-control"
+                                        placeholder="e.g. 18 inches"
+                                        value={newDimensionValue}
+                                        onChange={(e) => setNewDimensionValue(e.target.value)}
+                                        style={{ padding: '8px 12px' }}
+                                    />
+                                </div>
+                                <button 
+                                    type="button"
+                                    onClick={() => {
+                                        if (newDimensionLabel.trim() && newDimensionValue.trim()) {
+                                            setCustomDimensions([...customDimensions, { label: newDimensionLabel, value: newDimensionValue }]);
+                                            setNewDimensionLabel('');
+                                            setNewDimensionValue('');
+                                        }
+                                    }}
+                                    style={{ padding: '8px 16px', backgroundColor: '#4f46e5', color: 'white', border: 'none', borderRadius: '4px', fontWeight: '600', cursor: 'pointer', fontSize: '0.9rem' }}
+                                >
+                                    Add
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Custom Dimensions Display */}
+                        {customDimensions.length > 0 && (
+                            <div>
+                                <h4 style={{ margin: '0 0 12px 0', color: '#475569', fontSize: '0.95rem', fontWeight: '600' }}>Added Dimensions</h4>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '12px' }}>
+                                    {customDimensions.map((dim, idx) => (
+                                        <div key={idx} style={{ display: 'flex', flexDirection: 'column', padding: '16px', background: 'white', borderRadius: '8px', border: '1px solid #e0e0e0' }}>
+                                            <span style={{ fontSize: '0.85rem', color: '#475569', fontWeight: '600', marginBottom: '4px' }}>{dim.label}</span>
+                                            <span style={{ fontSize: '0.9rem', color: '#0f172a', marginBottom: '10px' }}>{dim.value}</span>
+                                            <button 
+                                                type="button"
+                                                onClick={() => {
+                                                    setCustomDimensions(customDimensions.filter((_, i) => i !== idx));
+                                                }}
+                                                style={{ fontSize: '0.75rem', color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600', alignSelf: 'flex-start' }}
+                                            >
+                                                Delete
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
 
                     <div className="spec-container">
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>

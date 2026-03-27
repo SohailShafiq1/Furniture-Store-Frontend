@@ -82,6 +82,7 @@ export default function ProductDetailPage() {
   const [mainImageIndex, setMainImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [selectedVariation, setSelectedVariation] = useState(null);
+  const [selectedColor, setSelectedColor] = useState(null);
   const [addingToCart, setAddingToCart] = useState(false);
   const [modal, setModal] = useState({ isOpen: false, title: '', message: '', type: 'info' });
   const [openAccordion, setOpenAccordion] = useState('Overview');
@@ -156,14 +157,14 @@ export default function ProductDetailPage() {
       name: product.name,
       image: product.images?.[0]
     };
-    const success = await addToCart(product._id, variationName, quantity, currentPrice, productDetails);
+    const success = await addToCart(product._id, variationName, quantity, currentPrice, productDetails, selectedColor);
     setAddingToCart(false);
 
     if (success) {
       setModal({
         isOpen: true,
         title: 'Added to Cart',
-        message: `${product.name} has been added to your cart successfully!`,
+        message: `${product.name}${selectedColor ? ` in ${selectedColor}` : ''} has been added to your cart successfully!`,
         type: 'success'
       });
     }
@@ -246,9 +247,125 @@ export default function ProductDetailPage() {
                     {product.collectionName && <li><strong>Collection Name:</strong> {product.collectionName}</li>}
                     {product.brandId && <li><strong>Brand:</strong> {product.brandId}</li>}
                   </ul>
-                  <div className="pd-description-text" dangerouslySetInnerHTML={{ __html: product.description }} />
+                  <div className="pd-description-text" dangerouslySetInnerHTML={{ __html: product.description }} style={{ marginTop: '16px' }} />
                 </div>
               </AccordionItem>
+
+              {/* Dimensions Accordion */}
+              {(product.dimensions && Object.keys(product.dimensions).length > 0) || (product.customDimensions && product.customDimensions.length > 0) ? (
+                <AccordionItem 
+                  title="DIMENSIONS" 
+                  isOpen={openAccordion === 'Dimensions'} 
+                  onClick={() => setOpenAccordion(openAccordion === 'Dimensions' ? '' : 'Dimensions')}
+                >
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                    {product.dimensions && Object.keys(product.dimensions).length > 0 && (
+                      <>
+                        {product.dimensions.overallDimensions && <div><strong>Overall Dimensions:</strong> <span style={{ color: '#666' }}>{product.dimensions.overallDimensions}</span></div>}
+                        {product.dimensions.itemWeight && <div><strong>Item Weight:</strong> <span style={{ color: '#666' }}>{product.dimensions.itemWeight}</span></div>}
+                        {product.dimensions.unitWidth && <div><strong>Unit Width:</strong> <span style={{ color: '#666' }}>{product.dimensions.unitWidth}</span></div>}
+                        {product.dimensions.unitDepth && <div><strong>Unit Depth:</strong> <span style={{ color: '#666' }}>{product.dimensions.unitDepth}</span></div>}
+                        {product.dimensions.unitHeight && <div><strong>Unit Height:</strong> <span style={{ color: '#666' }}>{product.dimensions.unitHeight}</span></div>}
+                        {product.dimensions.itemsPerCase && <div><strong>Items Per Case:</strong> <span style={{ color: '#666' }}>{product.dimensions.itemsPerCase}</span></div>}
+                        {product.dimensions.shippingWeight && <div><strong>Shipping Weight:</strong> <span style={{ color: '#666' }}>{product.dimensions.shippingWeight}</span></div>}
+                        {product.dimensions.cartonDepth && <div><strong>Carton Depth:</strong> <span style={{ color: '#666' }}>{product.dimensions.cartonDepth}</span></div>}
+                        {product.dimensions.cartonHeight && <div><strong>Carton Height:</strong> <span style={{ color: '#666' }}>{product.dimensions.cartonHeight}</span></div>}
+                        {product.dimensions.cartonWidth && <div><strong>Carton Width:</strong> <span style={{ color: '#666' }}>{product.dimensions.cartonWidth}</span></div>}
+                      </>
+                    )}
+                    {product.customDimensions && product.customDimensions.length > 0 && (
+                      <>
+                        {product.customDimensions.map((dim, idx) => (
+                          <div key={idx}><strong>{dim.label}:</strong> <span style={{ color: '#666' }}>{dim.value}</span></div>
+                        ))}
+                      </>
+                    )}
+                  </div>
+                </AccordionItem>
+              ) : null}
+
+              {/* Colors Accordion */}
+              {(product.selectedColors?.length > 0 || product.customColors?.length > 0) && (
+                <AccordionItem 
+                  title="COLORS" 
+                  isOpen={openAccordion === 'Colors'} 
+                  onClick={() => setOpenAccordion(openAccordion === 'Colors' ? '' : 'Colors')}
+                >
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', gap: '16px' }}>
+                    {/* Predefined Colors */}
+                    {product.selectedColors?.length > 0 && product.selectedColors.map((colorName) => {
+                      const predefinedColors = {
+                        'Red': '#C1121F', 'Blue': '#007AFF', 'Green': '#34C759', 'Yellow': '#FFCC00', 'Orange': '#FF9500',
+                        'Purple': '#AF52DE', 'Pink': '#FF1493', 'Brown': '#8B4513', 'Black': '#000000', 'White': '#FFFFFF',
+                        'Gray': '#A9A9A9', 'Beige': '#F5F5DC', 'Navy': '#000080', 'Teal': '#008080', 'Gold': '#FFD700',
+                        'Silver': '#C0C0C0', 'Cream': '#FFFDD0', 'Charcoal': '#36454F', 'Burgundy': '#800020', 'Olive': '#808000'
+                      };
+                      const hexCode = predefinedColors[colorName] || '#000000';
+                      
+                      return (
+                        <button
+                          key={colorName}
+                          onClick={() => setSelectedColor(selectedColor === colorName ? null : colorName)}
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            gap: '8px',
+                            padding: '12px',
+                            border: selectedColor === colorName ? '2px solid #4f46e5' : '1px solid #d1d1d1',
+                            borderRadius: '8px',
+                            background: 'white',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s'
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: '50px',
+                              height: '50px',
+                              backgroundColor: hexCode,
+                              borderRadius: '6px',
+                              border: hexCode === '#FFFFFF' ? '1px solid #d0d0d0' : 'none'
+                            }}
+                          />
+                          <span style={{ fontSize: '0.75rem', color: '#333', fontWeight: '500', textAlign: 'center' }}>{colorName}</span>
+                        </button>
+                      );
+                    })}
+                    
+                    {/* Custom Colors */}
+                    {product.customColors?.length > 0 && product.customColors.map((customColor) => (
+                      <button
+                        key={customColor.name}
+                        onClick={() => setSelectedColor(selectedColor === customColor.name ? null : customColor.name)}
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          gap: '8px',
+                          padding: '12px',
+                          border: selectedColor === customColor.name ? '2px solid #4f46e5' : '1px solid #d1d1d1',
+                          borderRadius: '8px',
+                          background: 'white',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s'
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: '50px',
+                            height: '50px',
+                            backgroundColor: customColor.hex,
+                            borderRadius: '6px',
+                            border: customColor.hex === '#FFFFFF' ? '1px solid #d0d0d0' : 'none'
+                          }}
+                        />
+                        <span style={{ fontSize: '0.75rem', color: '#333', fontWeight: '500', textAlign: 'center' }}>{customColor.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                </AccordionItem>
+              )}
 
               {/* Dynamic Specifications */}
               {product.specifications && product.specifications.map((spec, index) => (
