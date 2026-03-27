@@ -268,6 +268,51 @@
   font-size: 11px;
 }
 
+/* Apply Now Wrapper */
+.pd-apply-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+/* Apply Now Button */
+.pd-apply-btn {
+  flex: 1;
+  padding: 16px 24px;
+  background: linear-gradient(135deg, #C21223 0%, #a00d1c 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 0.8px;
+  box-shadow: 0 4px 12px rgba(194, 18, 35, 0.25);
+}
+
+.pd-apply-btn:hover {
+  background: linear-gradient(135deg, #a00d1c 0%, #8a0a17 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(194, 18, 35, 0.35);
+}
+
+.pd-apply-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(194, 18, 35, 0.25);
+}
+
+.pd-no-credit {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--luna-text);
+  margin: 0;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
 /* Add to Cart Button */
 .pd-add-cart-btn {
   width: 100%;
@@ -650,5 +695,24 @@
   .pd-benefits {
     grid-template-columns: 1fr;
     gap: 16px;
+  }
+
+  .pd-apply-wrapper {
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .pd-apply-btn {
+    font-size: 14px;
+    padding: 14px 16px;
+    flex: 1;
+    min-width: 150px;
+  }
+
+  .pd-no-credit {
+    font-size: 13px;
+    flex: 1;
+    min-width: 120px;
   }
 }

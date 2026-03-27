@@ -426,6 +426,17 @@ export default function ProductDetailPage() {
               <p className="pd-discount-text">Extra 5% off with code <span className="pd-code">55OFF</span></p>
             </div>
 
+            {/* Apply Now Section */}
+            <div className="pd-apply-wrapper">
+              <button 
+                className="pd-apply-btn"
+                onClick={() => window.open('https://subscribe.podium.com/Diamond-Modern-Furniture', '_blank')}
+              >
+                Apply Now
+              </button>
+              <p className="pd-no-credit">No Credit Needed.</p>
+            </div>
+
             {/* Add to Cart Button */}
             <button 
               className="pd-add-cart-btn" 
