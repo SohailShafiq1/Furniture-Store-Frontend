@@ -1,0 +1,343 @@
+.inspiration-mgmt-container {
+  padding: 30px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.inspiration-mgmt-header {
+  margin-bottom: 40px;
+}
+
+.inspiration-mgmt-header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #1a1a1a;
+}
+
+.inspiration-mgmt-header p {
+  font-size: 14px;
+  color: #666;
+}
+
+.inspiration-actions {
+  margin-bottom: 30px;
+  display: flex;
+  gap: 10px;
+}
+
+.inspiration-add-btn {
+  background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+}
+
+.inspiration-add-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+}
+
+.inspiration-loading {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-size: 16px;
+}
+
+.inspiration-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.inspiration-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.inspiration-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transform: translateY(-4px);
+}
+
+.inspiration-image-wrapper {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  background: #f5f5f5;
+}
+
+.inspiration-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.inspiration-card:hover .inspiration-image {
+  transform: scale(1.05);
+}
+
+.inspiration-content {
+  padding: 16px;
+}
+
+.inspiration-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  color: #1a1a1a;
+  line-height: 1.4;
+}
+
+.inspiration-description {
+  font-size: 13px;
+  color: #666;
+  margin: 0 0 12px 0;
+  line-height: 1.5;
+}
+
+.inspiration-actions-group {
+  display: flex;
+  gap: 8px;
+}
+
+.inspiration-edit-btn,
+.inspiration-delete-btn {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.inspiration-edit-btn {
+  background: #3498db;
+  color: white;
+}
+
+.inspiration-edit-btn:hover {
+  background: #2980b9;
+}
+
+.inspiration-delete-btn {
+  background: #e74c3c;
+  color: white;
+}
+
+.inspiration-delete-btn:hover {
+  background: #c0392b;
+}
+
+.inspiration-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: #999;
+  background: #f9f9f9;
+  border-radius: 12px;
+}
+
+.inspiration-empty p {
+  font-size: 16px;
+}
+
+/* Modal Styles */
+.inspiration-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.inspiration-modal {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.inspiration-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 1px solid #eee;
+}
+
+.inspiration-modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #999;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+  color: #333;
+}
+
+.inspiration-form {
+  padding: 24px;
+}
+
+.inspiration-form-group {
+  margin-bottom: 20px;
+}
+
+.inspiration-form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.inspiration-input,
+.inspiration-textarea,
+.inspiration-file-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  transition: all 0.2s ease;
+}
+
+.inspiration-input:focus,
+.inspiration-textarea:focus,
+.inspiration-file-input:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.inspiration-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.inspiration-image-preview {
+  margin-top: 12px;
+  border-radius: 8px;
+  overflow: hidden;
+  max-height: 300px;
+}
+
+.inspiration-image-preview img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.inspiration-error {
+  background: #ffe6e6;
+  border: 1px solid #ff6b6b;
+  color: #d32f2f;
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.inspiration-success {
+  background: #e6ffe6;
+  border: 1px solid #51cf66;
+  color: #2f5233;
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.inspiration-form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding-top: 12px;
+  border-top: 1px solid #eee;
+}
+
+.inspiration-cancel-btn,
+.inspiration-submit-btn {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.inspiration-cancel-btn {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.inspiration-cancel-btn:hover {
+  background: #e0e0e0;
+}
+
+.inspiration-submit-btn {
+  background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+}
+
+.inspiration-submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .inspiration-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .inspiration-modal-overlay {
+    padding: 10px;
+  }
+
+  .inspiration-modal {
+    max-height: 95vh;
+  }
+}

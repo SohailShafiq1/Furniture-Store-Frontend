@@ -8,6 +8,35 @@
   margin-bottom: 30px;
 }
 
+/* Tabs Navigation */
+.store-mgmt-tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.store-mgmt-tab {
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.store-mgmt-tab:hover {
+  color: #121212;
+}
+
+.store-mgmt-tab.active {
+  color: #121212;
+  border-bottom-color: #121212;
+}
+
 .store-form-section {
   background: white;
   padding: 24px;

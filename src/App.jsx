@@ -5,6 +5,8 @@ import 'aos/dist/aos.css';
 import HomePage from './pages/HomePage';
 import CategoryPage from './pages/CategoryPage';
 import ProductDetailPage from './pages/ProductDetailPage';
+import InspirationPage from './pages/InspirationPage';
+import InspirationDetailPage from './pages/InspirationDetailPage';
 import './App.css';
 import './admin-panel/admin-panel.css';
 import AdminLogin from './admin-panel/pages/AdminLogin';
@@ -43,6 +45,8 @@ function App() {
         <Route path="/category/:categoryId" element={<CategoryPage />} />
         <Route path="/category/:categoryId/sub/:subcategoryName" element={<CategoryPage />} />
         <Route path="/product/:categoryId/:productId" element={<ProductDetailPage />} />
+        <Route path="/inspiration" element={<InspirationPage />} />
+        <Route path="/inspiration/:inspirationId" element={<InspirationDetailPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/order-success/:sessionId" element={<OrderSuccessPage />} />
         <Route path="/my-orders" element={<MyOrdersPage />} />

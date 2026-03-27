@@ -9,7 +9,7 @@ import Sectionals from '../components/Sectionals/Sectionals';
 import PromoBanners from '../components/PromoBanners/PromoBanners';
 import ShopByCategory from '../components/ShopByCategory/ShopByCategory';
 import SlidingBanner from '../components/SlidingBanner/SlidingBanner';
-import Inspiration from '../components/Inspiration/Inspiration';
+import InspirationSection from '../components/Inspiration/InspirationSection';
 import TopBrands from '../components/TopBrands/TopBrands';
 import NewsUpdates from '../components/NewsUpdates/NewsUpdates';
 import Footer from '../components/Footer/Footer';
@@ -387,7 +387,7 @@ export default function HomePage() {
 
       {/* Static components at the bottom */}
       <SlidingBanner />
-      <Inspiration />
+      <InspirationSection />
       <TopBrands />
       <NewsUpdates />
       <Footer />
