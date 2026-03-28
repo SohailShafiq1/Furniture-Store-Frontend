@@ -11,6 +11,7 @@ import NewsPage from './pages/NewsPage';
 import NewsDetailPage from './pages/NewsDetailPage';
 import FinancingPage from './pages/FinancingPage';
 import StoreLocationsPage from './pages/StoreLocationsPage';
+import DealsPage from './pages/DealsPage';
 import './App.css';
 import './admin-panel/admin-panel.css';
 import AdminLogin from './admin-panel/pages/AdminLogin';
@@ -47,6 +48,7 @@ function App() {
     <div className="app">
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/deals" element={<DealsPage />} />
         <Route path="/category/:categoryId" element={<CategoryPage />} />
         <Route path="/category/:categoryId/sub/:subcategoryName" element={<CategoryPage />} />
         <Route path="/product/:categoryId/:productId" element={<ProductDetailPage />} />

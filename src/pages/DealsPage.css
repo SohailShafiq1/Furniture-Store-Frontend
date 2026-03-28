@@ -1,0 +1,615 @@
+.deals-page {
+  min-height: 100vh;
+  background-color: #f9f9f9;
+}
+
+.deals-banner {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.deals-banner-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.deals-banner-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  z-index: 2;
+}
+
+.deals-banner-content {
+  color: white;
+  padding-left: 60px;
+  max-width: 600px;
+}
+
+.deals-banner-subtitle {
+  font-size: 0.95rem;
+  letter-spacing: 1.5px;
+  font-weight: 600;
+  margin: 0 0 15px 0;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+.deals-banner-title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  margin: 0 0 15px 0;
+  letter-spacing: -1px;
+  line-height: 1.1;
+}
+
+.deals-banner-description {
+  font-size: 1.1rem;
+  margin: 0;
+  font-weight: 300;
+  letter-spacing: 0.3px;
+  opacity: 0.95;
+}
+
+.deals-container {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 80px 40px;
+}
+
+.fresh-picks-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.fresh-picks-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 50px;
+  color: #000;
+  letter-spacing: -0.5px;
+}
+
+.fresh-picks-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+.fresh-pick-card {
+  background: white;
+  border-radius: 0;
+  overflow: hidden;
+  box-shadow: none;
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.fresh-pick-card:hover {
+  transform: translateY(-4px);
+}
+
+.pick-image-wrapper {
+  position: relative;
+  width: 100%;
+  padding-bottom: 100%;
+  overflow: hidden;
+  background-color: #e8e8e8;
+}
+
+.pick-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.fresh-pick-card:hover .pick-image {
+  transform: scale(1.03);
+}
+
+.pick-info {
+  padding: 30px 30px 45px;
+  background-color: #d6ede2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  flex-grow: 1;
+}
+
+.pick-price {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0d2b20;
+  margin: 0;
+  letter-spacing: 0.3px;
+}
+
+.pick-btn {
+  background-color: #114b3d;
+  color: white;
+  border: none;
+  padding: 14px 32px;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 0.3px;
+}
+
+.bloom-btn:hover {
+  background-color: #0c3329;
+}
+
+.deals-category-wrapper {
+  margin-top: 80px;
+  width: 100%;
+}
+
+.deals-category-wrapper .category-container,
+.deals-category-wrapper .shop-by-category {
+  max-width: none !important;
+  width: 100% !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.deals-financing-section {
+  background-color: #f9f9f9;
+  padding: 100px 20px;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.financing-content {
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.financing-subtitle {
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #000;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.financing-title {
+  font-size: 2.8rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #1a1a1a;
+  margin: 0 auto;
+}
+
+.financing-btn {
+  margin-top: 15px;
+  background-color: transparent;
+  color: #000;
+  border: 1.5px solid #000;
+  padding: 14px 40px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+}
+
+.financing-btn:hover {
+  background-color: #000;
+  color: #fff;
+}
+
+.promo-strip-container {
+  background-color: #114b3d;
+  width: 100%;
+  padding: 35px 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.promo-strip-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+  max-width: 1500px;
+  width: 100%;
+}
+
+.promo-strip-text {
+  font-size: 1.4rem;
+  color: white;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.highlight-text {
+  color: #71cba5;
+  font-weight: 700;
+  font-size: 1.8rem;
+}
+
+.normal-text {
+  font-weight: 400;
+  letter-spacing: 0.3px;
+}
+
+.promo-code-box {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  background-color: transparent;
+  height: 48px;
+}
+
+.promo-code-box:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.promo-code {
+  padding: 0 24px;
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.promo-copy {
+  padding: 0 24px;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-left: 1px dashed rgba(255, 255, 255, 0.4);
+  font-size: 1rem;
+}
+
+.copy-success {
+  color: #71cba5;
+  font-weight: 600;
+}
+
+.home-bloom-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.home-bloom-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 50px;
+  color: #000;
+  letter-spacing: -0.5px;
+}
+
+.home-bloom-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+}
+
+.bloom-card {
+  background: white;
+  border-radius: 0;
+  overflow: hidden;
+  box-shadow: none;
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.bloom-card:hover {
+  transform: translateY(-4px);
+}
+
+.bloom-image-wrapper {
+  position: relative;
+  width: 100%;
+  padding-bottom: 75%;
+  overflow: hidden;
+  background-color: #e8e8e8;
+}
+
+.bloom-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.bloom-card:hover .bloom-image {
+  transform: scale(1.03);
+}
+
+.bloom-info {
+  padding: 40px 30px 45px;
+  background-color: #f6e8da;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  flex-grow: 1;
+}
+
+.bloom-price {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #0d2b20;
+  margin: 0;
+  letter-spacing: 0.3px;
+}
+
+.bloom-btn {
+  background-color: #114b3d;
+  color: white;
+  border: none;
+  padding: 14px 32px;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 0.3px;
+}
+
+.bloom-btn:hover {
+  background-color: #0c3329;
+}
+
+.promotions-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+}
+
+.promotion-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.promotion-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 30px;
+  color: #000;
+  letter-spacing: -0.5px;
+}
+
+.promotion-items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.promotion-item {
+  background: white;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.promotion-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.promo-image-wrapper {
+  position: relative;
+  width: 100%;
+  padding-bottom: 66.67%;
+  overflow: hidden;
+  background-color: #e8e8e8;
+}
+
+.promo-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.promotion-item:hover .promo-image {
+  transform: scale(1.03);
+}
+
+.promo-info {
+  padding: 25px 20px;
+  background-color: #f5ede3;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.promo-discount {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #2d6a4f;
+  margin: 0;
+  letter-spacing: 0.3px;
+}
+
+.promo-btn {
+  background-color: #2d6a4f;
+  color: white;
+  border: none;
+  padding: 11px 24px;
+  border-radius: 5px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 0.3px;
+}
+
+.promo-btn:hover {
+  background-color: #1f4d36;
+  transform: scale(1.02);
+}
+
+.loading,
+.error,
+.no-deals {
+  text-align: center;
+  padding: 60px 20px;
+  font-size: 1.1rem;
+  color: #666;
+}
+
+.error {
+  color: #d32f2f;
+  padding: 30px;
+  background-color: #ffebee;
+  border-radius: 4px;
+}
+
+@media (max-width: 1024px) {
+  .deals-banner {
+    height: 350px;
+  }
+
+  .deals-banner-content {
+    padding-left: 40px;
+  }
+
+  .deals-banner-title {
+    font-size: 2.8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .deals-banner {
+    height: 300px;
+  }
+
+  .deals-banner-content {
+    padding-left: 25px;
+    max-width: 100%;
+  }
+
+  .deals-banner-subtitle {
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+  }
+
+  .deals-banner-title {
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+
+  .deals-banner-description {
+    font-size: 0.95rem;
+  }
+
+  .deals-container {
+    padding: 35px 15px;
+  }
+
+  .fresh-picks-title {
+    font-size: 1.6rem;
+    margin-bottom: 25px;
+  }
+
+  .fresh-picks-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .home-bloom-title {
+    font-size: 1.8rem;
+    margin-bottom: 25px;
+  }
+
+  .home-bloom-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .bloom-info {
+    padding: 25px 20px;
+    gap: 20px;
+  }
+
+  .pick-info {
+    padding: 20px 16px;
+    gap: 14px;
+  }
+
+  .pick-price {
+    font-size: 1.1rem;
+  }
+
+  .pick-btn {
+    padding: 10px 20px;
+    font-size: 0.85rem;
+  }
+
+  .promotion-items-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .promotion-title {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+
+  .promo-info {
+    padding: 20px 15px;
+  }
+
+  .promo-discount {
+    font-size: 1rem;
+  }
+
+  .promo-btn {
+    padding: 9px 20px;
+    font-size: 0.9rem;
+  }
+}

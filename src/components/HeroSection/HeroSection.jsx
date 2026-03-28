@@ -1,11 +1,22 @@
+import { useNavigate } from 'react-router-dom';
 import './HeroSection.css';
 
 export default function HeroSection() {
+  const navigate = useNavigate();
+
+  const handleBannerClick = () => {
+    navigate('/deals');
+  };
+
   return (
     <section className="hero-section" data-aos="fade-in">
       <div className="hero-container" data-aos="zoom-out" data-aos-delay="200">
         {/* Desktop Hero Image */}
-        <picture className="hero-image-picture">
+        <picture 
+          className="hero-image-picture"
+          onClick={handleBannerClick}
+          style={{ cursor: 'pointer' }}
+        >
           <source 
             media="(max-width: 768px)" 
             srcSet="/spring-sale-mobile-campaign.jpeg"
@@ -18,6 +29,7 @@ export default function HeroSection() {
             src="/images.jpeg" 
             alt="Spring Sale - Up to 70% Off" 
             className="hero-image"
+            style={{ cursor: 'pointer' }}
           />
         </picture>
 
