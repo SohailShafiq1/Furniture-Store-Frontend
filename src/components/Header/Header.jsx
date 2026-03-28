@@ -109,7 +109,7 @@ export default function Header() {
           <button 
             className="header-icon-btn cart-icon-btn" 
             title="Cart"
-            onClick={() => navigate('/checkout')}
+            onClick={() => navigate('/cart')}
           >
             <div className="cart-icon-wrapper">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">

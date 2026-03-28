@@ -29,6 +29,7 @@ import FinancingManagement from './admin-panel/pages/FinancingManagement';
 import AnalyticsDashboard from './admin-panel/pages/AnalyticsDashboard';
 import ProtectedRoute from './admin-panel/components/ProtectedRoute';
 import CheckoutPage from './pages/CheckoutPage';
+import CartPage from './pages/CartPage';
 import OrderSuccessPage from './pages/OrderSuccessPage';
 import MyOrdersPage from './pages/MyOrdersPage';
 import ProfileSettingsPage from './pages/ProfileSettingsPage';
@@ -58,6 +59,7 @@ function App() {
         <Route path="/news/:newsId" element={<NewsDetailPage />} />
         <Route path="/financing" element={<FinancingPage />} />
         <Route path="/store-locations" element={<StoreLocationsPage />} />
+        <Route path="/cart" element={<CartPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/order-success/:sessionId" element={<OrderSuccessPage />} />
         <Route path="/my-orders" element={<MyOrdersPage />} />
