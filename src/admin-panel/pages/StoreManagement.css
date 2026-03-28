@@ -47,18 +47,55 @@
 
 .store-form {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 15px;
-  align-items: center;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
 }
 
 .store-input {
   padding: 10px 12px;
   border: 1px solid #ddd;
   border-radius: 6px;
-  min-width: 200px;
-  flex: 1;
   font-size: 14px;
+  width: 100%;
+}
+
+.hours-section {
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 6px;
+  margin: 10px 0;
+}
+
+.hours-section h4 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.hours-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.hours-input {
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.maps-textarea {
+  resize: vertical !important;
+  font-family: monospace;
+  font-size: 12px !important;
 }
 
 .store-checkbox-label {

@@ -10,6 +10,7 @@ import InspirationDetailPage from './pages/InspirationDetailPage';
 import NewsPage from './pages/NewsPage';
 import NewsDetailPage from './pages/NewsDetailPage';
 import FinancingPage from './pages/FinancingPage';
+import StoreLocationsPage from './pages/StoreLocationsPage';
 import './App.css';
 import './admin-panel/admin-panel.css';
 import AdminLogin from './admin-panel/pages/AdminLogin';
@@ -54,6 +55,7 @@ function App() {
         <Route path="/news" element={<NewsPage />} />
         <Route path="/news/:newsId" element={<NewsDetailPage />} />
         <Route path="/financing" element={<FinancingPage />} />
+        <Route path="/store-locations" element={<StoreLocationsPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/order-success/:sessionId" element={<OrderSuccessPage />} />
         <Route path="/my-orders" element={<MyOrdersPage />} />

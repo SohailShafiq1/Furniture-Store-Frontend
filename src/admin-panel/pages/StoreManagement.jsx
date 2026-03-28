@@ -18,6 +18,19 @@ const StoreManagement = () => {
   
   const [name, setName] = useState('');
   const [location, setLocation] = useState('');
+  const [description, setDescription] = useState('');
+  const [googleMapsLink, setGoogleMapsLink] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [hours, setHours] = useState({
+    monday: '',
+    tuesday: '',
+    wednesday: '',
+    thursday: '',
+    friday: '',
+    saturday: '',
+    sunday: ''
+  });
   const [isDefault, setIsDefault] = useState(false);
   const { token: adminToken } = useAdminAuth();
 
@@ -79,7 +92,7 @@ const StoreManagement = () => {
     e.preventDefault();
     try {
       await axios.post(`${BACKEND_URL}/api/admin/store`, 
-        { name, location, isDefault },
+        { name, location, description, googleMapsLink, phone, email, hours, isDefault },
         { headers: { 
           Authorization: `Bearer ${adminToken}`,
           'Content-Type': 'application/json' 
@@ -87,6 +100,19 @@ const StoreManagement = () => {
       );
       setName('');
       setLocation('');
+      setDescription('');
+      setGoogleMapsLink('');
+      setPhone('');
+      setEmail('');
+      setHours({
+        monday: '',
+        tuesday: '',
+        wednesday: '',
+        thursday: '',
+        friday: '',
+        saturday: '',
+        sunday: ''
+      });
       setIsDefault(false);
       fetchStores();
     } catch (err) {
@@ -144,21 +170,86 @@ const StoreManagement = () => {
           <div className="store-form-section">
             <h3>Add New Store</h3>
             <form onSubmit={handleAddStore} className="store-form">
-              <input 
-                type="text" 
-                placeholder="Store Name (e.g. Dubai, Meta Ads)" 
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                className="store-input"
-              />
-              <input 
-                type="text" 
-                placeholder="Location/Description" 
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                className="store-input"
-              />
+              <div className="form-row">
+                <input 
+                  type="text" 
+                  placeholder="Store Name (e.g. Houston Store)" 
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  className="store-input"
+                />
+                <input 
+                  type="text" 
+                  placeholder="Location/Address" 
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  className="store-input"
+                />
+              </div>
+
+              <div className="form-row">
+                <textarea 
+                  placeholder="Store Description (shown in list, e.g., features luxury brands...)" 
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="store-input"
+                  rows="2"
+                />
+              </div>
+
+              <div className="form-row">
+                <input 
+                  type="tel" 
+                  placeholder="Phone Number" 
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="store-input"
+                />
+                <input 
+                  type="email" 
+                  placeholder="Email" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="store-input"
+                />
+              </div>
+
+              <div className="form-row">
+                <textarea 
+                  placeholder="Google Maps Embed Code (paste the entire iframe code here)" 
+                  value={googleMapsLink}
+                  onChange={(e) => {
+                    let value = e.target.value;
+                    // Extract src from iframe tag if pasted
+                    const srcMatch = value.match(/src=["']([^"']+)["']/);
+                    if (srcMatch) {
+                      value = srcMatch[1];
+                    }
+                    setGoogleMapsLink(value);
+                  }}
+                  className="store-input maps-textarea"
+                  rows="3"
+                  title="Paste the entire iframe code or just the src URL"
+                />
+              </div>
+
+              <div className="hours-section">
+                <h4>Store Hours</h4>
+                <div className="hours-grid">
+                  {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => (
+                    <input
+                      key={day}
+                      type="text"
+                      placeholder={`${day.charAt(0).toUpperCase() + day.slice(1)} (e.g., 10:00 AM - 8:00 PM)`}
+                      value={hours[day]}
+                      onChange={(e) => setHours({ ...hours, [day]: e.target.value })}
+                      className="hours-input"
+                    />
+                  ))}
+                </div>
+              </div>
+
               <label className="store-checkbox-label">
                 <input 
                   type="checkbox" 
