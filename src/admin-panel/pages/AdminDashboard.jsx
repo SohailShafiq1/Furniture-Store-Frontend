@@ -37,6 +37,10 @@ const AdminDashboard = () => {
             <h3>Manage Brands</h3>
             <p>Add, edit, and manage furniture brands</p>
           </Link>
+          <Link to="/admin/financing-companies" className="dashboard-card">
+            <h3>Financing Companies</h3>
+            <p>Add and manage financing company options</p>
+          </Link>
           <Link to="/admin/categories" className="dashboard-card">
             <h3>Manage Categories</h3>
             <p>Add and manage categories and sub-categories</p>
