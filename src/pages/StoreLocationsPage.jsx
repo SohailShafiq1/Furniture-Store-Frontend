@@ -102,7 +102,9 @@ const StoreLocationsPage = () => {
                       onClick={() => setSelectedStore(store)}
                     >
                       <div className="store-card-header">
-                        <span className="pin-icon">📍</span>
+                        <svg className="pin-icon" viewBox="0 0 24 24" fill="#333">
+                          <path d="M12 0C7.03 0 3 4.03 3 9c0 5.25 9 15 9 15s9-9.75 9-15c0-4.97-4.03-9-9-9zm0 12c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/>
+                        </svg>
                         <h3>{store.name}</h3>
                       </div>
                       
