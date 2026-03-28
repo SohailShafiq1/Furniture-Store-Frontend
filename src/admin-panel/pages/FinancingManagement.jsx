@@ -10,7 +10,7 @@ const FinancingManagement = () => {
   const [applyLink, setApplyLink] = useState('');
   const [title, setTitle] = useState('');
   const [details, setDetails] = useState('');
-  const [conditions, setConditions] = useState(['']);
+  const [conditions, setConditions] = useState([{ title: '', description: '', points: [''] }]);
   const [logo, setLogo] = useState(null);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -20,7 +20,7 @@ const FinancingManagement = () => {
     applyLink: '',
     title: '',
     details: '',
-    conditions: [''],
+    conditions: [{ title: '', description: '', points: [''] }],
     logo: null,
   });
   const [editLogoPreview, setEditLogoPreview] = useState('');
@@ -51,7 +51,7 @@ const FinancingManagement = () => {
   }, []);
 
   const handleAddCondition = () => {
-    setConditions([...conditions, '']);
+    setConditions([...conditions, { title: '', description: '', points: [''] }]);
   };
 
   const handleRemoveCondition = (index) => {
@@ -59,9 +59,29 @@ const FinancingManagement = () => {
     setConditions(newConditions);
   };
 
-  const handleConditionChange = (index, value) => {
+  const handleConditionChange = (index, field, value) => {
     const newConditions = [...conditions];
-    newConditions[index] = value;
+    newConditions[index][field] = value;
+    setConditions(newConditions);
+  };
+
+  const handleAddPoint = (conditionIndex) => {
+    const newConditions = [...conditions];
+    newConditions[conditionIndex].points.push('');
+    setConditions(newConditions);
+  };
+
+  const handleRemovePoint = (conditionIndex, pointIndex) => {
+    const newConditions = [...conditions];
+    newConditions[conditionIndex].points = newConditions[conditionIndex].points.filter(
+      (_, i) => i !== pointIndex
+    );
+    setConditions(newConditions);
+  };
+
+  const handlePointChange = (conditionIndex, pointIndex, value) => {
+    const newConditions = [...conditions];
+    newConditions[conditionIndex].points[pointIndex] = value;
     setConditions(newConditions);
   };
 
@@ -92,7 +112,9 @@ const FinancingManagement = () => {
       formData.append('applyLink', applyLink);
       formData.append('title', title);
       formData.append('details', details);
-      formData.append('conditions', JSON.stringify(conditions.filter(c => c.trim())));
+      formData.append('conditions', JSON.stringify(
+        conditions.filter(c => c.title.trim() || c.description.trim())
+      ));
       if (logo) formData.append('logo', logo);
 
       await axios.post(`${apiEndpoint}/create`, formData, multipartConfig);
@@ -101,7 +123,7 @@ const FinancingManagement = () => {
       setApplyLink('');
       setTitle('');
       setDetails('');
-      setConditions(['']);
+      setConditions([{ title: '', description: '', points: [''] }]);
       setLogo(null);
       setLogoPreview(null);
       setError('');
@@ -120,27 +142,49 @@ const FinancingManagement = () => {
       applyLink: company.applyLink,
       title: company.title,
       details: company.details || '',
-      conditions: company.conditions && company.conditions.length > 0 ? company.conditions : [''],
+      conditions: company.conditions && company.conditions.length > 0 
+        ? company.conditions 
+        : [{ title: '', description: '', points: [''] }],
       logo: null,
     });
     setEditLogoPreview(company.logo ? `${backendRoot}/${company.logo}` : '');
   };
 
-  const handleEditConditionChange = (index, value) => {
+  const handleEditConditionChange = (index, field, value) => {
     const newConditions = [...editData.conditions];
-    newConditions[index] = value;
+    newConditions[index][field] = value;
     setEditData({ ...editData, conditions: newConditions });
   };
 
   const handleAddEditCondition = () => {
     setEditData({
       ...editData,
-      conditions: [...editData.conditions, ''],
+      conditions: [...editData.conditions, { title: '', description: '', points: [''] }],
     });
   };
 
   const handleRemoveEditCondition = (index) => {
     const newConditions = editData.conditions.filter((_, i) => i !== index);
+    setEditData({ ...editData, conditions: newConditions });
+  };
+
+  const handleAddEditPoint = (conditionIndex) => {
+    const newConditions = [...editData.conditions];
+    newConditions[conditionIndex].points.push('');
+    setEditData({ ...editData, conditions: newConditions });
+  };
+
+  const handleRemoveEditPoint = (conditionIndex, pointIndex) => {
+    const newConditions = [...editData.conditions];
+    newConditions[conditionIndex].points = newConditions[conditionIndex].points.filter(
+      (_, i) => i !== pointIndex
+    );
+    setEditData({ ...editData, conditions: newConditions });
+  };
+
+  const handleEditPointChange = (conditionIndex, pointIndex, value) => {
+    const newConditions = [...editData.conditions];
+    newConditions[conditionIndex].points[pointIndex] = value;
     setEditData({ ...editData, conditions: newConditions });
   };
 
@@ -171,13 +215,15 @@ const FinancingManagement = () => {
       formData.append('applyLink', editData.applyLink);
       formData.append('title', editData.title);
       formData.append('details', editData.details);
-      formData.append('conditions', JSON.stringify(editData.conditions.filter(c => c.trim())));
+      formData.append('conditions', JSON.stringify(
+        editData.conditions.filter(c => c.title.trim() || c.description.trim())
+      ));
       if (editData.logo) formData.append('logo', editData.logo);
 
       await axios.put(`${apiEndpoint}/${editingId}`, formData, multipartConfig);
       setMessage('Company updated successfully!');
       setEditingId(null);
-      setEditData({ companyName: '', applyLink: '', title: '', details: '', conditions: [''], logo: null });
+      setEditData({ companyName: '', applyLink: '', title: '', details: '', conditions: [{ title: '', description: '', points: [''] }], logo: null });
       setEditLogoPreview('');
       setError('');
       fetchCompanies();
@@ -266,29 +312,94 @@ const FinancingManagement = () => {
           </div>
 
           <div className="form-group">
-            <label>Conditions (Points)</label>
+            <label>Conditions & Terms</label>
             <div className="conditions-list">
-              {(editingId ? editData.conditions : conditions).map((condition, index) => (
-                <div key={index} className="condition-item">
-                  <input
-                    type="text"
-                    placeholder={`Condition point ${index + 1}`}
-                    value={condition}
-                    onChange={(e) =>
-                      editingId
-                        ? handleEditConditionChange(index, e.target.value)
-                        : handleConditionChange(index, e.target.value)
-                    }
-                  />
-                  {(editingId ? editData.conditions : conditions).length > 1 && (
+              {(editingId ? editData.conditions : conditions).map((condition, condIdx) => (
+                <div key={condIdx} className="condition-block">
+                  <div className="condition-header">
+                    <h4>Condition #{condIdx + 1}</h4>
+                    {(editingId ? editData.conditions : conditions).length > 1 && (
+                      <button
+                        type="button"
+                        className="remove-condition-btn"
+                        onClick={() =>
+                          editingId ? handleRemoveEditCondition(condIdx) : handleRemoveCondition(condIdx)
+                        }
+                      >
+                        ✕ Remove Condition
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="condition-input-group">
+                    <label>Title</label>
+                    <input
+                      type="text"
+                      placeholder="e.g., Pay over 3, 6, or 12 months"
+                      value={condition.title}
+                      onChange={(e) =>
+                        editingId
+                          ? handleEditConditionChange(condIdx, 'title', e.target.value)
+                          : handleConditionChange(condIdx, 'title', e.target.value)
+                      }
+                    />
+                  </div>
+
+                  <div className="condition-input-group">
+                    <label>Description</label>
+                    <textarea
+                      placeholder="Enter the description for this condition..."
+                      value={condition.description}
+                      onChange={(e) =>
+                        editingId
+                          ? handleEditConditionChange(condIdx, 'description', e.target.value)
+                          : handleConditionChange(condIdx, 'description', e.target.value)
+                      }
+                      rows={3}
+                    />
+                  </div>
+
+                  <div className="condition-input-group">
+                    <label>Bullet Points</label>
+                    <div className="points-list">
+                      {condition.points.map((point, pointIdx) => (
+                        <div key={pointIdx} className="point-item">
+                          <input
+                            type="text"
+                            placeholder={`Point ${pointIdx + 1}`}
+                            value={point}
+                            onChange={(e) =>
+                              editingId
+                                ? handleEditPointChange(condIdx, pointIdx, e.target.value)
+                                : handlePointChange(condIdx, pointIdx, e.target.value)
+                            }
+                          />
+                          {condition.points.length > 1 && (
+                            <button
+                              type="button"
+                              className="remove-point-btn"
+                              onClick={() =>
+                                editingId
+                                  ? handleRemoveEditPoint(condIdx, pointIdx)
+                                  : handleRemovePoint(condIdx, pointIdx)
+                              }
+                            >
+                              ✕
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
                     <button
                       type="button"
-                      className="remove-condition-btn"
-                      onClick={() => (editingId ? handleRemoveEditCondition(index) : handleRemoveCondition(index))}
+                      className="add-point-btn"
+                      onClick={() =>
+                        editingId ? handleAddEditPoint(condIdx) : handleAddPoint(condIdx)
+                      }
                     >
-                      Remove
+                      + Add Point
                     </button>
-                  )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -297,7 +408,7 @@ const FinancingManagement = () => {
               className="add-condition-btn"
               onClick={() => (editingId ? handleAddEditCondition() : handleAddCondition())}
             >
-              + Add Condition
+              + Add Condition/Section
             </button>
           </div>
 
@@ -366,11 +477,23 @@ const FinancingManagement = () => {
                     </td>
                     <td>{company.details || '-'}</td>
                     <td>
-                      <ul className="conditions-display">
+                      <div className="conditions-display">
                         {company.conditions && company.conditions.length > 0
-                          ? company.conditions.map((condition, i) => <li key={i}>{condition}</li>)
-                          : [<li key={0}>No conditions</li>]}
-                      </ul>
+                          ? company.conditions.map((condition, i) => (
+                              <div key={i} className="condition-summary">
+                                {condition.title && <strong>{condition.title}</strong>}
+                                {condition.description && <p>{condition.description}</p>}
+                                {condition.points && condition.points.length > 0 && (
+                                  <ul>
+                                    {condition.points.map((point, j) => (
+                                      <li key={j}>{point}</li>
+                                    ))}
+                                  </ul>
+                                )}
+                              </div>
+                            ))
+                          : <span>No conditions</span>}
+                      </div>
                     </td>
                     <td className="actions">
                       <button
