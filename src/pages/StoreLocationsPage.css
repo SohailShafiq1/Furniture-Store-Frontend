@@ -410,3 +410,115 @@
     margin-top: 10px;
   }
 }
+
+/* Contact & Info Section */
+.contact-info-section {
+  background-color: #fff;
+  padding: 60px 40px;
+  text-align: center;
+}
+
+.contact-info-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.contact-brand-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin: 0 0 20px 0;
+  color: #000;
+}
+
+.contact-intro-text {
+  font-size: 1.1rem;
+  color: #333;
+  margin: 0 0 50px 0;
+  line-height: 1.8;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Contact Options */
+.contact-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  margin-bottom: 60px;
+}
+
+.contact-option {
+  padding: 20px;
+}
+
+.contact-icon {
+  width: 50px;
+  height: 50px;
+  margin: 0 auto 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #333;
+}
+
+.contact-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.contact-option h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #000;
+  margin: 15px 0 8px 0;
+}
+
+.contact-option p {
+  font-size: 0.95rem;
+  color: #555;
+  margin: 0;
+}
+
+/* Service Team Message */
+.service-team-message {
+  padding: 40px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin-top: 40px;
+}
+
+.service-team-message h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #000;
+  margin: 0 0 20px 0;
+  line-height: 1.3;
+}
+
+.service-team-message p {
+  font-size: 1rem;
+  color: #333;
+  margin: 10px 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .contact-options {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .contact-info-section {
+    padding: 40px 20px;
+  }
+
+  .contact-brand-title {
+    font-size: 1.2rem;
+  }
+
+  .service-team-message h2 {
+    font-size: 1.5rem;
+  }
+}
