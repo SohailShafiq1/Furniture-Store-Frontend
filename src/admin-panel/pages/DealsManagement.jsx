@@ -261,7 +261,7 @@ const DealsManagement = () => {
           <label className="form-label">Deal Offer</label>
           <textarea value={dealOffer} onChange={(e) => setDealOffer(e.target.value)} placeholder="e.g. Up to 40% off select items" rows={4} required />
 
-          <label className="form-label">
+          <label className="form-label checkbox-label">
             <input
               type="checkbox"
               checked={showOnHomePage}
@@ -271,7 +271,7 @@ const DealsManagement = () => {
             Show on Home Page (Yes/No)
           </label>
 
-          <label className="form-label">
+          <label className="form-label checkbox-label">
             <input
               type="checkbox"
               checked={promoEnabled}
