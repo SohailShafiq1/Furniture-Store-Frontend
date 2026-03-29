@@ -11,11 +11,15 @@ const DealsManagement = () => {
 
   const [title, setTitle] = useState('');
   const [dealOffer, setDealOffer] = useState('');
-  const [buttonName, setButtonName] = useState('');
+  const [showOnHomePage, setShowOnHomePage] = useState(false);
+  const [promoEnabled, setPromoEnabled] = useState(false);
+  const [promoHighlightText, setPromoHighlightText] = useState('Extra 5% OFF');
+  const [promoNormalText, setPromoNormalText] = useState('A small boost for your tax refund season.');
+  const [promoCode, setPromoCode] = useState('SS5OFF');
   const [categoryId, setCategoryId] = useState('');
   const [subCategoryName, setSubCategoryName] = useState('');
-  const [subSubCategoryName, setSubSubCategoryName] = useState('');
   const [images, setImages] = useState([]);
+  const [imageActions, setImageActions] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
 
   const [editingId, setEditingId] = useState(null);
@@ -34,11 +38,15 @@ const DealsManagement = () => {
     imagePreviews.forEach((p) => URL.revokeObjectURL(p));
     setTitle('');
     setDealOffer('');
-    setButtonName('');
+    setShowOnHomePage(false);
+    setPromoEnabled(false);
+    setPromoHighlightText('Extra 5% OFF');
+    setPromoNormalText('A small boost for your tax refund season.');
+    setPromoCode('SS5OFF');
     setCategoryId('');
     setSubCategoryName('');
-    setSubSubCategoryName('');
     setImages([]);
+    setImageActions([]);
     setImagePreviews([]);
     setEditingId(null);
     setEditExistingImages([]);
@@ -93,6 +101,10 @@ const DealsManagement = () => {
 
     const mergedPreviews = [...imagePreviews, ...incomingFiles.map((f) => URL.createObjectURL(f))];
     setImages(mergedFiles);
+    setImageActions([
+      ...imageActions,
+      ...incomingFiles.map(() => ({ buttonName: '', subSubCategoryName: '' })),
+    ]);
     setImagePreviews(mergedPreviews);
     setError('');
     e.target.value = '';
@@ -123,8 +135,13 @@ const DealsManagement = () => {
       return;
     }
 
-    if (hasSubSubs && !subSubCategoryName) {
-      setError('Please select a sub-sub-category for this sub-category');
+    if (imageActions.some((a) => !a.buttonName?.trim())) {
+      setError('Please add button name for every selected image');
+      return;
+    }
+
+    if (hasSubSubs && imageActions.some((a) => !a.subSubCategoryName?.trim())) {
+      setError('Please select sub-sub-category for every selected image');
       return;
     }
 
@@ -142,10 +159,24 @@ const DealsManagement = () => {
       const formData = new FormData();
       formData.append('title', title);
       formData.append('dealOffer', dealOffer);
-      formData.append('buttonName', buttonName);
+      formData.append('showOnHomePage', String(showOnHomePage));
+      formData.append('promoEnabled', String(promoEnabled));
+      formData.append('promoHighlightText', promoHighlightText);
+      formData.append('promoNormalText', promoNormalText);
+      formData.append('promoCode', promoCode);
       formData.append('categoryId', categoryId);
       formData.append('subCategoryName', subCategoryName);
-      if (subSubCategoryName) formData.append('subSubCategoryName', subSubCategoryName);
+      formData.append(
+        'imageActions',
+        JSON.stringify(
+          images.length > 0
+            ? imageActions
+            : editExistingImages.map((img) => ({
+                buttonName: img.buttonName || '',
+                subSubCategoryName: img.subSubCategoryName || '',
+              }))
+        )
+      );
 
       images.forEach((file) => formData.append('images', file));
 
@@ -172,13 +203,22 @@ const DealsManagement = () => {
     setEditingId(deal._id);
     setTitle(deal.title);
     setDealOffer(deal.dealOffer);
-    setButtonName(deal.buttonName);
+    setShowOnHomePage(!!deal.showOnHomePage);
+    setPromoEnabled(!!deal.promoStrip?.enabled);
+    setPromoHighlightText(deal.promoStrip?.highlightText || 'Extra 5% OFF');
+    setPromoNormalText(deal.promoStrip?.normalText || 'A small boost for your tax refund season.');
+    setPromoCode(deal.promoStrip?.code || 'SS5OFF');
     setCategoryId(String(deal.redirectTarget.categoryId));
     setSubCategoryName(deal.redirectTarget.subCategoryName);
-    setSubSubCategoryName(deal.redirectTarget.subSubCategoryName || '');
     setImages([]);
+    setImageActions([]);
     setImagePreviews([]);
-    setEditExistingImages(deal.images || []);
+    const existing = (deal.images || []).map((img) =>
+      typeof img === 'string'
+        ? { image: img, buttonName: deal.buttonName || '', subSubCategoryName: deal.redirectTarget?.subSubCategoryName || '' }
+        : img
+    );
+    setEditExistingImages(existing);
   };
 
   const handleToggleActive = async (deal) => {
@@ -221,8 +261,40 @@ const DealsManagement = () => {
           <label className="form-label">Deal Offer</label>
           <textarea value={dealOffer} onChange={(e) => setDealOffer(e.target.value)} placeholder="e.g. Up to 40% off select items" rows={4} required />
 
-          <label className="form-label">Button Name</label>
-          <input value={buttonName} onChange={(e) => setButtonName(e.target.value)} placeholder="e.g. Shop Nightstands" required />
+          <label className="form-label">
+            <input
+              type="checkbox"
+              checked={showOnHomePage}
+              onChange={(e) => setShowOnHomePage(e.target.checked)}
+              style={{ marginRight: 8 }}
+            />
+            Show on Home Page (Yes/No)
+          </label>
+
+          <label className="form-label">
+            <input
+              type="checkbox"
+              checked={promoEnabled}
+              onChange={(e) => setPromoEnabled(e.target.checked)}
+              style={{ marginRight: 8 }}
+            />
+            Show Promo Strip Between Deals
+          </label>
+          {promoEnabled && (
+            <>
+              <input
+                value={promoHighlightText}
+                onChange={(e) => setPromoHighlightText(e.target.value)}
+                placeholder="Promo highlight text"
+              />
+              <input
+                value={promoNormalText}
+                onChange={(e) => setPromoNormalText(e.target.value)}
+                placeholder="Promo normal text"
+              />
+              <input value={promoCode} onChange={(e) => setPromoCode(e.target.value)} placeholder="Promo code" />
+            </>
+          )}
 
           <div className="triple-select">
             <div>
@@ -232,7 +304,7 @@ const DealsManagement = () => {
                 onChange={(e) => {
                   setCategoryId(e.target.value);
                   setSubCategoryName('');
-                  setSubSubCategoryName('');
+                  setImageActions((prev) => prev.map((a) => ({ ...a, subSubCategoryName: '' })));
                 }}
                 required
               >
@@ -251,7 +323,7 @@ const DealsManagement = () => {
                 value={subCategoryName}
                 onChange={(e) => {
                   setSubCategoryName(e.target.value);
-                  setSubSubCategoryName('');
+                  setImageActions((prev) => prev.map((a) => ({ ...a, subSubCategoryName: '' })));
                 }}
                 required
                 disabled={!categoryId}
@@ -266,18 +338,13 @@ const DealsManagement = () => {
             </div>
 
             <div>
-              <label className="form-label">Sub-sub-category</label>
+              <label className="form-label">Sub-sub-category rule</label>
               <select
-                value={subSubCategoryName}
-                onChange={(e) => setSubSubCategoryName(e.target.value)}
-                disabled={!subCategoryName || !hasSubSubs}
+                value=""
+                onChange={() => {}}
+                disabled
               >
-                <option value="">{hasSubSubs ? 'Optional / select one' : 'None for this sub-category'}</option>
-                {(selectedSub?.subSubCategories || []).map((ss) => (
-                  <option key={ss.name} value={ss.name}>
-                    {ss.name}
-                  </option>
-                ))}
+                <option value="">{hasSubSubs ? 'Select per image below' : 'No sub-sub-categories for this sub-category'}</option>
               </select>
             </div>
           </div>
@@ -293,17 +360,67 @@ const DealsManagement = () => {
           <div className="preview-grid">
             {editingId && editExistingImages.length > 0 && images.length === 0 && (
               <>
-                {editExistingImages.map((imgPath, idx) => (
-                  <img
-                    key={`existing-${idx}`}
-                    src={imgPath?.startsWith('http') ? imgPath : `${backendRoot}/${imgPath}`}
-                    alt=""
-                  />
+                {editExistingImages.map((img, idx) => (
+                  <div key={`existing-${idx}`}>
+                    <img src={img.image?.startsWith('http') ? img.image : `${backendRoot}/${img.image}`} alt="" />
+                    <input
+                      value={img.buttonName || ''}
+                      onChange={(e) =>
+                        setEditExistingImages((prev) =>
+                          prev.map((x, i) => (i === idx ? { ...x, buttonName: e.target.value } : x))
+                        )
+                      }
+                      placeholder="Button name"
+                      style={{ marginTop: 6 }}
+                    />
+                    <select
+                      value={img.subSubCategoryName || ''}
+                      onChange={(e) =>
+                        setEditExistingImages((prev) =>
+                          prev.map((x, i) => (i === idx ? { ...x, subSubCategoryName: e.target.value } : x))
+                        )
+                      }
+                      disabled={!hasSubSubs}
+                    >
+                      <option value="">{hasSubSubs ? 'Select sub-sub-category' : 'No sub-sub-categories'}</option>
+                      {(selectedSub?.subSubCategories || []).map((ss) => (
+                        <option key={ss.name} value={ss.name}>
+                          {ss.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 ))}
               </>
             )}
             {imagePreviews.map((src, idx) => (
-              <img key={`new-${idx}`} src={src} alt="" />
+              <div key={`new-${idx}`}>
+                <img src={src} alt="" />
+                <input
+                  value={imageActions[idx]?.buttonName || ''}
+                  onChange={(e) =>
+                    setImageActions((prev) => prev.map((a, i) => (i === idx ? { ...a, buttonName: e.target.value } : a)))
+                  }
+                  placeholder="Button name"
+                  style={{ marginTop: 6 }}
+                />
+                <select
+                  value={imageActions[idx]?.subSubCategoryName || ''}
+                  onChange={(e) =>
+                    setImageActions((prev) =>
+                      prev.map((a, i) => (i === idx ? { ...a, subSubCategoryName: e.target.value } : a))
+                    )
+                  }
+                  disabled={!hasSubSubs}
+                >
+                  <option value="">{hasSubSubs ? 'Select sub-sub-category' : 'No sub-sub-categories'}</option>
+                  {(selectedSub?.subSubCategories || []).map((ss) => (
+                    <option key={ss.name} value={ss.name}>
+                      {ss.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
             ))}
           </div>
 
@@ -330,7 +447,7 @@ const DealsManagement = () => {
                   <th>Preview</th>
                   <th>Title</th>
                   <th>Offer</th>
-                  <th>Button</th>
+                  <th>Buttons</th>
                   <th>Target</th>
                   <th>Status</th>
                   <th>Actions</th>
@@ -343,7 +460,11 @@ const DealsManagement = () => {
                       {deal.images?.[0] ? (
                         <img
                           className="thumb"
-                          src={deal.images[0]?.startsWith('http') ? deal.images[0] : `${backendRoot}/${deal.images[0]}`}
+                          src={
+                            (typeof deal.images[0] === 'string' ? deal.images[0] : deal.images[0]?.image)?.startsWith('http')
+                              ? (typeof deal.images[0] === 'string' ? deal.images[0] : deal.images[0]?.image)
+                              : `${backendRoot}/${typeof deal.images[0] === 'string' ? deal.images[0] : deal.images[0]?.image}`
+                          }
                           alt=""
                         />
                       ) : (
@@ -352,7 +473,7 @@ const DealsManagement = () => {
                     </td>
                     <td>{deal.title}</td>
                     <td>{deal.dealOffer}</td>
-                    <td>{deal.buttonName}</td>
+                    <td>{(deal.images || []).map((img) => (typeof img === 'string' ? deal.buttonName || 'Button' : img.buttonName)).join(', ')}</td>
                     <td>
                       <div className="target-cell">
                         <div>
@@ -360,7 +481,6 @@ const DealsManagement = () => {
                         </div>
                         <div className="muted small">
                           {deal.redirectTarget?.subCategoryName}
-                          {deal.redirectTarget?.subSubCategoryName ? ` / ${deal.redirectTarget.subSubCategoryName}` : ''}
                         </div>
                         <div className="muted small mono">{buildDealRedirectPath(deal)}</div>
                       </div>

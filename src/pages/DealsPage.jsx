@@ -7,10 +7,10 @@ import SlidingBanner from '../components/SlidingBanner/SlidingBanner';
 import { API_BASE_URL, BACKEND_URL } from '../config/api';
 import './DealsPage.css';
 
-const buildDealRedirectPath = (deal) => {
+const buildDealRedirectPath = (deal, imageItem) => {
   const catId = deal.redirectTarget?.categoryId;
   const subName = deal.redirectTarget?.subCategoryName;
-  const subSub = deal.redirectTarget?.subSubCategoryName;
+  const subSub = imageItem?.subSubCategoryName || deal.redirectTarget?.subSubCategoryName;
 
   const basePath = `/category/${catId}/sub/${encodeURIComponent(subName)}`;
   if (!subSub) return basePath;
@@ -21,69 +21,6 @@ const imageUrl = (path) => {
   if (!path) return '/placeholder-image.png';
   return path.startsWith('http') ? path : `${BACKEND_URL}/${path}`;
 };
-
-function DealPromotionCard({ deal, onShop }) {
-  const [idx, setIdx] = useState(0);
-  const imgs = deal.images || [];
-
-  useEffect(() => {
-    setIdx(0);
-  }, [deal._id]);
-
-  return (
-    <div className="promotion-item">
-      <div className="promo-image-wrapper">
-        <img
-          src={imageUrl(imgs[idx])}
-          alt={deal.title}
-          className="promo-image"
-          onError={(e) => {
-            e.target.src = '/placeholder-image.png';
-          }}
-        />
-        {imgs.length > 1 && (
-          <div
-            style={{
-              position: 'absolute',
-              bottom: 10,
-              left: 0,
-              right: 0,
-              display: 'flex',
-              justifyContent: 'center',
-              gap: 6,
-            }}
-          >
-            {imgs.map((_, i) => (
-              <button
-                key={i}
-                type="button"
-                onClick={() => setIdx(i)}
-                aria-label={`Show image ${i + 1}`}
-                style={{
-                  width: 10,
-                  height: 10,
-                  borderRadius: 999,
-                  border: 'none',
-                  cursor: 'pointer',
-                  background: i === idx ? '#114b3d' : 'rgba(255,255,255,0.7)',
-                }}
-              />
-            ))}
-          </div>
-        )}
-      </div>
-      <div className="promo-info">
-        <h3 style={{ margin: 0, fontSize: '1.05rem' }}>{deal.title}</h3>
-        <p className="promo-discount" style={{ margin: 0 }}>
-          {deal.dealOffer}
-        </p>
-        <button type="button" className="promo-btn" onClick={() => onShop(deal)}>
-          {deal.buttonName}
-        </button>
-      </div>
-    </div>
-  );
-}
 
 export default function DealsPage() {
   const navigate = useNavigate();
@@ -123,8 +60,48 @@ export default function DealsPage() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleShopDeal = (deal) => {
-    navigate(buildDealRedirectPath(deal));
+  const normalizedDeals = useMemo(
+    () =>
+      deals.map((deal) => ({
+        ...deal,
+        images: (deal.images || []).map((img) =>
+          typeof img === 'string'
+            ? {
+                image: img,
+                buttonName: deal.buttonName || 'Shop Now',
+                subSubCategoryName: deal.redirectTarget?.subSubCategoryName || '',
+              }
+            : img
+        ),
+      })),
+    [deals]
+  );
+
+  const groupedDeals = useMemo(() => {
+    const threeDeals = normalizedDeals.filter((deal) => deal.images.length === 3);
+    const twoDeals = normalizedDeals.filter((deal) => deal.images.length === 2);
+
+    const ordered = [];
+    let i = 0;
+    let j = 0;
+
+    while (i < threeDeals.length || j < twoDeals.length) {
+      if (i < threeDeals.length) ordered.push(threeDeals[i++]);
+      if (j < twoDeals.length) ordered.push(twoDeals[j++]);
+      if (i >= threeDeals.length && j < twoDeals.length) ordered.push(twoDeals[j++]);
+      if (j >= twoDeals.length && i < threeDeals.length) ordered.push(threeDeals[i++]);
+    }
+
+    return ordered;
+  }, [normalizedDeals]);
+
+  const promoSource = useMemo(
+    () => normalizedDeals.find((deal) => deal.promoStrip?.enabled),
+    [normalizedDeals]
+  );
+
+  const handleShopDeal = (onClick) => {
+    onClick();
   };
 
   return (
@@ -143,120 +120,94 @@ export default function DealsPage() {
         </div>
 
         <div className="deals-container">
-          <div className="promotions-wrapper">
-            <div className="promotion-group">
-              <h2 className="promotion-title">Featured Deals</h2>
-              {dealsLoading && <div className="loading">Loading deals...</div>}
-              {!dealsLoading && dealsError && <div className="error">{dealsError}</div>}
-              {!dealsLoading && !dealsError && deals.length === 0 && (
-                <div className="no-deals">No active deals yet. Check back soon!</div>
-              )}
-              {!dealsLoading && !dealsError && deals.length > 0 && (
-                <div className="promotion-items-grid">
-                  {deals.map((deal) => (
-                    <DealPromotionCard key={deal._id} deal={deal} onShop={handleShopDeal} />
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+          {dealsLoading && <div className="loading">Loading deals...</div>}
+          {!dealsLoading && dealsError && <div className="error">{dealsError}</div>}
+          {!dealsLoading && !dealsError && groupedDeals.length === 0 && <div className="no-deals">No deals available.</div>}
+          {!dealsLoading &&
+            !dealsError &&
+            groupedDeals.map((deal, idx) => {
+              const isThree = deal.images.length === 3;
+              const sectionClass = isThree ? 'fresh-picks-section' : 'home-bloom-section';
+              const titleClass = isThree ? 'fresh-picks-title' : 'home-bloom-title';
+              const gridClass = isThree ? 'fresh-picks-grid' : 'home-bloom-grid';
+              const cardClass = isThree ? 'fresh-pick-card' : 'bloom-card';
+              const imageWrapperClass = isThree ? 'pick-image-wrapper' : 'bloom-image-wrapper';
+              const imageClass = isThree ? 'pick-image' : 'bloom-image';
+              const infoClass = isThree ? 'pick-info' : 'bloom-info';
+              const offerClass = isThree ? 'pick-price' : 'bloom-price';
+              const buttonClass = isThree ? 'pick-btn' : 'bloom-btn';
 
-        <div className="promo-strip-container">
-          <div className="promo-strip-content">
-            <div className="promo-strip-text">
-              <span className="highlight-text">Extra 5% OFF</span>
-              <span className="normal-text">A small boost for your tax refund season.</span>
-            </div>
-            <div className="promo-code-box" onClick={handleCopy}>
-              <div className="promo-code">SS5OFF</div>
-              <div className="promo-copy">
-                {copied ? (
-                  <span className="copy-success">Copied!</span>
-                ) : (
-                  <>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                    </svg>
-                    <span>Copy code</span>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
+              return (
+                <div key={deal._id} style={{ marginTop: idx === 0 ? 0 : 40 }}>
+                  <div className={sectionClass}>
+                    <h2 className={titleClass}>{deal.title}</h2>
+                    <div className={gridClass}>
+                      {deal.images.map((img) => (
+                        <div key={`${deal._id}-${img.image}`} className={cardClass}>
+                          <div className={imageWrapperClass}>
+                            <img
+                              src={imageUrl(img.image)}
+                              alt={deal.title}
+                              className={imageClass}
+                              onError={(e) => {
+                                e.target.src = '/placeholder-image.png';
+                              }}
+                            />
+                          </div>
+                          <div className={infoClass}>
+                            <p className={offerClass}>{deal.dealOffer}</p>
+                            <button
+                              className={buttonClass}
+                              onClick={() => handleShopDeal(() => navigate(buildDealRedirectPath(deal, img)))}
+                            >
+                              {img.buttonName}
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
 
-        <div className="deals-container" style={{ paddingTop: '40px' }}>
-          <div className="home-bloom-section">
-            <h2 className="home-bloom-title">Home in Bloom</h2>
-            <div className="home-bloom-grid">
-              <div className="bloom-card">
-                <div className="bloom-image-wrapper">
-                  <img src="/living.jpg" alt="Living Room" className="bloom-image" />
+                  {idx === 0 && promoSource && (
+                    <div className="promo-strip-container" style={{ marginTop: 40 }}>
+                      <div className="promo-strip-content">
+                        <div className="promo-strip-text">
+                          <span className="highlight-text">{promoSource.promoStrip?.highlightText || 'Extra 5% OFF'}</span>
+                          <span className="normal-text">
+                            {promoSource.promoStrip?.normalText || 'A small boost for your tax refund season.'}
+                          </span>
+                        </div>
+                        <div className="promo-code-box" onClick={handleCopy}>
+                          <div className="promo-code">{promoSource.promoStrip?.code || 'SS5OFF'}</div>
+                          <div className="promo-copy">
+                            {copied ? (
+                              <span className="copy-success">Copied!</span>
+                            ) : (
+                              <>
+                                <svg
+                                  width="18"
+                                  height="18"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                                <span>Copy code</span>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <div className="bloom-info">
-                  <p className="bloom-price">Up to 70% Off</p>
-                  <button className="bloom-btn" onClick={() => navigate('/category/living-room')}>
-                    Shop Living Room
-                  </button>
-                </div>
-              </div>
-
-              <div className="bloom-card">
-                <div className="bloom-image-wrapper">
-                  <img src="/dining2.jpg" alt="Dining Room" className="bloom-image" />
-                </div>
-                <div className="bloom-info">
-                  <p className="bloom-price">Up to 70% Off</p>
-                  <button className="bloom-btn" onClick={() => navigate('/category/dining-room')}>
-                    Shop Dining Room
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="fresh-picks-section" style={{ marginTop: '80px' }}>
-            <h2 className="fresh-picks-title">More Top Picks</h2>
-            <div className="fresh-picks-grid">
-              <div className="fresh-pick-card">
-                <div className="pick-image-wrapper">
-                  <img src="/storage.jpg" alt="Storage" className="pick-image" />
-                </div>
-                <div className="pick-info">
-                  <p className="pick-price">Starting at $99</p>
-                  <button className="pick-btn" onClick={() => navigate('/category/storage')}>
-                    Shop Storage
-                  </button>
-                </div>
-              </div>
-
-              <div className="fresh-pick-card">
-                <div className="pick-image-wrapper">
-                  <img src="/lighting.jpg" alt="Lighting" className="pick-image" />
-                </div>
-                <div className="pick-info">
-                  <p className="pick-price">Starting at $49</p>
-                  <button className="pick-btn" onClick={() => navigate('/category/lighting')}>
-                    Shop Lighting
-                  </button>
-                </div>
-              </div>
-
-              <div className="fresh-pick-card">
-                <div className="pick-image-wrapper">
-                  <img src="/decor.jpg" alt="Decor" className="pick-image" />
-                </div>
-                <div className="pick-info">
-                  <p className="pick-price">Starting at $39</p>
-                  <button className="pick-btn" onClick={() => navigate('/category/decor')}>
-                    Shop Decor
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+              );
+            })}
         </div>
 
         <div className="deals-category-wrapper">
