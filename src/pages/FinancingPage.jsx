@@ -1,21 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
 import SlidingBanner from '../components/SlidingBanner/SlidingBanner';
+import { API_BASE_URL, BACKEND_URL } from '../config/api';
 import './FinancingPage.css';
 
 const FinancingPage = () => {
-  const [expandedCondition, setExpandedCondition] = useState(null);
+  const [collapsedConditions, setCollapsedConditions] = useState(new Set());
+  const [companies, setCompanies] = useState([]);
+  const [loadingCompanies, setLoadingCompanies] = useState(true);
+  const [companiesError, setCompaniesError] = useState('');
 
-  const financingOptions = [
-    { name: 'Pop', logo: 'Ⓟ' },
-    { name: 'Klarna', logo: '𝓚' },
-    { name: 'Layaway Program', logo: '📦' },
-    { name: 'Snap Finance', logo: '◆' },
-    { name: 'Synchrony', logo: '📊' },
-    { name: 'Affirm', logo: '✓' },
-    { name: 'Shop Pay', logo: '🛍️' },
-  ];
+  const companiesEndpoint = useMemo(() => `${API_BASE_URL}/financing-companies/all`, []);
 
   const steps = [
     {
@@ -35,26 +31,67 @@ const FinancingPage = () => {
     }
   ];
 
-  const conditions = [
-    {
-      id: 1,
-      title: 'What is Snap Finance?',
-      content: 'Snap Finance offers lease-to-own financing that empowers credit-challenged shoppers with the buying power to get what they need, now. Snap was founded on the principle that you should thrive with financing that\'s accessible, affordable, and completely transparent. The application is easy, and you\'ll find out in seconds if you\'ve been approved.'
-    },
-    {
-      id: 2,
-      title: 'Requirements to Apply',
-      content: 'To apply, you\'ll need to: Be of legal age to enter into a contract, Have a steady monthly income, Have an active checking account, Provide a valid email address and phone number. That\'s it! You can apply online or we can help you in-store. Snap offers flexible payment options that fit your pay schedule, so it\'s convenient too! With approvals up to $5,000 – get what you need today with Snap!'
-    },
-    {
-      id: 3,
-      title: 'Credit Worries?',
-      content: 'Don\'t let a less-than-perfect credit score hold you back. Snap Finance offers lease-to-own financing, empowering those with credit challenges to get what they need, now. High-interest rates and fees may apply. No credit needed. Quick application process. The application does not affect your credit score. 100-Day option with no interest.'
-    }
-  ];
+  useEffect(() => {
+    const loadCompanies = async () => {
+      try {
+        setLoadingCompanies(true);
+        setCompaniesError('');
 
-  const toggleCondition = (id) => {
-    setExpandedCondition(expandedCondition === id ? null : id);
+        const res = await fetch(companiesEndpoint);
+        if (!res.ok) throw new Error(`Failed to load financing companies (${res.status})`);
+        const data = await res.json();
+        setCompanies(Array.isArray(data) ? data : []);
+      } catch (err) {
+        setCompanies([]);
+        setCompaniesError(err.message || 'Failed to load financing companies');
+      } finally {
+        setLoadingCompanies(false);
+      }
+    };
+
+    loadCompanies();
+  }, [companiesEndpoint]);
+
+  const toggleCondition = (conditionKey) => {
+    setCollapsedConditions((prev) => {
+      const next = new Set(prev);
+      if (next.has(conditionKey)) {
+        next.delete(conditionKey);
+      } else {
+        next.add(conditionKey);
+      }
+      return next;
+    });
+  };
+
+  const normalizeConditionPoints = (condition) => {
+    if (!condition) return [];
+    if (Array.isArray(condition.points)) {
+      return condition.points.filter((p) => typeof p === 'string' && p.trim().length > 0);
+    }
+    if (Array.isArray(condition)) {
+      return condition.filter((p) => typeof p === 'string' && p.trim().length > 0);
+    }
+    if (typeof condition === 'string') {
+      return [condition];
+    }
+    return [];
+  };
+
+  const parseDetailsPoints = (rawDetails) => {
+    if (typeof rawDetails !== 'string') return [];
+
+    return rawDetails
+      .split(/\r?\n|\u2022/)
+      .map((line) => line.trim())
+      .filter((line) => line.length > 0);
+  };
+
+  const hasConditionContent = (condition) => {
+    const title = condition?.title?.trim();
+    const description = condition?.description?.trim();
+    const points = normalizeConditionPoints(condition);
+    return Boolean(title || description || points.length > 0);
   };
 
   return (
@@ -101,56 +138,118 @@ const FinancingPage = () => {
         </div>
       </section>
 
-      {/* Snap Finance Section */}
-      <section className="snap-finance-section">
-        <div className="snap-header">
-          <h2>Credit worries? No problem.</h2>
-          <p>
-            Don't let a less-than-perfect credit score hold you back. Snap Finance offers lease-to-own financing, 
-            empowering those with credit challenges to get what they need, now.
-          </p>
-        </div>
+      <section className="financing-companies-section">
+        {loadingCompanies && <div className="financing-state">Loading financing options...</div>}
+        {!loadingCompanies && companiesError && <div className="financing-state error">{companiesError}</div>}
+        {!loadingCompanies && !companiesError && companies.length === 0 && (
+          <div className="financing-state">No financing companies available right now.</div>
+        )}
 
-        <div className="snap-details">
-          <div className="snap-left">
-            <div className="snap-logo-box">
-              <div className="snap-logo-placeholder">🔷</div>
-            </div>
-          </div>
-          <div className="snap-right">
-            <h3>Flexible finance solutions to suit your needs.</h3>
-            <p className="location-label">In-Store & Online</p>
-            <ul className="snap-features">
-              <li>No credit needed.</li>
-              <li>Quick application process.</li>
-              <li>The application does not affect your credit score.</li>
-              <li>100-Day option with no interest.</li>
-              <li>High-interest rates and fees may apply.</li>
-            </ul>
-            <button className="apply-now-btn">Apply Now</button>
-          </div>
-        </div>
-      </section>
+        {!loadingCompanies &&
+          !companiesError &&
+          companies.map((company) => {
+            const companyConditions = Array.isArray(company.conditions) ? company.conditions : [];
+            const detailPoints = parseDetailsPoints(company.details);
 
-      {/* Conditions Section */}
-      <section className="conditions-section">
-        {conditions.map((condition) => (
-          <div key={condition.id} className="condition-item">
-            <button
-              className={`condition-toggle ${expandedCondition === condition.id ? 'active' : ''}`}
-              onClick={() => toggleCondition(condition.id)}
-            >
-              <span className="condition-icon">📋</span>
-              {condition.title}
-              <span className="toggle-arrow">⌄</span>
-            </button>
-            {expandedCondition === condition.id && (
-              <div className="condition-content">
-                <p>{condition.content}</p>
-              </div>
-            )}
-          </div>
-        ))}
+            return (
+              <article key={company._id} className="company-block">
+                <div className="snap-finance-section">
+                  <div className="snap-header">
+                    <h2>{company.companyName}</h2>
+                    {company.details && <p>{company.details}</p>}
+                  </div>
+
+                  <div className="snap-details">
+                    <div className="snap-left">
+                      <div className="snap-logo-box">
+                        {company.logo ? (
+                          <img
+                            src={company.logo.startsWith('http') ? company.logo : `${BACKEND_URL}/${company.logo}`}
+                            alt={company.companyName}
+                            className="company-logo"
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                            }}
+                          />
+                        ) : (
+                          <div className="snap-logo-placeholder">{(company.companyName || '?').charAt(0)}</div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="snap-right">
+                      <h3>{company.title}</h3>
+                      <p className="location-label">In-Store & Online</p>
+
+                      <ul className="snap-features">
+                        {detailPoints.map((point, idx) => (
+                          <li key={`${company._id}-p-${idx}`}>{point}</li>
+                        ))}
+                        {detailPoints.length === 0 && normalizeConditionPoints(companyConditions[0]).map((point, idx) => (
+                          <li key={`${company._id}-fallback-p-${idx}`}>{point}</li>
+                        ))}
+                        {detailPoints.length === 0 && normalizeConditionPoints(companyConditions[0]).length === 0 && company.details && (
+                          <li>{company.details}</li>
+                        )}
+                      </ul>
+
+                      <a href={company.applyLink} target="_blank" rel="noreferrer" className="apply-now-btn">
+                        Apply Now
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                <section className="conditions-section">
+                  {companyConditions.length === 0 || !companyConditions.some(hasConditionContent) ? (
+                    <div className="condition-item">
+                      <button className="condition-toggle" type="button" disabled>
+                        <span className="condition-icon">✎</span>
+                        Conditions
+                        <span className="toggle-arrow">⌄</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="condition-item">
+                      <button
+                        className={`condition-toggle ${!collapsedConditions.has(company._id) ? 'active' : ''}`}
+                        onClick={() => toggleCondition(company._id)}
+                        type="button"
+                      >
+                        <span className="condition-icon">✎</span>
+                        Conditions
+                        <span className="toggle-arrow">⌄</span>
+                      </button>
+
+                      {!collapsedConditions.has(company._id) && (
+                        <div className="condition-content">
+                          {companyConditions.filter(hasConditionContent).map((condition, idx) => {
+                            const points = normalizeConditionPoints(condition);
+                            return (
+                              <div key={`${company._id}-condition-${idx}`} className="condition-entry">
+                                {condition?.title?.trim() && (
+                                  <h4 className="condition-entry-title">{condition.title.trim()}</h4>
+                                )}
+                                {condition?.description?.trim() && (
+                                  <p className="condition-entry-description">{condition.description.trim()}</p>
+                                )}
+                                {points.length > 0 && (
+                                  <ul className="condition-points">
+                                    {points.map((point, pointIdx) => (
+                                      <li key={`${company._id}-condition-${idx}-point-${pointIdx}`}>{point}</li>
+                                    ))}
+                                  </ul>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </section>
+              </article>
+            );
+          })}
       </section>
 
       <Footer />

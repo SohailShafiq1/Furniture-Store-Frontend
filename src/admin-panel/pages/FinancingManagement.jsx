@@ -10,6 +10,7 @@ const FinancingManagement = () => {
   const [applyLink, setApplyLink] = useState('');
   const [title, setTitle] = useState('');
   const [details, setDetails] = useState('');
+  const [detailsPoints, setDetailsPoints] = useState(['']);
   const [conditions, setConditions] = useState([{ title: '', description: '', points: [''] }]);
   const [logo, setLogo] = useState(null);
   const [message, setMessage] = useState('');
@@ -23,6 +24,7 @@ const FinancingManagement = () => {
     conditions: [{ title: '', description: '', points: [''] }],
     logo: null,
   });
+  const [editDetailsPoints, setEditDetailsPoints] = useState(['']);
   const [editLogoPreview, setEditLogoPreview] = useState('');
   const [logoPreview, setLogoPreview] = useState(null);
   const { token } = useAdminAuth();
@@ -49,6 +51,53 @@ const FinancingManagement = () => {
   useEffect(() => {
     fetchCompanies();
   }, []);
+
+  const parseDetailsPoints = (rawDetails) => {
+    if (typeof rawDetails !== 'string') return [''];
+
+    const parsed = rawDetails
+      .split(/\r?\n|\u2022/)
+      .map((line) => line.trim())
+      .filter((line) => line.length > 0);
+
+    return parsed.length > 0 ? parsed : [''];
+  };
+
+  const buildDetailsString = (points) => {
+    const cleaned = (points || []).map((p) => p.trim()).filter((p) => p.length > 0);
+    return cleaned.join('\n');
+  };
+
+  const handleAddDetailsPoint = () => {
+    if (editingId) {
+      setEditDetailsPoints((prev) => [...prev, '']);
+      return;
+    }
+    setDetailsPoints((prev) => [...prev, '']);
+  };
+
+  const handleRemoveDetailsPoint = (index) => {
+    if (editingId) {
+      setEditDetailsPoints((prev) => {
+        const next = prev.filter((_, i) => i !== index);
+        return next.length > 0 ? next : [''];
+      });
+      return;
+    }
+
+    setDetailsPoints((prev) => {
+      const next = prev.filter((_, i) => i !== index);
+      return next.length > 0 ? next : [''];
+    });
+  };
+
+  const handleDetailsPointChange = (index, value) => {
+    if (editingId) {
+      setEditDetailsPoints((prev) => prev.map((item, i) => (i === index ? value : item)));
+      return;
+    }
+    setDetailsPoints((prev) => prev.map((item, i) => (i === index ? value : item)));
+  };
 
   const handleAddCondition = () => {
     setConditions([...conditions, { title: '', description: '', points: [''] }]);
@@ -111,7 +160,7 @@ const FinancingManagement = () => {
       formData.append('companyName', companyName);
       formData.append('applyLink', applyLink);
       formData.append('title', title);
-      formData.append('details', details);
+      formData.append('details', buildDetailsString(detailsPoints));
       formData.append('conditions', JSON.stringify(
         conditions.filter(c => c.title.trim() || c.description.trim())
       ));
@@ -123,6 +172,7 @@ const FinancingManagement = () => {
       setApplyLink('');
       setTitle('');
       setDetails('');
+      setDetailsPoints(['']);
       setConditions([{ title: '', description: '', points: [''] }]);
       setLogo(null);
       setLogoPreview(null);
@@ -147,6 +197,7 @@ const FinancingManagement = () => {
         : [{ title: '', description: '', points: [''] }],
       logo: null,
     });
+    setEditDetailsPoints(parseDetailsPoints(company.details || ''));
     setEditLogoPreview(company.logo ? `${backendRoot}/${company.logo}` : '');
   };
 
@@ -214,7 +265,7 @@ const FinancingManagement = () => {
       formData.append('companyName', editData.companyName);
       formData.append('applyLink', editData.applyLink);
       formData.append('title', editData.title);
-      formData.append('details', editData.details);
+      formData.append('details', buildDetailsString(editDetailsPoints));
       formData.append('conditions', JSON.stringify(
         editData.conditions.filter(c => c.title.trim() || c.description.trim())
       ));
@@ -224,6 +275,7 @@ const FinancingManagement = () => {
       setMessage('Company updated successfully!');
       setEditingId(null);
       setEditData({ companyName: '', applyLink: '', title: '', details: '', conditions: [{ title: '', description: '', points: [''] }], logo: null });
+      setEditDetailsPoints(['']);
       setEditLogoPreview('');
       setError('');
       fetchCompanies();
@@ -251,6 +303,7 @@ const FinancingManagement = () => {
   const handleCancel = () => {
     setEditingId(null);
     setEditData({ companyName: '', applyLink: '', title: '', details: '', conditions: [''], logo: null });
+    setEditDetailsPoints(['']);
     setEditLogoPreview('');
   };
 
@@ -301,14 +354,31 @@ const FinancingManagement = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="details">Details</label>
-            <textarea
-              id="details"
-              placeholder="Enter financing details"
-              value={editingId ? editData.details : details}
-              onChange={(e) => editingId ? setEditData({ ...editData, details: e.target.value }) : setDetails(e.target.value)}
-              rows={4}
-            />
+            <label>Details Points (shown under In-Store & Online)</label>
+            <div className="details-points-list">
+              {(editingId ? editDetailsPoints : detailsPoints).map((point, idx) => (
+                <div key={idx} className="point-item">
+                  <input
+                    type="text"
+                    placeholder={`Detail point ${idx + 1}`}
+                    value={point}
+                    onChange={(e) => handleDetailsPointChange(idx, e.target.value)}
+                  />
+                  {(editingId ? editDetailsPoints : detailsPoints).length > 1 && (
+                    <button
+                      type="button"
+                      className="remove-point-btn"
+                      onClick={() => handleRemoveDetailsPoint(idx)}
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+            <button type="button" className="add-point-btn" onClick={handleAddDetailsPoint}>
+              + Add Detail Point
+            </button>
           </div>
 
           <div className="form-group">
@@ -463,7 +533,7 @@ const FinancingManagement = () => {
                   <tr key={company._id}>
                     <td>
                       {company.logo ? (
-                        <img src={`${backendRoot}/${company.logo}`} alt={company.companyName} className="company-logo" />
+                        <img src={`${backendRoot}/${company.logo}`} alt={company.companyName} className="admin-company-logo-preview" />
                       ) : (
                         <span>No logo</span>
                       )}
@@ -475,7 +545,17 @@ const FinancingManagement = () => {
                         {company.applyLink}
                       </a>
                     </td>
-                    <td>{company.details || '-'}</td>
+                    <td>
+                      {company.details ? (
+                        <ul className="details-points-preview">
+                          {parseDetailsPoints(company.details).map((item, idx) => (
+                            <li key={idx}>{item}</li>
+                          ))}
+                        </ul>
+                      ) : (
+                        '-'
+                      )}
+                    </td>
                     <td>
                       <div className="conditions-display">
                         {company.conditions && company.conditions.length > 0

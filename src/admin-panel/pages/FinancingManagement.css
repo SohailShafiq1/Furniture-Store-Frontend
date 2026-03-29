@@ -231,6 +231,13 @@
   margin-bottom: 0.8rem;
 }
 
+.details-points-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 0.8rem;
+}
+
 .point-item {
   display: flex;
   gap: 0.5rem;
@@ -281,6 +288,15 @@
 
 .add-point-btn:hover {
   background-color: #229954;
+}
+
+.details-points-preview {
+  margin: 0;
+  padding-left: 1rem;
+}
+
+.details-points-preview li {
+  margin-bottom: 0.25rem;
 }
 
 /* Logo Preview */
@@ -394,7 +410,7 @@
   vertical-align: top;
 }
 
-.company-logo {
+.admin-company-logo-preview {
   width: 80px;
   height: 60px;
   object-fit: contain;
