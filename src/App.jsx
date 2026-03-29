@@ -27,6 +27,7 @@ import OrderManagement from './admin-panel/pages/OrderManagement';
 import StoreManagement from './admin-panel/pages/StoreManagement';
 import FinancingManagement from './admin-panel/pages/FinancingManagement';
 import AnalyticsDashboard from './admin-panel/pages/AnalyticsDashboard';
+import DealsManagement from './admin-panel/pages/DealsManagement';
 import ProtectedRoute from './admin-panel/components/ProtectedRoute';
 import CheckoutPage from './pages/CheckoutPage';
 import CartPage from './pages/CartPage';
@@ -163,6 +164,14 @@ function App() {
               <AnalyticsDashboard />
             </ProtectedRoute>
           } 
+        />
+        <Route
+          path="/admin/deals"
+          element={
+            <ProtectedRoute>
+              <DealsManagement />
+            </ProtectedRoute>
+          }
         />
       </Routes>
     </div>

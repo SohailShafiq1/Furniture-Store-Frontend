@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useCategoryData } from '../hooks/useCategoryData';
 import { useProductsByCategory } from '../hooks/useProductsByCategory';
 import { BACKEND_URL } from '../config/api';
@@ -49,6 +49,8 @@ const StarIcon = ({ filled }) => (
 
 export default function CategoryPage() {
   const { categoryId, subcategoryName } = useParams();
+  const location = useLocation();
+  const subSubFromQuery = new URLSearchParams(location.search).get('subSub');
   const navigate = useNavigate();
   const { categories, loading: categoriesLoading } = useCategoryData();
   const { products: categoryProducts, loading: productsLoading } = useProductsByCategory(categoryId);
@@ -70,7 +72,10 @@ export default function CategoryPage() {
 
   // Update products when categoryProducts change or subcategory changes
   useEffect(() => {
-    setActiveSubSub(null); // Reset sub-sub filter when changing sub-category
+    // When a `subSub` query is present, the dedicated effect below owns activeSubSub + filtering.
+    if (!subSubFromQuery) {
+      setActiveSubSub(null); // Reset sub-sub filter when changing sub-category
+    }
     setAppliedFilters({
       productType: [],
       availability: [],
@@ -87,7 +92,27 @@ export default function CategoryPage() {
       );
       setProducts(filtered);
     }
-  }, [categoryProducts, subcategoryName]);
+  }, [categoryProducts, subcategoryName, subSubFromQuery]);
+
+  // Allow deep-linking into a sub-sub category (used by Deals CTAs)
+  useEffect(() => {
+    if (!subcategoryName || !subSubFromQuery) return;
+
+    setActiveSubSub(subSubFromQuery);
+    setAppliedFilters({
+      productType: [],
+      availability: [],
+      color: [],
+      price: { min: '', max: '' }
+    });
+
+    const filtered = categoryProducts.filter(
+      (p) =>
+        p.subCategoryName?.trim().toLowerCase() === subcategoryName?.trim().toLowerCase() &&
+        p.subSubCategoryName?.trim().toLowerCase() === subSubFromQuery.trim().toLowerCase()
+    );
+    setProducts(filtered);
+  }, [subSubFromQuery, subcategoryName, categoryProducts]);
 
   const handleFilterChange = (filterType, value) => {
     // Determine the base set of products to filter from
