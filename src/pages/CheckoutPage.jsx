@@ -53,6 +53,12 @@ const CheckoutPage = () => {
     window.location.href = 'https://shop.app/checkout/70294831400/cn/hWNALQaLzoPDaXKClxvrGQZo/en-us/shoppay_login?_cs=3.AMPS&_r=AQABhJnE0Q6d8xdadaJ9zbkvPQ7O_-5J9WDqTwN3WoXeaXU&redirect_source=direct_checkout_cart&tracking_unique=54d14bfd-b392-4631-80c3-7d52a566ccbf&tracking_visit=bc86648d-209a-4fa6-9a98-8d2296b8d750';
   };
 
+  const handleGooglePayRedirect = () => {
+    // TODO: Integrate with Stripe's Google Pay API or your Google Pay setup
+    alert('Google Pay integration coming soon!');
+    // For now: window.location.href = 'your-google-pay-checkout-url';
+  };
+
   const handleCheckout = async (e) => {
     e.preventDefault();
     
@@ -168,6 +174,36 @@ const CheckoutPage = () => {
         <h1>Checkout</h1>
         <div className="checkout-layout">
           <form className="checkout-form" onSubmit={handleCheckout}>
+            {/* Express Checkout Section */}
+            <section className="express-checkout-section">
+              <h3>Express checkout</h3>
+              <div className="express-buttons-group">
+                <button 
+                  type="button" 
+                  className="express-btn shop-pay-btn"
+                  onClick={handleShopPayRedirect}
+                >
+                  <span>Shop Pay</span>
+                </button>
+                <button 
+                  type="button" 
+                  className="express-btn google-pay-btn"
+                  onClick={handleGooglePayRedirect}
+                >
+                  <svg viewBox="0 0 533.5 544.3" width="18" height="18" aria-hidden="true">
+                    <path fill="#4285F4" d="M533.5 278.4c0-17.4-1.6-34.1-4.6-50.4H272v95.3h146.9c-6.4 34.7-25.8 64.1-55 83.7v69.5h88.7c51.9-47.8 81.9-118.1 81.9-198.1z"/>
+                    <path fill="#34A853" d="M272 544.3c74.4 0 136.9-24.6 182.5-66.8l-88.7-69.5c-24.6 16.5-56.1 26.3-93.8 26.3-72 0-133-48.5-154.7-113.6H28.6v71.4C73.9 483.8 166.9 544.3 272 544.3z"/>
+                    <path fill="#FBBC04" d="M117.3 320.7c-10.6-31.7-10.6-65.7 0-97.4V151.9H28.6c-38.4 76.8-38.4 167.6 0 244.4l88.7-71.4z"/>
+                    <path fill="#EA4335" d="M272 107.7c39.5-.6 77 13.9 105.6 40.9l79-79C413.5 24.3 344.8-1 272 0 166.9 0 73.9 60.5 28.6 151.9l88.7 71.4C139 158.2 200 107.7 272 107.7z"/>
+                  </svg>
+                  <span>Google Pay</span>
+                </button>
+              </div>
+              <div className="express-divider">
+                <span>OR</span>
+              </div>
+            </section>
+
             {/* Email field for guest users */}
             {!user && (
               <section className="form-section">
