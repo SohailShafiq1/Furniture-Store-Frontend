@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { useCart } from '../context/CartContext';
 import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
@@ -18,9 +19,67 @@ export default function CartPage() {
     zipcode: ''
   });
 
+  // Review states
+  const [reviews, setReviews] = useState([]);
+  const [reviewStats, setReviewStats] = useState({
+    averageRating: 0,
+    totalReviews: 0,
+    ratingDistribution: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
+  });
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [reviewForm, setReviewForm] = useState({
+    userName: '',
+    email: '',
+    rating: 5,
+    title: '',
+    comment: ''
+  });
+  const [reviewLoading, setReviewLoading] = useState(false);
+  const [reviewError, setReviewError] = useState('');
+  const [reviewSuccess, setReviewSuccess] = useState('');
+  const [reviewPage, setReviewPage] = useState(1);
+
+  // Product reviews states
+  const [productReviews, setProductReviews] = useState([]);
+  const [productReviewStats, setProductReviewStats] = useState({
+    averageRating: 0,
+    totalReviews: 0,
+    ratingDistribution: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
+  });
+  const [productReviewPage, setProductReviewPage] = useState(1);
+
   useEffect(() => {
     window.scrollTo(0, 0);
+    fetchReviews();
+    fetchProductReviews();
   }, []);
+
+  const fetchReviews = async () => {
+    try {
+      // Get the store ID from somewhere - for now using a default
+      // You may need to pass store ID through context or props
+      const storeId = localStorage.getItem('storeId') || 'default-store';
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/reviews/store`, {
+        params: { store: storeId, page: reviewPage, limit: 10 }
+      });
+      setReviews(response.data.reviews);
+      setReviewStats(response.data.stats);
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+    }
+  };
+
+  const fetchProductReviews = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/reviews/products/all`, {
+        params: { page: productReviewPage, limit: 10 }
+      });
+      setProductReviews(response.data.reviews);
+      setProductReviewStats(response.data.stats);
+    } catch (error) {
+      console.error('Error fetching product reviews:', error);
+    }
+  };
 
   const cart = cartData.items || [];
   const subtotal = cart.reduce((total, item) => {
@@ -45,6 +104,58 @@ export default function CartPage() {
   const handleQuantityChange = (productId, newQuantity) => {
     if (newQuantity < 1) return;
     updateQuantity(productId, newQuantity);
+  };
+
+  const handleSubmitReview = async (e) => {
+    e.preventDefault();
+    setReviewError('');
+    setReviewSuccess('');
+    setReviewLoading(true);
+
+    try {
+      const storeId = localStorage.getItem('storeId') || 'default-store';
+      
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/reviews/create`, {
+        ...reviewForm,
+        store: storeId,
+        rating: parseInt(reviewForm.rating)
+      });
+
+      setReviewSuccess('Review submitted successfully!');
+      setReviewForm({
+        userName: '',
+        email: '',
+        rating: 5,
+        title: '',
+        comment: ''
+      });
+      setShowReviewForm(false);
+      fetchReviews();
+    } catch (error) {
+      setReviewError(error.response?.data?.message || 'Failed to submit review');
+    } finally {
+      setReviewLoading(false);
+    }
+  };
+
+  const renderStars = (rating) => {
+    return (
+      <div className="star-rating">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <span key={star} className={star <= rating ? 'star filled' : 'star'}>★</span>
+        ))}
+      </div>
+    );
+  };
+
+  const renderDistributionStars = (rating) => {
+    return (
+      <div className="star-label">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <span key={star} className={star <= rating ? 'star filled' : 'star'}>★</span>
+        ))}
+      </div>
+    );
   };
 
   return (
@@ -220,7 +331,7 @@ export default function CartPage() {
             </div>
 
             <button 
-              className={`cart-summary-checkout-btn ${!termsAcepted ? 'disabled' : ''}`}
+              className={`cart-summary-checkout-btn ${!termsAccepted ? 'disabled' : ''}`}
               onClick={handleCheckout}
               disabled={!termsAccepted}
             >
@@ -235,7 +346,288 @@ export default function CartPage() {
         </div>
 
       </div>
-      <SlidingBanner/>
+
+      <div className="reviews-section">
+        <div className="reviews-container">
+          <h2>Store Reviews</h2>
+          
+          {/* Review Statistics */}
+          <div className="review-stats">
+            <div className="rating-summary">
+              <div className="average-rating">
+                {renderStars(Math.round(reviewStats.averageRating))}
+                <span className="big-rating">{reviewStats.averageRating}</span>
+                <span className="out-of">out of 5</span>
+              </div>
+              <p className="based-on">Based on {reviewStats.totalReviews} reviews</p>
+            </div>
+              
+            <div className="rating-distribution">
+              {[5, 4, 3, 2, 1].map((star) => (
+                <div key={star} className="rating-row">
+                  {renderDistributionStars(star)}
+                  <div className="rating-bar">
+                    <div 
+                      className="rating-fill"
+                      style={{
+                        width: `${reviewStats.totalReviews > 0 
+                          ? (reviewStats.ratingDistribution[star] / reviewStats.totalReviews) * 100 
+                          : 0}%`
+                      }}
+                    ></div>
+                  </div>
+                  <span className="rating-count">{reviewStats.ratingDistribution[star]}</span>
+                </div>
+              ))}
+            </div>
+
+            <button 
+              className="write-review-btn"
+              onClick={() => setShowReviewForm(!showReviewForm)}
+            >
+              Write a Store Review
+            </button>
+          </div>
+
+          {/* Review Form */}
+          {showReviewForm && (
+            <div className="review-form-container">
+              <h3>Share Your Experience</h3>
+              {reviewError && <div className="error-message">{reviewError}</div>}
+              {reviewSuccess && <div className="success-message">{reviewSuccess}</div>}
+              
+              <form onSubmit={handleSubmitReview} className="review-form">
+                <div className="form-group">
+                  <label>Your Name *</label>
+                  <input
+                    type="text"
+                    value={reviewForm.userName}
+                    onChange={(e) => setReviewForm({ ...reviewForm, userName: e.target.value })}
+                    required
+                    placeholder="Enter your name"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Email *</label>
+                  <input
+                    type="email"
+                    value={reviewForm.email}
+                    onChange={(e) => setReviewForm({ ...reviewForm, email: e.target.value })}
+                    required
+                    placeholder="Enter your email"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Rating *</label>
+                  <div className="rating-input">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        type="button"
+                        className={`star-btn ${star <= reviewForm.rating ? 'active' : ''}`}
+                        onClick={() => setReviewForm({ ...reviewForm, rating: star })}
+                      >
+                        ★
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label>Review Title *</label>
+                  <input
+                    type="text"
+                    value={reviewForm.title}
+                    onChange={(e) => setReviewForm({ ...reviewForm, title: e.target.value })}
+                    required
+                    placeholder="e.g. Amazing furniture"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Your Review *</label>
+                  <textarea
+                    value={reviewForm.comment}
+                    onChange={(e) => setReviewForm({ ...reviewForm, comment: e.target.value })}
+                    required
+                    placeholder="Share your experience with our store..."
+                    rows="5"
+                  ></textarea>
+                </div>
+
+                <div className="form-actions">
+                  <button type="submit" disabled={reviewLoading}>
+                    {reviewLoading ? 'Submitting...' : 'Submit Review'}
+                  </button>
+                  <button 
+                    type="button" 
+                    className="cancel-btn"
+                    onClick={() => setShowReviewForm(false)}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+
+          {/* Reviews List */}
+          <div className="reviews-list">
+            {reviews.length === 0 ? (
+              <p className="no-reviews">No reviews yet. Be the first to review!</p>
+            ) : (
+              reviews.map((review) => (
+                <div key={review._id} className="review-card">
+                  <div className="review-header">
+                    <div className="reviewer-info">
+                      <div className="reviewer-avatar">
+                        {review.userName.charAt(0).toUpperCase()}
+                      </div>
+                      <div className="reviewer-details">
+                        <h4>{review.userName}</h4>
+                        <p className="review-date">
+                          {new Date(review.createdAt).toLocaleDateString()}
+                          {review.isVerifiedPurchase && <span className="verified-badge">✓ Verified Purchase</span>}
+                        </p>
+                      </div>
+                    </div>
+                    {renderStars(review.rating)}
+                  </div>
+
+                  <div className="review-body">
+                    <h5>{review.title}</h5>
+                    <p>{review.comment}</p>
+                  </div>
+
+                  {review.images && review.images.length > 0 && (
+                    <div className="review-images">
+                      {review.images.map((img, idx) => (
+                        <img 
+                          key={idx} 
+                          src={img} 
+                          alt="Review" 
+                          className="review-image"
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Product Reviews Section */}
+      <div className="reviews-section">
+        <div className="reviews-container">
+          <h2>Product Reviews</h2>
+          
+          {/* Review Statistics */}
+          <div className="review-stats">
+            <div className="rating-summary">
+              <div className="average-rating">
+                {renderStars(Math.round(productReviewStats.averageRating))}
+                <span className="big-rating">{productReviewStats.averageRating}</span>
+                <span className="out-of">out of 5</span>
+              </div>
+              <p className="based-on">Based on {productReviewStats.totalReviews} reviews</p>
+            </div>
+              
+            <div className="rating-distribution">
+              {[5, 4, 3, 2, 1].map((star) => (
+                <div key={star} className="rating-row">
+                  {renderDistributionStars(star)}
+                  <div className="rating-bar">
+                    <div 
+                      className="rating-fill"
+                      style={{
+                        width: `${productReviewStats.totalReviews > 0 
+                          ? (productReviewStats.ratingDistribution[star] / productReviewStats.totalReviews) * 100 
+                          : 0}%`
+                      }}
+                    ></div>
+                  </div>
+                  <span className="rating-count">{productReviewStats.ratingDistribution[star]}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Product Reviews List */}
+          <div className="reviews-list product-reviews-grid">
+            {productReviews.length === 0 ? (
+              <p className="no-reviews">No product reviews yet.</p>
+            ) : (
+              productReviews.map((review) => (
+                <div key={review._id} className="product-review-card">
+                  {review.product && review.product.image && (
+                    <div className="product-review-image">
+                      <img 
+                        src={review.product.image.startsWith('http') 
+                          ? review.product.image 
+                          : `${BACKEND_URL}/${review.product.image}`}
+                        alt={review.product.title}
+                      />
+                    </div>
+                  )}
+                  
+                  <div className="product-review-content">
+                    {review.product && (
+                      <p className="review-product-name">
+                        about <strong>{review.product.title}</strong>
+                      </p>
+                    )}
+
+                    <div className="review-stars-section">
+                      {renderStars(review.rating)}
+                    </div>
+
+                    <div className="reviewer-info-compact">
+                      <div className="reviewer-avatar-small">
+                        {review.userName.charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <p className="reviewer-name">
+                          {review.userName}
+                          {review.isVerifiedPurchase && <span className="verified-badge">Verified</span>}
+                        </p>
+                      </div>
+                    </div>
+
+                    <h5 className="review-title">{review.title}</h5>
+                    <p className="review-text">
+                      {review.comment.length > 200 
+                        ? `${review.comment.substring(0, 200)}...` 
+                        : review.comment}
+                    </p>
+
+                    {review.comment.length > 200 && (
+                      <a href="#" className="read-more">Read more</a>
+                    )}
+
+                    {review.images && review.images.length > 0 && (
+                      <div className="review-images-compact">
+                        {review.images.map((img, idx) => (
+                          <img 
+                            key={idx} 
+                            src={img} 
+                            alt="Review" 
+                            className="review-image-small"
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+
       <Footer />
     </>
   );
