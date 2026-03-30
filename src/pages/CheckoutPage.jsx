@@ -320,13 +320,13 @@ const CheckoutPage = () => {
                       {item.variation && <p className="summary-product-variant">Variation: {item.variation}</p>}
                       <p className="summary-product-qty">Qty: {item.quantity}</p>
                       <p className="summary-product-price">${(item.price * item.quantity).toFixed(2)}</p>
-                      <button 
+                      {/* <button 
                         type="button"
                         className="remove-item-btn"
                         onClick={() => handleRemoveItem(item._id)}
                       >
                         ✕ Remove
-                      </button>
+                      </button> */}
                     </div>
                   </div>
                 );
@@ -346,13 +346,13 @@ const CheckoutPage = () => {
                 <span>${cart.totalPrice.toFixed(2)}</span>
               </div>
             </div>
-            <button 
+            {/* <button 
               type="button" 
               className="shop-pay-btn"
               onClick={handleShopPayRedirect}
             >
               <span style={{ color: 'white', fontWeight: '600' }}>shop</span> Pay
-            </button>
+            </button> */}
           </aside>
         </div>
 
