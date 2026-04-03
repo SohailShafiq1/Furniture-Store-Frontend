@@ -167,7 +167,7 @@ const StoreLocationsPage = () => {
                 </svg>
               </div>
               <h3>E-Mail Us</h3>
-              <p>customerservice@lunafurn.com</p>
+              <p>customerservice@DimondModernFurniture.com</p>
             </div>
 
             <div className="contact-option">

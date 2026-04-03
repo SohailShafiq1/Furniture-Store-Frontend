@@ -73,7 +73,7 @@ export default function Footer() {
           <h4>About Us</h4>
           <ul>
             <li>Our Story</li>
-            <li>Why Luna?</li>
+            <li>Why Dimond Modern Furniture?</li>
             <li>Reviews</li>
             <li>Financing</li>
             <li>News & Blog</li>
