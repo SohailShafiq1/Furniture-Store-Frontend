@@ -1,1 +1,1 @@
-export const STRIPE_PUBLISHABLE_KEY = 'pk_test_51SUbhkPoREsUsXRDXvKjHn7Pq4uY8Z3sI9vK6y9vK6y9vK6y9vK6y9vK6y9vK6y9vK6y9vK6y9vK6y9vK6y'; // Replace with actual pk_test key from balance
+export const STRIPE_PUBLISHABLE_KEY = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || 'pk_test_51SUbhkPoREsUsXRD7Hecf6utdE2VWt89DHykcnNEWfaShrdc3kraUeoWEQhsBt9IjM4cv5R3F6WZE0OHhROByqnk00jLCklYPq';
