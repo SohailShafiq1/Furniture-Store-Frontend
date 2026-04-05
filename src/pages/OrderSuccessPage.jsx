@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { API_BASE_URL, BACKEND_URL } from '../config/api';
@@ -14,12 +14,18 @@ const OrderSuccessPage = () => {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const cartClearedRef = useRef(false);
 
+  // Clear cart once when component mounts
   useEffect(() => {
-    // Clear cart since payment was successful
-    clearCart();
-    
-    // Fetch order details
+    if (!cartClearedRef.current) {
+      clearCart();
+      cartClearedRef.current = true;
+    }
+  }, []);
+
+  // Fetch order details when sessionId changes
+  useEffect(() => {
     const fetchOrderDetails = async () => {
       try {
         const res = await axios.get(`${API_BASE_URL}/orders/by-session/${sessionId}`);
@@ -34,8 +40,10 @@ const OrderSuccessPage = () => {
       }
     };
     
-    fetchOrderDetails();
-  }, [sessionId, clearCart]);
+    if (sessionId) {
+      fetchOrderDetails();
+    }
+  }, [sessionId]);
 
   const getImageUrl = (imagePath) => {
     if (!imagePath) return '';

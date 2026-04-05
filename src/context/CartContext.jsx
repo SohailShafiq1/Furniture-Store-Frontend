@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { API_BASE_URL } from '../config/api';
 import { useUserAuth } from './UserAuthContext';
@@ -75,7 +75,7 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  const fetchCart = async () => {
+  const fetchCart = useCallback(async () => {
     try {
       setLoading(true);
       const res = await axios.get(`${API_BASE_URL}/cart`, {
@@ -89,9 +89,9 @@ export const CartProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
-  const addToCart = async (productId, variation, quantity, price, productDetails = null, selectedColor = null) => {
+  const addToCart = useCallback(async (productId, variation, quantity, price, productDetails = null, selectedColor = null) => {
     // Allow both logged-in and guest users
     if (!productId) {
       console.error('Invalid product');
@@ -163,9 +163,9 @@ export const CartProvider = ({ children }) => {
       console.error('Error adding to cart:', err);
       return false;
     }
-  };
+  }, [user, token, attribution, cart.storeId, cart.items]);
 
-  const updateQuantity = async (itemId, quantity) => {
+  const updateQuantity = useCallback(async (itemId, quantity) => {
     try {
       if (user && token) {
         // Logged-in user
@@ -195,9 +195,9 @@ export const CartProvider = ({ children }) => {
     } catch (err) {
       console.error('Error updating quantity:', err);
     }
-  };
+  }, [user, token, cart]);
 
-  const removeFromCart = async (itemId) => {
+  const removeFromCart = useCallback(async (itemId) => {
     try {
       if (user && token) {
         // Logged-in user
@@ -222,9 +222,9 @@ export const CartProvider = ({ children }) => {
     } catch (err) {
       console.error('Error removing from cart:', err);
     }
-  };
+  }, [user, token, cart]);
 
-  const clearCart = async () => {
+  const clearCart = useCallback(async () => {
     try {
       if (user && token) {
         // Logged-in user
@@ -239,7 +239,7 @@ export const CartProvider = ({ children }) => {
     } catch (err) {
       console.error('Error clearing cart:', err);
     }
-  };
+  }, [user, token]);
 
   return (
     <CartContext.Provider value={{ 
