@@ -27,9 +27,10 @@ const CategoryManagement = () => {
     const fetchCategories = async () => {
         try {
             const res = await axios.get(`${apiEndpoint}/all`, config);
-            setCategories(res.data);
+            setCategories(Array.isArray(res.data) ? res.data : []);
         } catch (err) {
             setError('Failed to fetch categories');
+            setCategories([]);
         }
     };
 

@@ -54,12 +54,12 @@ const DealsManagement = () => {
 
   const fetchCategories = async () => {
     const res = await axios.get(`${categoriesEndpoint}/all`);
-    setCategories(res.data);
+    setCategories(Array.isArray(res.data) ? res.data : []);
   };
 
   const fetchDeals = async () => {
     const res = await axios.get(`${dealsEndpoint}/admin/all`, jsonConfig);
-    setDeals(res.data);
+    setDeals(Array.isArray(res.data) ? res.data : []);
   };
 
   useEffect(() => {

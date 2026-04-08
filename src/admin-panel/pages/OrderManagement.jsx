@@ -32,9 +32,10 @@ const OrderManagement = () => {
       const res = await axios.get(`${BACKEND_URL}/api/admin/stores`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setStores(res.data);
+      setStores(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error('Error fetching stores for filter:', err);
+      setStores([]);
     }
   };
 

@@ -43,9 +43,10 @@ const StoreManagement = () => {
           'Content-Type': 'application/json' 
         }
       });
-      setStores(res.data);
+      setStores(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error('Error fetching stores:', err);
+      setStores([]);
     }
   };
 
@@ -80,9 +81,10 @@ const StoreManagement = () => {
       const res = await axios.get(`${BACKEND_URL}/api/admin/store-products/${store._id}`, {
         headers: { Authorization: `Bearer ${adminToken}` }
       });
-      setProducts(res.data);
+      setProducts(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error('Error fetching store products:', err);
+      setProducts([]);
     } finally {
       setLoadingProducts(false);
     }

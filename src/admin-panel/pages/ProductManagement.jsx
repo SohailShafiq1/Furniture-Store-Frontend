@@ -111,9 +111,9 @@ const ProductManagement = () => {
                 axios.get(`${apiBase}/products/all`, config),
                 axios.get(`${apiBase}/admin/stores`, config)
             ]);
-            setCategories(catsRes.data);
-            setProducts(productsRes.data);
-            setStores(storesRes.data);
+            setCategories(Array.isArray(catsRes.data) ? catsRes.data : []);
+            setProducts(Array.isArray(productsRes.data) ? productsRes.data : []);
+            setStores(Array.isArray(storesRes.data) ? storesRes.data : []);
         } catch (err) {
             setError('Failed to load data');
         }

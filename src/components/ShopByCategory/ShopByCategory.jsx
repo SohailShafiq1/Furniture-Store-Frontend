@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useCategoryData } from '../../hooks/useCategoryData';
-import { BACKEND_URL } from '../../config/api';
+import { getImageUrl, getPlaceholderImage } from '../../utils/imageUrl';
 import './ShopByCategory.css';
 
 export default function ShopByCategory() {
@@ -17,7 +17,7 @@ export default function ShopByCategory() {
 
   // Debug: Log categories and URLs
   categories.forEach(cat => {
-    const imageUrl = cat.image?.startsWith('http') ? cat.image : `${BACKEND_URL}/${cat.image}`;
+    const imageUrl = getImageUrl(cat.image);
     console.log(`Category: ${cat.name}, Image Path: ${cat.image}, Full URL: ${imageUrl}`);
   });
 
@@ -26,7 +26,7 @@ export default function ShopByCategory() {
       <h2 className="category-heading" data-aos="fade-up">Shop by Category</h2>
       <div className="category-grid">
         {categories.map((cat, idx) => {
-          const imageUrl = cat.image?.startsWith('http') ? cat.image : `${BACKEND_URL}/${cat.image}`;
+          const imageUrl = getImageUrl(cat.image);
           return (
             <Link 
               key={cat._id} 
@@ -43,7 +43,7 @@ export default function ShopByCategory() {
                   loading="lazy"
                   onError={(e) => {
                     console.error(`Failed to load image: ${imageUrl}`, e);
-                    e.target.src = '/placeholder-image.png'; // Fallback image
+                    e.target.src = getPlaceholderImage(); // Fallback image
                   }}
                 />
               </div>
