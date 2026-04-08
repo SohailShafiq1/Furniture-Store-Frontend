@@ -103,9 +103,16 @@ export const CartProvider = ({ children }) => {
       let targetStoreId = attribution?.storeId;
 
       if (!targetStoreId) {
-        // Fetch Priority 2: Highest Stock
-        const res = await axios.get(`${API_BASE_URL}/products/attribution/${productId}`);
-        targetStoreId = res.data.storeId;
+        // Try to fetch attribution from backend
+        try {
+          const res = await axios.get(`${API_BASE_URL}/products/attribution/${productId}`);
+          targetStoreId = res.data.storeId;
+        } catch (attrErr) {
+          console.warn('Could not fetch product attribution, using fallback:', attrErr.message);
+          // Fallback: Use null (let backend handle default store assignment)
+          // or use localStorage attribution if available
+          targetStoreId = attribution?.storeId || null;
+        }
       }
 
       // STRICT RULE: Cart is locked to ONE store
@@ -117,15 +124,27 @@ export const CartProvider = ({ children }) => {
 
       if (user && token) {
         // Logged-in user - save to database
-        const res = await axios.post(`${API_BASE_URL}/cart/add`, {
-          productId, variation, quantity, price, storeId: targetStoreId, color: selectedColor
-        }, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        
-        if (res.data.success) {
-          setCart(res.data.cart);
-          return true;
+        try {
+          const res = await axios.post(`${API_BASE_URL}/cart/add`, {
+            productId, 
+            variation, 
+            quantity, 
+            price, 
+            storeId: targetStoreId, 
+            color: selectedColor
+          }, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          
+          if (res.data.success) {
+            setCart(res.data.cart);
+            return true;
+          }
+        } catch (cartErr) {
+          console.error('Error adding to cart (logged-in user):', cartErr);
+          console.error('Status:', cartErr.response?.status);
+          console.error('Message:', cartErr.response?.data?.message);
+          throw cartErr;
         }
       } else {
         // Guest user - save to localStorage
