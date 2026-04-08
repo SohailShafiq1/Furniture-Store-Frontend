@@ -7,7 +7,7 @@ import Footer from '../components/Footer/Footer';
 import './CartPage.css';
 import SlidingBanner from '../components/SlidingBanner/SlidingBanner';
 
-const BACKEND_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || '';
+const BACKEND_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5001';
 
 export default function CartPage() {
   const navigate = useNavigate();
@@ -56,14 +56,13 @@ export default function CartPage() {
 
   const fetchReviews = async () => {
     try {
-      // Get the store ID from somewhere - for now using a default
-      // You may need to pass store ID through context or props
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
       const storeId = localStorage.getItem('storeId') || 'default-store';
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/reviews/store`, {
+      const response = await axios.get(`${apiUrl}/reviews/store`, {
         params: { store: storeId, page: reviewPage, limit: 10 }
       });
-      setReviews(response.data.reviews);
-      setReviewStats(response.data.stats);
+      setReviews(Array.isArray(response.data.reviews) ? response.data.reviews : []);
+      setReviewStats(response.data.stats || {});
     } catch (error) {
       console.error('Error fetching reviews:', error);
     }
@@ -71,11 +70,12 @@ export default function CartPage() {
 
   const fetchProductReviews = async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/reviews/products/all`, {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+      const response = await axios.get(`${apiUrl}/reviews/products/all`, {
         params: { page: productReviewPage, limit: 10 }
       });
-      setProductReviews(response.data.reviews);
-      setProductReviewStats(response.data.stats);
+      setProductReviews(Array.isArray(response.data.reviews) ? response.data.reviews : []);
+      setProductReviewStats(response.data.stats || {});
     } catch (error) {
       console.error('Error fetching product reviews:', error);
     }
@@ -113,9 +113,10 @@ export default function CartPage() {
     setReviewLoading(true);
 
     try {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
       const storeId = localStorage.getItem('storeId') || 'default-store';
       
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/reviews/create`, {
+      const response = await axios.post(`${apiUrl}/reviews/create`, {
         ...reviewForm,
         store: storeId,
         rating: parseInt(reviewForm.rating)

@@ -32,10 +32,11 @@ const InspirationManagement = () => {
           'Content-Type': 'application/json'
         }
       });
-      setInspirations(res.data);
+      setInspirations(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error('Error fetching inspirations:', err);
       setSubmitError('Failed to load inspirations');
+      setInspirations([]);
     } finally {
       setLoading(false);
     }

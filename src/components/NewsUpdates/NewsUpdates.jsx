@@ -14,9 +14,11 @@ export default function NewsUpdates() {
   const fetchNews = async () => {
     try {
       const res = await axios.get(`${BACKEND_URL}/api/home-content/news/get-all`);
-      setNews(res.data.slice(0, 3)); // Show only 3
+      const newsArray = Array.isArray(res.data) ? res.data : [];
+      setNews(newsArray.slice(0, 3)); // Show only 3
     } catch (err) {
       console.error('Error fetching news:', err);
+      setNews([]);
     }
   };
 

@@ -12,6 +12,12 @@ export default function DiningTable() {
         const response = await fetch(`${BACKEND_URL}/api/products/all?t=${Date.now()}`);
         const data = await response.json();
         
+        // Validate data is an array before filtering
+        if (!Array.isArray(data)) {
+          setProducts([]);
+          return;
+        }
+        
         // Filter dining products and map to carousel format
         const dining = data
           .filter(p => p.subCategoryName?.toLowerCase().includes('dining') || p.subCategoryName?.toLowerCase().includes('table'))

@@ -12,6 +12,12 @@ export default function Sectionals() {
         const response = await fetch(`${BACKEND_URL}/api/products/all?t=${Date.now()}`);
         const data = await response.json();
         
+        // Validate data is an array before filtering
+        if (!Array.isArray(data)) {
+          setProducts([]);
+          return;
+        }
+        
         // Filter sectional products and map to carousel format
         const sectionals = data
           .filter(p => p.subCategoryName?.toLowerCase().includes('sectional'))
@@ -31,6 +37,7 @@ export default function Sectionals() {
         setProducts(sectionals);
       } catch (err) {
         console.error('Failed to fetch sectionals:', err);
+        setProducts([]);
       } finally {
         setLoading(false);
       }

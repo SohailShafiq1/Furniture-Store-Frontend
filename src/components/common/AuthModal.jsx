@@ -11,7 +11,8 @@ const AuthModal = ({ isOpen, onClose }) => {
     const [message, setMessage] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const apiBase = import.meta.env.VITE_API_URL + '/users';
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+    const apiBase = apiUrl + '/users';
 
     if (!isOpen) return null;
 
@@ -22,7 +23,7 @@ const AuthModal = ({ isOpen, onClose }) => {
     };
 
     const handleGoogleLogin = () => {
-        window.location.href = `${import.meta.env.VITE_API_URL}/users/google`;
+        window.location.href = `${apiUrl}/users/google`;
     };
 
     const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });

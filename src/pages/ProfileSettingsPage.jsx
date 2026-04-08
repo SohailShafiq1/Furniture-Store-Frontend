@@ -34,7 +34,8 @@ const ProfileSettingsPage = () => {
     confirm: false
   });
 
-  const apiEndpoint = `${import.meta.env.VITE_API_URL}/users`;
+  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+  const apiEndpoint = `${apiUrl}/users`;
 
   useEffect(() => {
     if (!token) {

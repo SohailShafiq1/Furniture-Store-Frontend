@@ -24,16 +24,18 @@ export default function NewsDetailPage() {
       setNews(res.data);
 
       const allRes = await axios.get(`${BACKEND_URL}/api/home-content/news/get-all`);
-      setAllNews(allRes.data);
+      setAllNews(Array.isArray(allRes.data) ? allRes.data : []);
     } catch (err) {
       console.error('Error fetching news:', err);
       setError('News not found');
+      setAllNews([]);
     } finally {
       setLoading(false);
     }
   };
 
   const getRelatedNews = () => {
+    if (!Array.isArray(allNews)) return [];
     return allNews.filter(item => item._id !== newsId).slice(0, 3);
   };
 

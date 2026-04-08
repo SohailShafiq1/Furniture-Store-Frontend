@@ -10,7 +10,7 @@ const StoreLocationsPage = () => {
   const [error, setError] = useState('');
   const [selectedStore, setSelectedStore] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const apiUrl = import.meta.env.VITE_API_URL;
+  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
   useEffect(() => {
     fetchStores();
@@ -20,13 +20,15 @@ const StoreLocationsPage = () => {
     try {
       setLoading(true);
       const res = await axios.get(`${apiUrl}/admin/stores/public/all`);
-      setStores(res.data);
-      if (res.data.length > 0) {
-        setSelectedStore(res.data[0]);
+      const storesArray = Array.isArray(res.data) ? res.data : [];
+      setStores(storesArray);
+      if (storesArray.length > 0) {
+        setSelectedStore(storesArray[0]);
       }
       setError('');
     } catch (err) {
       setError('Failed to load stores');
+      setStores([]);
       console.error(err);
     } finally {
       setLoading(false);

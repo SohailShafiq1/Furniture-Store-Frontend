@@ -17,9 +17,10 @@ export default function NewsPage() {
   const fetchNews = async () => {
     try {
       const res = await axios.get(`${BACKEND_URL}/api/home-content/news/get-all`);
-      setNews(res.data);
+      setNews(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error('Error fetching news:', err);
+      setNews([]);
     } finally {
       setLoading(false);
     }

@@ -9,7 +9,7 @@ const SubAdminManagement = () => {
   const [error, setError] = useState('');
   const { token, admin: currentAdmin } = useAdminAuth();
 
-  const apiUrl = import.meta.env.VITE_API_URL;
+  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
   const config = { headers: { Authorization: `Bearer ${token}` } };
 
   const fetchAdmins = async () => {

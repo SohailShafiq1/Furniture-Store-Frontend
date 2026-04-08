@@ -13,8 +13,9 @@ const MyOrdersPage = () => {
   const [expandedOrder, setExpandedOrder] = useState(null);
   const [filterStatus, setFilterStatus] = useState('All');
 
-  const apiEndpoint = `${import.meta.env.VITE_API_URL}/orders`;
-  const backendRoot = import.meta.env.VITE_API_URL.replace('/api', '');
+  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+  const apiEndpoint = `${apiUrl}/orders`;
+  const backendRoot = apiUrl.replace('/api', '');
 
   useEffect(() => {
     if (!token) {

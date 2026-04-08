@@ -8,7 +8,8 @@ const AnalyticsDashboard = () => {
   const [analytics, setAnalytics] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const apiEndpoint = `${import.meta.env.VITE_API_URL}/analytics`;
+  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+  const apiEndpoint = `${apiUrl}/analytics`;
 
   useEffect(() => {
     fetchAnalytics();

@@ -12,6 +12,12 @@ export default function BedroomSets() {
         const response = await fetch(`${BACKEND_URL}/api/products/all?t=${Date.now()}`);
         const data = await response.json();
         
+        // Validate data is an array before filtering
+        if (!Array.isArray(data)) {
+          setProducts([]);
+          return;
+        }
+        
         // Filter bedroom products and map to carousel format
         const bedrooms = data
           .filter(p => p.subCategoryName?.toLowerCase().includes('bed') || p.subCategoryName?.toLowerCase().includes('bedroom'))
@@ -31,6 +37,7 @@ export default function BedroomSets() {
         setProducts(bedrooms);
       } catch (err) {
         console.error('Failed to fetch bedroom sets:', err);
+        setProducts([]);
       } finally {
         setLoading(false);
       }
