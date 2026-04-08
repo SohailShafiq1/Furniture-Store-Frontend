@@ -10,17 +10,24 @@ export const useCategoryData = () => {
     const fetchCategories = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${API_BASE_URL}/categories/all`);
+        const url = `${API_BASE_URL}/categories/all`;
+        console.log('Fetching categories from:', url);
+        
+        const response = await fetch(url);
         
         if (!response.ok) {
-          throw new Error(`API error: ${response.status}`);
+          const text = await response.text();
+          console.error('Response Status:', response.status);
+          console.error('Response Text (first 100 chars):', text.substring(0, 100));
+          throw new Error(`API error: ${response.status} ${response.statusText}`);
         }
 
         const data = await response.json();
-        setCategories(data);
+        setCategories(Array.isArray(data) ? data : []);
         setError(null);
       } catch (err) {
         console.error('Error fetching categories:', err);
+        console.error('Full error:', err);
         setError(err.message);
         setCategories([]);
       } finally {

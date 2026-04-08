@@ -406,14 +406,25 @@ export default function HomePage() {
     const fetchHomeContent = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`${API_BASE_URL}/home-content/get-all-content`);
+        const url = `${API_BASE_URL}/home-content/get-all-content`;
+        console.log('Fetching home content from:', url);
+        
+        const res = await axios.get(url);
+        console.log('Home content response:', res.data);
+        
         // Filter only visible content and sort by createdAt
-        const visibleContent = (res.data || [])
-          .filter(item => item.isVisible)
-          .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        const visibleContent = (Array.isArray(res.data) ? res.data : [])
+          .filter(item => item?.isVisible)
+          .sort((a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0));
         setHomeContent(visibleContent);
       } catch (err) {
         console.error('Error fetching home content:', err);
+        console.error('Error response:', {
+          status: err.response?.status,
+          statusText: err.response?.statusText,
+          data: err.response?.data ? err.response.data.substring?.(0, 100) : err.response?.data,
+          message: err.message,
+        });
         setHomeContent([]);
       } finally {
         setLoading(false);
