@@ -27,7 +27,8 @@ const InspirationDetailPage = () => {
         const allRes = await axios.get(
           `${BACKEND_URL}/api/home-content/inspiration/get-all`
         );
-        setAllInspirations(allRes.data.filter(insp => insp._id !== inspirationId));
+        const allInspArray = Array.isArray(allRes.data) ? allRes.data : [];
+        setAllInspirations(allInspArray.filter(insp => insp._id !== inspirationId));
       } catch (err) {
         console.error('Error fetching inspiration:', err);
         setError('Inspiration not found');

@@ -17,7 +17,7 @@ const InspirationPage = () => {
         const res = await axios.get(
           `${BACKEND_URL}/api/home-content/inspiration/get-all`
         );
-        setInspirations(res.data);
+        setInspirations(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
         console.error('Error fetching inspirations:', err);
       } finally {

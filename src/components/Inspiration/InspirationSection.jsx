@@ -15,7 +15,8 @@ const InspirationSection = () => {
         const res = await axios.get(
           `${BACKEND_URL}/api/home-content/inspiration/get-all`
         );
-        setInspirations(res.data.slice(0, 4)); // Show 4 inspirations
+        const inspArray = Array.isArray(res.data) ? res.data : [];
+        setInspirations(inspArray.slice(0, 4)); // Show 4 inspirations
       } catch (err) {
         console.error('Error fetching inspirations:', err);
       } finally {
