@@ -8,6 +8,8 @@ import HeroSection from '../components/HeroSection/HeroSection';
 import Sectionals from '../components/Sectionals/Sectionals';
 import PromoBanners from '../components/PromoBanners/PromoBanners';
 import ShopByCategory from '../components/ShopByCategory/ShopByCategory';
+import PromoStrip from '../components/PromoStrip/PromoStrip';
+import TopSpringPicks from '../components/TopSpringPicks/TopSpringPicks';
 import SlidingBanner from '../components/SlidingBanner/SlidingBanner';
 import InspirationSection from '../components/Inspiration/InspirationSection';
 import TopBrands from '../components/TopBrands/TopBrands';
@@ -439,6 +441,8 @@ export default function HomePage() {
       <Header />
       <HeroSection />
       <ShopByCategory />
+      <PromoStrip />
+      <TopSpringPicks />
       
       {/* Dynamically render HomeContent sections */}
       {homeContent.map((content, idx) => (
