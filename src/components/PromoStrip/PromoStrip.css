@@ -1,7 +1,7 @@
 .promo-strip {
   width: 100%;
   background: #f5efe7 !important;
-  padding: 20px 60px;
+  padding: 3rem 60px;
   border-top: none;
   border-bottom: none;
 }
@@ -11,20 +11,20 @@
   margin: 0 auto;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 32px;
+  justify-content: center;
+  gap: 24px;
 }
 
 .promo-strip-content {
   display: flex;
   flex-direction: row;
-  gap: 10px;
+  gap: 12px;
   align-items: center;
-  flex: 1;
+  justify-content: center;
 }
 
 .promo-strip-title {
-  font-size: 30px;
+  font-size: 3.125rem;
   font-weight: 700;
   color: #0f4a3a;
   margin: 0;
@@ -33,7 +33,7 @@
 }
 
 .promo-strip-subtitle {
-  font-size: 18px;
+  font-size: 1rem;
   color: #2b5b4f;
   margin: 0;
   line-height: 1.4;
@@ -48,15 +48,15 @@
   background: #f5efe7;
   border: 2px solid #cdbfae;
   border-radius: 6px;
-  padding: 4px 0;
+  padding: 6px 0;
 }
 
 .promo-code-label {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   color: #0f4a3a;
   letter-spacing: 0.8px;
-  padding: 8px 16px;
+  padding: 10px 18px;
   background: transparent;
   border: none;
   border-right: 2px dashed #cdbfae;
@@ -69,13 +69,13 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 16px;
+  padding: 10px 18px;
   background: transparent;
   color: #0f4a3a;
   border: none;
   border-left: none;
   border-radius: 0 4px 4px 0;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;

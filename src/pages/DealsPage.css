@@ -226,14 +226,15 @@
   color: #fff;
 }
 
-.promo-strip-container {
+.deals-page .promo-strip-container {
+  background-color: #114b3d;
   width: 100%;
   padding: 35px 20px;
   display: flex;
   justify-content: center;
 }
 
-.promo-strip-content {
+.deals-page .promo-strip-content {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -243,7 +244,7 @@
   width: 100%;
 }
 
-.promo-strip-text {
+.deals-page .promo-strip-text {
   font-size: 1.4rem;
   color: white;
   display: flex;
@@ -253,18 +254,18 @@
   justify-content: center;
 }
 
-.highlight-text {
+.deals-page .highlight-text {
   color: #71cba5;
   font-weight: 700;
   font-size: 1.8rem;
 }
 
-.normal-text {
+.deals-page .normal-text {
   font-weight: 400;
   letter-spacing: 0.3px;
 }
 
-.promo-code-box {
+.deals-page .promo-code-box {
   display: flex;
   align-items: stretch;
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -275,11 +276,11 @@
   height: 48px;
 }
 
-.promo-code-box:hover {
+.deals-page .promo-code-box:hover {
   background-color: rgba(255, 255, 255, 0.08);
 }
 
-.promo-code {
+.deals-page .promo-code {
   padding: 0 24px;
   color: white;
   font-weight: 700;
@@ -290,7 +291,7 @@
   justify-content: center;
 }
 
-.promo-copy {
+.deals-page .promo-copy {
   padding: 0 24px;
   color: white;
   display: flex;
@@ -300,7 +301,7 @@
   font-size: 1rem;
 }
 
-.copy-success {
+.deals-page .copy-success {
   color: #71cba5;
   font-weight: 600;
 }
