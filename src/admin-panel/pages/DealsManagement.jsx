@@ -21,6 +21,8 @@ const DealsManagement = () => {
   const [images, setImages] = useState([]);
   const [imageActions, setImageActions] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
+  const [showHomePanel, setShowHomePanel] = useState(false);
+  const [homeDealId, setHomeDealId] = useState('');
 
   const [editingId, setEditingId] = useState(null);
   const [editExistingImages, setEditExistingImages] = useState([]);
@@ -61,6 +63,11 @@ const DealsManagement = () => {
     const res = await axios.get(`${dealsEndpoint}/admin/all`, jsonConfig);
     setDeals(Array.isArray(res.data) ? res.data : []);
   };
+
+  useEffect(() => {
+    const currentHome = deals.find((deal) => deal.showOnHomePage);
+    setHomeDealId(currentHome?._id || '');
+  }, [deals]);
 
   useEffect(() => {
     (async () => {
@@ -245,14 +252,79 @@ const DealsManagement = () => {
     }
   };
 
+  const handleSetHomeDeal = async () => {
+    if (!homeDealId) {
+      setError('Please select a deal to show on the home page');
+      return;
+    }
+
+    try {
+      setError('');
+      await axios.put(`${dealsEndpoint}/set-home/${homeDealId}`, {}, jsonConfig);
+      setMessage('Home page deal updated');
+      await fetchDeals();
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to set home page deal');
+    }
+  };
+
   return (
     <div className="deals-management">
       <h1>Deals Management</h1>
 
+      <div style={{ margin: '10px 0 20px 0', display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+        <button
+          type="button"
+          className="secondary-btn"
+          onClick={() => setShowHomePanel((prev) => !prev)}
+        >
+          Home Page Deals
+        </button>
+      </div>
+
+      {showHomePanel && (
+        <div className="deals-form-card">
+          <h2>Home Page Deal</h2>
+          <p className="helper">
+            Select an existing deal to show on the home page or create a new deal using the form below.
+          </p>
+          <div className="form-actions-row" style={{ alignItems: 'center' }}>
+            <select
+              value={homeDealId}
+              onChange={(e) => setHomeDealId(e.target.value)}
+              style={{ minWidth: 280 }}
+            >
+              <option value="">Select existing deal</option>
+              {deals.map((deal) => (
+                <option key={deal._id} value={deal._id}>
+                  {deal.title}
+                </option>
+              ))}
+            </select>
+            <button type="button" onClick={handleSetHomeDeal}>
+              Set Home Page Deal
+            </button>
+            <button
+              type="button"
+              className="secondary-btn"
+              onClick={() => {
+                setShowOnHomePage(true);
+                const formEl = document.getElementById('deals-form-card');
+                if (formEl) {
+                  formEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }}
+            >
+              Create New Home Deal
+            </button>
+          </div>
+        </div>
+      )}
+
       {message && <div className="success-toast" onClick={() => setMessage('')}>{message}</div>}
       {error && <div className="error-toast" onClick={() => setError('')}>{error}</div>}
 
-      <div className="deals-form-card">
+      <div className="deals-form-card" id="deals-form-card">
         <h2>{editingId ? 'Edit Deal' : 'Create New Deal'}</h2>
         <form onSubmit={handleCreateOrUpdate} className="admin-form">
           <label className="form-label">Title</label>

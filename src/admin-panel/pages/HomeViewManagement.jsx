@@ -5,6 +5,9 @@ import './HomeViewManagement.css';
 
 const HomeViewManagement = () => {
   const [homeContent, setHomeContent] = useState({
+    promoStripTitle: '',
+    promoStripSubtitle: '',
+    promoStripCode: '',
     promotionPhotos: [
       { image: null, heading: '', subHeading: '', buttonName: '', buttonSubcategory: '' },
       { image: null, heading: '', subHeading: '', buttonName: '', buttonSubcategory: '' },
@@ -221,6 +224,10 @@ const HomeViewManagement = () => {
       formData.append('promotionButtonName2', homeContent.promotionPhotos[1].buttonName);
       formData.append('promotionButtonSubcategory2', homeContent.promotionPhotos[1].buttonSubcategory);
 
+      formData.append('promoStripTitle', homeContent.promoStripTitle || '');
+      formData.append('promoStripSubtitle', homeContent.promoStripSubtitle || '');
+      formData.append('promoStripCode', homeContent.promoStripCode || '');
+
       // Add category, sub-category, and products
       formData.append('selectedCategory', homeContent.selectedCategory);
       formData.append('selectedSubCategory', homeContent.selectedSubCategory);
@@ -271,6 +278,9 @@ const HomeViewManagement = () => {
   // Reset form
   const resetForm = () => {
     setHomeContent({
+      promoStripTitle: '',
+      promoStripSubtitle: '',
+      promoStripCode: '',
       promotionPhotos: [
         { image: null, heading: '', subHeading: '' },
         { image: null, heading: '', subHeading: '' },
@@ -290,6 +300,9 @@ const HomeViewManagement = () => {
   const handleEdit = (content) => {
     setEditingId(content._id);
     setHomeContent({
+      promoStripTitle: content.promoStripTitle || '',
+      promoStripSubtitle: content.promoStripSubtitle || '',
+      promoStripCode: content.promoStripCode || '',
       promotionPhotos: content.promotionPhotos,
       selectedCategory: content.selectedCategory?._id || '',
       selectedSubCategory: content.selectedSubCategoryName || '',
@@ -358,6 +371,51 @@ const HomeViewManagement = () => {
       {/* Form */}
       {showForm && (
         <form onSubmit={handleSaveContent} className="home-content-form">
+        {/* Promo Strip Section */}
+        <section className="promotion-section">
+          <h2>Promo Strip</h2>
+          <p className="section-subtitle">Configure the text and code for the home page promo strip</p>
+
+          <div className="form-group">
+            <label>Title</label>
+            <input
+              type="text"
+              placeholder="e.g., Extra 5% OFF"
+              value={homeContent.promoStripTitle}
+              onChange={(e) => setHomeContent(prev => ({
+                ...prev,
+                promoStripTitle: e.target.value
+              }))}
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Subtitle</label>
+            <input
+              type="text"
+              placeholder="e.g., A small boost for your tax refund season."
+              value={homeContent.promoStripSubtitle}
+              onChange={(e) => setHomeContent(prev => ({
+                ...prev,
+                promoStripSubtitle: e.target.value
+              }))}
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Promo Code</label>
+            <input
+              type="text"
+              placeholder="e.g., 555OFF"
+              value={homeContent.promoStripCode}
+              onChange={(e) => setHomeContent(prev => ({
+                ...prev,
+                promoStripCode: e.target.value.toUpperCase()
+              }))}
+            />
+          </div>
+        </section>
+
         {/* Promotion Photos Section */}
         <section className="promotion-section">
           <h2>Promotion Photos (Banner Items)</h2>

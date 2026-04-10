@@ -16,6 +16,16 @@ import TopBrands from '../components/TopBrands/TopBrands';
 import NewsUpdates from '../components/NewsUpdates/NewsUpdates';
 import Footer from '../components/Footer/Footer';
 
+const buildDealRedirectPath = (deal, imageItem) => {
+  const catId = deal?.redirectTarget?.categoryId;
+  const subName = deal?.redirectTarget?.subCategoryName;
+  const subSub = imageItem?.subSubCategoryName || deal?.redirectTarget?.subSubCategoryName;
+
+  const basePath = `/category/${catId}/sub/${encodeURIComponent(subName || '')}`;
+  if (!subSub) return basePath;
+  return `${basePath}?subSub=${encodeURIComponent(subSub)}`;
+};
+
 // Dynamic PromoBanners Component that accepts custom data
 const DynamicPromoBanners = ({ homeContent }) => {
   const navigate = useNavigate();
@@ -386,6 +396,7 @@ export default function HomePage() {
   const { login, token: currentToken } = useUserAuth();
   const [homeContent, setHomeContent] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [homeDeal, setHomeDeal] = useState(null);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -417,7 +428,7 @@ export default function HomePage() {
         // Filter only visible content and sort by createdAt
         const visibleContent = (Array.isArray(res.data) ? res.data : [])
           .filter(item => item?.isVisible)
-          .sort((a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0));
+          .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
         setHomeContent(visibleContent);
       } catch (err) {
         console.error('Error fetching home content:', err);
@@ -436,13 +447,61 @@ export default function HomePage() {
     fetchHomeContent();
   }, []);
 
+  useEffect(() => {
+    const fetchHomeDeal = async () => {
+      try {
+        const res = await axios.get(`${API_BASE_URL}/deals/all`);
+        const deals = Array.isArray(res.data) ? res.data : [];
+        const selected = deals.find((deal) => deal.showOnHomePage);
+        setHomeDeal(selected || null);
+      } catch (err) {
+        console.error('Error fetching deals:', err);
+        setHomeDeal(null);
+      }
+    };
+
+    fetchHomeDeal();
+  }, []);
+
+  const homeDealItems = (homeDeal?.images || [])
+    .slice(0, 3)
+    .map((img, idx) => {
+      const rawImage = typeof img === 'string' ? img : img?.image;
+      const image = rawImage
+        ? (rawImage.startsWith('http') ? rawImage : `${BACKEND_URL}/${rawImage}`)
+        : '';
+      const buttonText = typeof img === 'string' ? 'Shop now' : img?.buttonName || 'Shop now';
+
+      return {
+        id: `${homeDeal?._id || 'deal'}-${idx}`,
+        image,
+        title: homeDeal?.title,
+        priceLabel: homeDeal?.dealOffer,
+        buttonText,
+        onClick: () => {
+          if (homeDeal?.redirectTarget?.categoryId && homeDeal?.redirectTarget?.subCategoryName) {
+            navigate(buildDealRedirectPath(homeDeal, img));
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        }
+      };
+    })
+    .filter((item) => item.image);
+
   return (
     <div className="home-page">
       <Header />
       <HeroSection />
       <ShopByCategory />
-      <PromoStrip />
-      <TopSpringPicks />
+      <PromoStrip
+        title={homeDeal?.promoStrip?.enabled ? homeDeal?.promoStrip?.highlightText : ''}
+        subtitle={homeDeal?.promoStrip?.enabled ? homeDeal?.promoStrip?.normalText : ''}
+        code={homeDeal?.promoStrip?.enabled ? homeDeal?.promoStrip?.code : ''}
+      />
+      <TopSpringPicks
+        items={homeDealItems}
+        title={homeDeal?.title || 'Top Deals'}
+      />
       
       {/* Dynamically render HomeContent sections */}
       {homeContent.map((content, idx) => (
