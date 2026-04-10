@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import SearchBar from '../common/SearchBar';
 import Navigation from '../Navigation/Navigation';
@@ -12,10 +13,54 @@ import './Header.css';
 export default function Header() {
   const [activeMenu, setActiveMenu] = useState(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [activeBannerIndex, setActiveBannerIndex] = useState(0);
+  const [latestNewsId, setLatestNewsId] = useState(null);
   const { user, logout } = useUserAuth();
   const { cart } = useCart();
   const { categories } = useCategoryData();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchLatestNews = async () => {
+      try {
+        const res = await axios.get(`${BACKEND_URL}/api/home-content/news/get-all`);
+        const newsItems = Array.isArray(res.data) ? res.data.filter((item) => item.isVisible !== false) : [];
+        if (newsItems.length > 0) {
+          const sortedNews = newsItems.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          setLatestNewsId(sortedNews[0]._id);
+        }
+      } catch (error) {
+        console.error('Error fetching latest news:', error);
+      }
+    };
+
+    fetchLatestNews();
+  }, []);
+
+  const bannerItems = [
+    {
+      text: 'Shop with Confidence: 30-DAY RETURNS*',
+      route: '/return-policy',
+    },
+    {
+      text: 'Spring Sale continues: Up to 70% Off',
+      route: '/deals',
+    },
+    {
+      text: 'Ranked top 100 among US furniture stores!',
+      route: latestNewsId ? `/news/${latestNewsId}` : '/news',
+    },
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveBannerIndex((current) => (current + 1) % bannerItems.length);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [bannerItems.length, latestNewsId]);
+
+  const activeBanner = bannerItems[activeBannerIndex];
 
   // Calculate total items in cart
   const cartItemCount = cart.items.reduce((total, item) => total + item.quantity, 0);
@@ -36,6 +81,33 @@ export default function Header() {
 
   return (
     <header className="header" onMouseLeave={() => setActiveMenu(null)}>
+      <div className="header-announcement-bar">
+        <div className="header-announcement-inner">
+          <button
+            type="button"
+            className="announcement-message"
+            onClick={() => navigate(activeBanner.route)}
+          >
+            {activeBanner.text}
+          </button>
+          <div className="announcement-links">
+            <button
+              type="button"
+              className="announcement-link"
+              onClick={() => navigate('/track-order')}
+            >
+              Track My Order
+            </button>
+            <button
+              type="button"
+              className="announcement-link"
+              onClick={() => navigate('/contact-us')}
+            >
+              Contact Us
+            </button>
+          </div>
+        </div>
+      </div>
 
       {/* Row 1: Logo | Search | Icons */}
       <div className="header-top-row">

@@ -137,7 +137,7 @@ const MyOrdersPage = () => {
                 {/* Card Header */}
                 <div className="order-card-header">
                   <div className="order-info">
-                    <h3>Order #{order._id.substring(0, 8).toUpperCase()}</h3>
+                    <h3>Order #{order.orderId || order._id.substring(0, 8).toUpperCase()}</h3>
                     <p className="order-date">
                       {new Date(order.createdAt).toLocaleDateString('en-US', {
                         year: 'numeric',

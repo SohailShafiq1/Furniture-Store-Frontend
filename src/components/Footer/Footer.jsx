@@ -95,8 +95,8 @@ export default function Footer() {
           <h4>Need Help?</h4>
           <p><strong>Email:</strong> customerservice@lunafurn.com</p>
           <p><strong>Call/Text:</strong> (832) 900-3800</p>
-          <p style={{marginTop: '16px', cursor: 'pointer'}}>Contact Us</p>
-          <p style={{cursor: 'pointer'}}>Store Locator</p>
+          <Link to="/contact-us" className="footer-link" style={{marginTop: '16px'}}>Contact Us</Link>
+          <Link to="/store-locations" className="footer-link">Store Locator</Link>
 
           <div className="social-row" aria-label="Social media links">
             <span className="social" title="Facebook">f</span>
@@ -112,7 +112,7 @@ export default function Footer() {
       <div className="footer-bottom">
         <div className="left">© 2026 Furniture Store.</div>
         <div className="right">
-          <a href="#">Privacy Policy</a>
+          <Link to="/privacy-policy">Privacy Policy</Link>
           <a href="#">Terms Of Use</a>
         </div>
       </div>

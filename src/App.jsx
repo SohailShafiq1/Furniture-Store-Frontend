@@ -10,7 +10,11 @@ import InspirationDetailPage from './pages/InspirationDetailPage';
 import NewsPage from './pages/NewsPage';
 import NewsDetailPage from './pages/NewsDetailPage';
 import FinancingPage from './pages/FinancingPage';
+import ReturnPolicyPage from './pages/ReturnPolicyPage';
 import StoreLocationsPage from './pages/StoreLocationsPage';
+import ContactPage from './pages/ContactPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TrackOrderPage from './pages/TrackOrderPage';
 import DealsPage from './pages/DealsPage';
 import './App.css';
 import './admin-panel/admin-panel.css';
@@ -51,6 +55,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/deals" element={<DealsPage />} />
+        <Route path="/contact-us" element={<ContactPage />} />
         <Route path="/category/:categoryId" element={<CategoryPage />} />
         <Route path="/category/:categoryId/sub/:subcategoryName" element={<CategoryPage />} />
         <Route path="/product/:categoryId/:productId" element={<ProductDetailPage />} />
@@ -58,11 +63,14 @@ function App() {
         <Route path="/inspiration/:inspirationId" element={<InspirationDetailPage />} />
         <Route path="/news" element={<NewsPage />} />
         <Route path="/news/:newsId" element={<NewsDetailPage />} />
+        <Route path="/return-policy" element={<ReturnPolicyPage />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
         <Route path="/financing" element={<FinancingPage />} />
         <Route path="/store-locations" element={<StoreLocationsPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/order-success/:sessionId" element={<OrderSuccessPage />} />
+        <Route path="/track-order" element={<TrackOrderPage />} />
         <Route path="/my-orders" element={<MyOrdersPage />} />
         <Route path="/profile-settings" element={<ProfileSettingsPage />} />
         <Route path="/admin" element={<AdminLogin />} />
