@@ -205,7 +205,7 @@ export default function Header() {
         <Navigation activeMenu={activeMenu} onCategoryHover={setActiveMenu} />
         <div className="nav-row-right">
           <Link to="/financing" className="financing-link">Financing / Lease to Own</Link>
-          <Link to="/premium" className="premium-action-btn">Luna Premium</Link>
+          {/* <Link to="/premium" className="premium-action-btn">Luna Premium</Link> */}
         </div>
       </div>
 
