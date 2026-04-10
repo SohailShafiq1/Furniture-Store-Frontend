@@ -1,6 +1,6 @@
 .inspiration-updates {
   width: 100%;
-  padding: 60px 20px;
+  padding: 50px 20px 70px;
   background-color: #ffffff;
 }
 
@@ -13,18 +13,18 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 40px;
+  margin-bottom: 28px;
 }
 
 .inspiration-title {
-  font-size: 36px;
+  font-size: 60px;
   font-weight: 700;
   color: #1a1a1a;
   margin: 0;
 }
 
 .view-all-inspiration {
-  color: #e74c3c;
+  color: #ff6b35;
   text-decoration: none;
   font-size: 14px;
   font-weight: 600;
@@ -32,13 +32,13 @@
 }
 
 .view-all-inspiration:hover {
-  color: #c0392b;
+  color: #e55a27;
 }
 
 .inspiration-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 24px;
+  gap: 20px;
 }
 
 .inspiration-card-link {
@@ -49,22 +49,22 @@
 .inspiration-card {
   display: flex;
   flex-direction: column;
-  background-color: #ffffff;
-  overflow: hidden;
+  background-color: transparent;
+  overflow: visible;
   cursor: pointer;
-  transition: transform 0.3s ease;
+  transition: none;
 }
 
 .inspiration-card:hover {
-  transform: translateY(-6px);
+  transform: none;
 }
 
 .inspiration-image-wrapper {
   width: 100%;
-  aspect-ratio: 1.6;
+  aspect-ratio: 1.75;
   overflow: hidden;
   background-color: #f5f5f5;
-  border-radius: 4px;
+  border-radius: 0;
 }
 
 .inspiration-image {
@@ -72,35 +72,35 @@
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.4s ease;
+  transition: none;
 }
 
 .inspiration-card:hover .inspiration-image {
-  transform: scale(1.05);
+  transform: none;
 }
 
 .inspiration-content {
-  padding: 24px 4px;
+  padding: 14px 0 0;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .inspiration-card-title {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   color: #1a1a1a;
   margin: 0;
-  line-height: 1.4;
+  line-height: 1.35;
 }
 
 .inspiration-description {
-  font-size: 15px;
-  color: #666;
+  font-size: 14px;
+  color: #333;
   margin: 0;
   line-height: 1.6;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -123,11 +123,11 @@
   }
 
   .inspiration-card-title {
-    font-size: 18px;
+    font-size: 16px;
   }
 
   .inspiration-description {
-    font-size: 14px;
+    font-size: 13px;
   }
 }
 
@@ -147,10 +147,10 @@
   }
 
   .inspiration-card-title {
-    font-size: 18px;
+    font-size: 16px;
   }
 
   .inspiration-description {
-    font-size: 14px;
+    font-size: 13px;
   }
 }
