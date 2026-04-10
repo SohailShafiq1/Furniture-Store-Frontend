@@ -46,9 +46,9 @@
   object-fit: contain;
   transition: transform 0.2s ease;
 }
-.logo:hover {
+/* .logo:hover {
   transform: none;
-}
+} */
 
 .icon-group {
   display: flex;
