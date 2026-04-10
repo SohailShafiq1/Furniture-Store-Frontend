@@ -10,6 +10,7 @@ import PromoBanners from '../components/PromoBanners/PromoBanners';
 import ShopByCategory from '../components/ShopByCategory/ShopByCategory';
 import PromoStrip from '../components/PromoStrip/PromoStrip';
 import TopSpringPicks from '../components/TopSpringPicks/TopSpringPicks';
+import FinancingPromo from '../components/FinancingPromo/FinancingPromo';
 import SlidingBanner from '../components/SlidingBanner/SlidingBanner';
 import InspirationSection from '../components/Inspiration/InspirationSection';
 import TopBrands from '../components/TopBrands/TopBrands';
@@ -502,6 +503,8 @@ export default function HomePage() {
         items={homeDealItems}
         title={homeDeal?.title || 'Top Deals'}
       />
+      <FinancingPromo />
+      <SlidingBanner />
       
       {/* Dynamically render HomeContent sections */}
       {homeContent.map((content, idx) => (

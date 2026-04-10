@@ -1,0 +1,58 @@
+.financing-promo {
+  width: 100%;
+  background: #ffffff;
+  padding: 60px 20px;
+}
+
+.financing-promo-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+}
+
+.financing-promo-tag {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #1a1a1a;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.financing-promo-title {
+  font-size: 34px;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 0;
+  line-height: 1.2;
+  max-width: 860px;
+}
+
+.financing-promo-button {
+  align-self: center;
+  background: transparent;
+  color: #1a1a1a;
+  border: 2px solid #1a1a1a;
+  padding: 12px 26px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 2px;
+}
+
+.financing-promo-button:hover {
+  background: #1a1a1a;
+  color: #ffffff;
+}
+
+@media (max-width: 768px) {
+  .financing-promo-title {
+    font-size: 26px;
+  }
+}
