@@ -1,18 +1,20 @@
 .search-bar {
   display: flex;
   align-items: center;
-  background-color: #f0f0f0;
-  border-radius: 8px;
-  padding: 0 15px;
+  background-color: #f2f2f2;
+  border-radius: 14px;
+  padding: 0 16px;
   flex: 1;
-  height: 44px;
+  height: 46px;
   margin: 0;
+  border: 1px solid #e6e6e6;
+  max-width: 920px;
 }
 
 .search-icon {
   width: 20px;
   height: 20px;
-  color: #666;
+  color: #777;
   flex-shrink: 0;
   margin-right: 10px;
 }
@@ -22,7 +24,7 @@
   background: transparent;
   outline: none;
   width: 100%;
-  font-size: 14px;
+  font-size: 15px;
   color: #333;
 }
 

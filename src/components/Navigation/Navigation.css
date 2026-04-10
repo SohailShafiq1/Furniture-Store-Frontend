@@ -29,7 +29,7 @@
 .nav-list {
   display: flex;
   list-style: none;
-  gap: 4px;
+  gap: 26px;
   padding: 0;
   margin: 0;
   align-items: center;
@@ -43,25 +43,23 @@
 .nav-link {
   display: flex;
   align-items: center;
-  gap: 3px;
-  padding: 12px 10px;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--color-primary);
+  gap: 4px;
+  padding: 14px 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
   text-decoration: none;
   white-space: nowrap;
   transition: color 0.2s ease;
-  border-bottom: 2px solid transparent;
+  border-bottom: none;
 }
 
 .nav-link:hover {
-  color: var(--color-accent);
-  border-bottom-color: var(--color-accent);
+  color: #ff6b35;
 }
 
 .nav-link.active {
-  color: var(--color-accent);
-  border-bottom-color: var(--color-accent);
+  color: #ff6b35;
 }
 
 .nav-link .chevron {
@@ -69,18 +67,18 @@
   height: 13px;
   flex-shrink: 0;
   stroke-width: 2.5;
-  color: var(--color-text-secondary);
+  color: #555;
   transition: transform 0.2s ease;
 }
 
 .nav-link:hover .chevron {
   transform: rotate(180deg);
-  color: var(--color-accent);
+  color: #ff6b35;
 }
 
 .nav-link.active .chevron {
   transform: rotate(180deg);
-  color: var(--color-accent);
+  color: #ff6b35;
 }
 
 /* Premium item */
