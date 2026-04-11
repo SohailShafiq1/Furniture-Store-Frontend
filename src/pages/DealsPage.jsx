@@ -179,12 +179,16 @@ export default function DealsPage() {
                             background: 'white',
                             fontSize: 30,
                             lineHeight: 1,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: 0,
                             cursor: dealStart === 0 ? 'not-allowed' : 'pointer',
                             opacity: dealStart === 0 ? 0.35 : 1,
                           }}
                           aria-label="Previous deal images"
                         >
-                          &lt;
+                          <span style={{ transform: 'translateY(-1px)' }}>&lsaquo;</span>
                         </button>
                         <div className={gridClass} style={{ flex: 1 }}>
                           {visibleImages.map((img) => (
@@ -228,12 +232,16 @@ export default function DealsPage() {
                             background: 'white',
                             fontSize: 30,
                             lineHeight: 1,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: 0,
                             cursor: dealStart >= maxDealStart ? 'not-allowed' : 'pointer',
                             opacity: dealStart >= maxDealStart ? 0.35 : 1,
                           }}
                           aria-label="Next deal images"
                         >
-                          &gt;
+                          <span style={{ transform: 'translateY(-1px)' }}>&rsaquo;</span>
                         </button>
                       </div>
                     ) : (
@@ -384,12 +392,16 @@ export default function DealsPage() {
                   background: 'white',
                   fontSize: 30,
                   lineHeight: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: 0,
                   cursor: featuredStartIndex === 0 ? 'not-allowed' : 'pointer',
                   opacity: featuredStartIndex === 0 ? 0.35 : 1,
                 }}
                 aria-label="Previous featured images"
               >
-                &lt;
+                <span style={{ transform: 'translateY(-1px)' }}>&lsaquo;</span>
               </button>
 
               <div className="fresh-picks-grid" style={{ flex: 1 }}>
@@ -436,6 +448,10 @@ export default function DealsPage() {
                   background: 'white',
                   fontSize: 30,
                   lineHeight: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: 0,
                   cursor:
                     featuredStartIndex >= Math.max(0, (featuredDeal.images?.length || 0) - 3)
                       ? 'not-allowed'
@@ -444,7 +460,7 @@ export default function DealsPage() {
                 }}
                 aria-label="Next featured images"
               >
-                &gt;
+                <span style={{ transform: 'translateY(-1px)' }}>&rsaquo;</span>
               </button>
             </div>
           </div>
