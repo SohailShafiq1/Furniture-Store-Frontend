@@ -77,39 +77,44 @@ export default function DealsPage() {
     [deals]
   );
 
-  const groupedDeals = useMemo(() => {
-    const threeDeals = normalizedDeals.filter((deal) => deal.images.length === 3);
-    const twoDeals = normalizedDeals.filter((deal) => deal.images.length === 2);
-
-    const ordered = [];
-    let i = 0;
-    let j = 0;
-
-    while (i < threeDeals.length || j < twoDeals.length) {
-      if (i < threeDeals.length) ordered.push(threeDeals[i++]);
-      if (j < twoDeals.length) ordered.push(twoDeals[j++]);
-      if (i >= threeDeals.length && j < twoDeals.length) ordered.push(twoDeals[j++]);
-      if (j >= twoDeals.length && i < threeDeals.length) ordered.push(threeDeals[i++]);
-    }
-
-    return ordered;
-  }, [normalizedDeals]);
-
-  const promoSource = useMemo(
-    () => normalizedDeals.find((deal) => deal.promoStrip?.enabled),
-    [normalizedDeals]
-  );
-
   const featuredDeal = useMemo(
-    () => normalizedDeals.find((deal) => deal.isFeaturedDeal && (deal.images?.length || 0) >= 2),
+    () =>
+      normalizedDeals.find((deal) => deal.isFeaturedDeal && (deal.images?.length || 0) >= 3) ||
+      normalizedDeals.find((deal) => (deal.images?.length || 0) >= 3),
     [normalizedDeals]
   );
 
+  const threeDeals = useMemo(
+    () => normalizedDeals.filter((deal) => deal.images.length >= 3 && deal._id !== featuredDeal?._id),
+    [normalizedDeals, featuredDeal?._id]
+  );
+
+  const twoDeals = useMemo(
+    () => normalizedDeals.filter((deal) => deal.images.length === 2),
+    [normalizedDeals]
+  );
+
+  const promoSource = useMemo(() => {
+    return (
+      threeDeals.find((deal) => deal.promoStrip?.enabled) ||
+      normalizedDeals.find((deal) => deal.promoStrip?.enabled)
+    );
+  }, [threeDeals, normalizedDeals]);
+
+  const [dealStartIndices, setDealStartIndices] = useState({});
   const [featuredStartIndex, setFeaturedStartIndex] = useState(0);
 
   useEffect(() => {
     setFeaturedStartIndex(0);
   }, [featuredDeal?._id]);
+
+  useEffect(() => {
+    const next = {};
+    threeDeals.forEach((deal) => {
+      next[deal._id] = 0;
+    });
+    setDealStartIndices(next);
+  }, [threeDeals]);
 
   const handleShopDeal = (onClick) => {
     onClick();
@@ -133,11 +138,11 @@ export default function DealsPage() {
         <div className="deals-container">
           {dealsLoading && <div className="loading">Loading deals...</div>}
           {!dealsLoading && dealsError && <div className="error">{dealsError}</div>}
-          {!dealsLoading && !dealsError && groupedDeals.length === 0 && <div className="no-deals">No deals available.</div>}
+          {!dealsLoading && !dealsError && threeDeals.length === 0 && twoDeals.length === 0 && <div className="no-deals">No deals available.</div>}
           {!dealsLoading &&
             !dealsError &&
-            groupedDeals.map((deal, idx) => {
-              const isThree = deal.images.length === 3;
+            threeDeals.map((deal, idx) => {
+              const isThree = deal.images.length >= 3;
               const sectionClass = isThree ? 'fresh-picks-section' : 'home-bloom-section';
               const titleClass = isThree ? 'fresh-picks-title' : 'home-bloom-title';
               const gridClass = isThree ? 'fresh-picks-grid' : 'home-bloom-grid';
@@ -147,9 +152,175 @@ export default function DealsPage() {
               const infoClass = isThree ? 'pick-info' : 'bloom-info';
               const offerClass = isThree ? 'pick-price' : 'bloom-price';
               const buttonClass = isThree ? 'pick-btn' : 'bloom-btn';
+              const dealStart = dealStartIndices[deal._id] || 0;
+              const maxDealStart = Math.max(0, deal.images.length - 3);
+              const visibleImages = isThree ? deal.images.slice(dealStart, dealStart + 3) : deal.images;
 
               return (
                 <div key={deal._id} style={{ marginTop: idx === 0 ? 0 : 40 }}>
+                  <div className={sectionClass}>
+                    <h2 className={titleClass}>{deal.title}</h2>
+                    {isThree && deal.images.length > 3 ? (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setDealStartIndices((prev) => ({
+                              ...prev,
+                              [deal._id]: Math.max(0, (prev[deal._id] || 0) - 1),
+                            }))
+                          }
+                          disabled={dealStart === 0}
+                          style={{
+                            width: 44,
+                            height: 44,
+                            borderRadius: '50%',
+                            border: '2px solid #222',
+                            background: 'white',
+                            fontSize: 30,
+                            lineHeight: 1,
+                            cursor: dealStart === 0 ? 'not-allowed' : 'pointer',
+                            opacity: dealStart === 0 ? 0.35 : 1,
+                          }}
+                          aria-label="Previous deal images"
+                        >
+                          &lt;
+                        </button>
+                        <div className={gridClass} style={{ flex: 1 }}>
+                          {visibleImages.map((img) => (
+                            <div key={`${deal._id}-${img.image}`} className={cardClass}>
+                              <div className={imageWrapperClass}>
+                                <img
+                                  src={imageUrl(img.image)}
+                                  alt={deal.title}
+                                  className={imageClass}
+                                  onError={(e) => {
+                                    e.target.src = '/placeholder-image.png';
+                                  }}
+                                />
+                              </div>
+                              <div className={infoClass}>
+                                <p className={offerClass}>{deal.dealOffer}</p>
+                                <button
+                                  className={buttonClass}
+                                  onClick={() => handleShopDeal(() => navigate(buildDealRedirectPath(deal, img)))}
+                                >
+                                  {img.buttonName}
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setDealStartIndices((prev) => ({
+                              ...prev,
+                              [deal._id]: Math.min(maxDealStart, (prev[deal._id] || 0) + 1),
+                            }))
+                          }
+                          disabled={dealStart >= maxDealStart}
+                          style={{
+                            width: 44,
+                            height: 44,
+                            borderRadius: '50%',
+                            border: '2px solid #222',
+                            background: 'white',
+                            fontSize: 30,
+                            lineHeight: 1,
+                            cursor: dealStart >= maxDealStart ? 'not-allowed' : 'pointer',
+                            opacity: dealStart >= maxDealStart ? 0.35 : 1,
+                          }}
+                          aria-label="Next deal images"
+                        >
+                          &gt;
+                        </button>
+                      </div>
+                    ) : (
+                      <div className={gridClass}>
+                        {visibleImages.map((img) => (
+                          <div key={`${deal._id}-${img.image}`} className={cardClass}>
+                            <div className={imageWrapperClass}>
+                              <img
+                                src={imageUrl(img.image)}
+                                alt={deal.title}
+                                className={imageClass}
+                                onError={(e) => {
+                                  e.target.src = '/placeholder-image.png';
+                                }}
+                              />
+                            </div>
+                            <div className={infoClass}>
+                              <p className={offerClass}>{deal.dealOffer}</p>
+                              <button
+                                className={buttonClass}
+                                onClick={() => handleShopDeal(() => navigate(buildDealRedirectPath(deal, img)))}
+                              >
+                                {img.buttonName}
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+
+          {!dealsLoading && !dealsError && promoSource && (
+            <div className="promo-strip-container" style={{ marginTop: 40 }}>
+              <div className="promo-strip-content">
+                <div className="promo-strip-text">
+                  <span className="highlight-text">{promoSource.promoStrip?.highlightText || 'Extra 5% OFF'}</span>
+                  <span className="normal-text">
+                    {promoSource.promoStrip?.normalText || 'A small boost for your tax refund season.'}
+                  </span>
+                </div>
+                <div className="promo-code-box" onClick={handleCopy}>
+                  <div className="promo-code">{promoSource.promoStrip?.code || 'SS5OFF'}</div>
+                  <div className="promo-copy">
+                    {copied ? (
+                      <span className="copy-success">Copied!</span>
+                    ) : (
+                      <>
+                        <svg
+                          width="18"
+                          height="18"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                        <span>Copy code</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {!dealsLoading &&
+            !dealsError &&
+            twoDeals.map((deal) => {
+              const sectionClass = 'home-bloom-section';
+              const titleClass = 'home-bloom-title';
+              const gridClass = 'home-bloom-grid';
+              const cardClass = 'bloom-card';
+              const imageWrapperClass = 'bloom-image-wrapper';
+              const imageClass = 'bloom-image';
+              const infoClass = 'bloom-info';
+              const offerClass = 'bloom-price';
+              const buttonClass = 'bloom-btn';
+
+              return (
+                <div key={deal._id} style={{ marginTop: 40 }}>
                   <div className={sectionClass}>
                     <h2 className={titleClass}>{deal.title}</h2>
                     <div className={gridClass}>
@@ -178,44 +349,6 @@ export default function DealsPage() {
                       ))}
                     </div>
                   </div>
-
-                  {idx === 0 && promoSource && (
-                    <div className="promo-strip-container" style={{ marginTop: 40 }}>
-                      <div className="promo-strip-content">
-                        <div className="promo-strip-text">
-                          <span className="highlight-text">{promoSource.promoStrip?.highlightText || 'Extra 5% OFF'}</span>
-                          <span className="normal-text">
-                            {promoSource.promoStrip?.normalText || 'A small boost for your tax refund season.'}
-                          </span>
-                        </div>
-                        <div className="promo-code-box" onClick={handleCopy}>
-                          <div className="promo-code">{promoSource.promoStrip?.code || 'SS5OFF'}</div>
-                          <div className="promo-copy">
-                            {copied ? (
-                              <span className="copy-success">Copied!</span>
-                            ) : (
-                              <>
-                                <svg
-                                  width="18"
-                                  height="18"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  strokeWidth="2"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                >
-                                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                </svg>
-                                <span>Copy code</span>
-                              </>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
                 </div>
               );
             })}
@@ -227,6 +360,12 @@ export default function DealsPage() {
             <source media="(min-width: 769px)" srcSet="/springsale-web.jpeg" />
             <img src="/springsale-web.jpeg" alt="Spring Sale Banner" className="deals-banner-image" />
           </picture>
+          <div className="deals-spring-banner-cta">
+            <h3>Up to 70% Off</h3>
+            <button type="button" onClick={() => navigate('/category/bedroom')}>
+              Shop Bedroom
+            </button>
+          </div>
         </div>
 
         {featuredDeal && (

@@ -168,6 +168,7 @@
 }
 
 .deals-spring-banner {
+  position: relative;
   width: 100%;
   margin: 50px 0 40px;
   overflow: hidden;
@@ -186,6 +187,41 @@
   width: 100%;
   height: auto;
   object-fit: cover;
+}
+
+.deals-spring-banner-cta {
+  position: absolute;
+  left: 50%;
+  bottom: 36px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  z-index: 2;
+  text-align: center;
+}
+
+.deals-spring-banner-cta h3 {
+  margin: 0;
+  color: #ffffff;
+  /* font-size: clamp(2rem, 4vw, 3.4rem); */
+  font-size: 45px;
+  font-family: sans-serif;
+  line-height: 1.05;
+  font-weight: 800;
+}
+
+.deals-spring-banner-cta button {
+  border: none;
+  background: #E6E6E6;
+  color: #111111;
+  font-weight: 700;
+  font-size: 14.08px;
+  padding: 12px 28px;
+  font-family: sans-serif;
+  /* border-radius: 10px; */
+  cursor: pointer;
 }
 
 .deals-category-wrapper .category-container,
@@ -632,5 +668,19 @@
   .promo-btn {
     padding: 9px 20px;
     font-size: 0.9rem;
+  }
+
+  .deals-spring-banner-cta {
+    bottom: 18px;
+    gap: 10px;
+  }
+
+  .deals-spring-banner-cta h3 {
+    font-size: 3.2rem;
+  }
+
+  .deals-spring-banner-cta button {
+    font-size: 1rem;
+    padding: 12px 30px;
   }
 }
