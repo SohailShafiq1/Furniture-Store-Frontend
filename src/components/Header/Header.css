@@ -22,17 +22,19 @@
   max-width: 1320px;
   padding: 0 48px;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 500;
+  font-family: sans-serif;
 }
 
 .announcement-message {
   all: unset;
   cursor: pointer;
-  flex: 1;
+  flex: 1 1 0;
   min-width: 0;
   color: #ffffff;
   font-size: inherit;
@@ -40,14 +42,24 @@
   text-align: left;
 }
 
-.announcement-message:hover {
+.announcement-highlight {
   text-decoration: underline;
+  text-decoration-color: rgba(255,255,255,0.9);
+  text-underline-offset: 3px;
+}
+
+.announcement-message:hover .announcement-highlight {
+  text-decoration-thickness: 2px;
+}
+
+.announcement-message:hover {
+  text-decoration: none;
 }
 
 .announcement-links {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 10px;
   flex-shrink: 0;
 }
 
@@ -56,8 +68,9 @@
   border: none;
   color: #ffffff;
   padding: 0;
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: bold;
+  /* font-weight: 600; */
   cursor: pointer;
   text-transform: none;
   letter-spacing: 0;
@@ -289,13 +302,14 @@
 }
 
 .financing-link {
-  font-size: 15px;
-  color: #757575;
+  font-size: 16px;
+  color: #53565a99;
   white-space: nowrap;
   text-decoration: none;
   cursor: pointer;
   transition: color 0.2s ease;
-  font-weight: 500;
+  font-weight: 900;
+  font-family: sans-serif;
 }
 
 .premium-action-btn {
@@ -413,9 +427,19 @@
     text-align: center;
   }
 
-  .announcement-links {
-    gap: 8px;
+  .header-announcement-inner {
     justify-content: center;
+    gap: 12px;
+  }
+
+  .announcement-message {
+    flex: 1 1 100%;
+    text-align: center;
+    font-size: 14px;
+  }
+
+  .announcement-links {
+    display: none;
   }
 
   .announcement-link {

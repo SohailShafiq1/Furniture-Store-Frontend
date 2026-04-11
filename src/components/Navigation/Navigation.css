@@ -44,14 +44,15 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 14px 0;
-  font-size: 15px;
+  padding: 10px 0;
+  font-size: 16px;
   font-weight: 600;
-  color: #333;
+  color: #53565a;
   text-decoration: none;
   white-space: nowrap;
   transition: color 0.2s ease;
   border-bottom: none;
+  font-family: sans-serif;
 }
 
 .nav-link:hover {

@@ -15,9 +15,11 @@
 .search-icon {
   width: 20px;
   height: 20px;
-  color: #777;
   flex-shrink: 0;
   margin-right: 10px;
+   font-size: 16px;
+  color: #53565a;
+  
 }
 
 .search-input {
@@ -25,8 +27,9 @@
   background: transparent;
   outline: none;
   width: 100%;
-  font-size: 15px;
-  color: #333;
+  font-size: 16px;
+  color: #53565a;
+  font-family: sans-serif;
 }
 
 .search-input::placeholder {

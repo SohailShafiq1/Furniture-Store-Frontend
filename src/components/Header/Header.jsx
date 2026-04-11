@@ -39,15 +39,19 @@ export default function Header() {
 
   const bannerItems = [
     {
-      text: 'Shop with Confidence: 30-DAY RETURNS*',
+      prefix: 'Shop with Confidence: ',
+      highlight: '30-DAY RETURNS*',
       route: '/return-policy',
     },
     {
-      text: 'Spring Sale continues: Up to 70% Off',
+      prefix: 'Spring Sale continues: ',
+      highlight: 'Up to 70% Off',
       route: '/deals',
     },
     {
-      text: 'Ranked top 100 among US furniture stores!',
+      prefix: '',
+      highlight: 'Ranked top 100',
+      suffix: ' among US furniture stores!',
       route: latestNewsId ? `/news/${latestNewsId}` : '/news',
     },
   ];
@@ -88,7 +92,9 @@ export default function Header() {
             className="announcement-message"
             onClick={() => navigate(activeBanner.route)}
           >
-            {activeBanner.text}
+            {activeBanner.prefix}
+            <span className="announcement-highlight">{activeBanner.highlight}</span>
+            {activeBanner.suffix || ''}
           </button>
           <div className="announcement-links">
             <button
@@ -98,6 +104,7 @@ export default function Header() {
             >
               Track My Order
             </button>
+            <h3 style={{color:'white'}}>|</h3>
             <button
               type="button"
               className="announcement-link"
