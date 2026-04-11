@@ -100,6 +100,17 @@ export default function DealsPage() {
     [normalizedDeals]
   );
 
+  const featuredDeal = useMemo(
+    () => normalizedDeals.find((deal) => deal.isFeaturedDeal && (deal.images?.length || 0) >= 2),
+    [normalizedDeals]
+  );
+
+  const [featuredStartIndex, setFeaturedStartIndex] = useState(0);
+
+  useEffect(() => {
+    setFeaturedStartIndex(0);
+  }, [featuredDeal?._id]);
+
   const handleShopDeal = (onClick) => {
     onClick();
   };
@@ -209,6 +220,96 @@ export default function DealsPage() {
               );
             })}
         </div>
+
+        <div className="deals-spring-banner">
+          <picture>
+            <source media="(max-width: 768px)" srcSet="/springsale-mob.webp" />
+            <source media="(min-width: 769px)" srcSet="/springsale-web.jpeg" />
+            <img src="/springsale-web.jpeg" alt="Spring Sale Banner" className="deals-banner-image" />
+          </picture>
+        </div>
+
+        {featuredDeal && (
+          <div className="fresh-picks-section" style={{ maxWidth: 1500, margin: '40px auto 0', padding: '0 40px' }}>
+            <h2 className="fresh-picks-title">{featuredDeal.title}</h2>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+              <button
+                type="button"
+                onClick={() => setFeaturedStartIndex((prev) => Math.max(0, prev - 1))}
+                disabled={featuredStartIndex === 0}
+                style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: '50%',
+                  border: '2px solid #222',
+                  background: 'white',
+                  fontSize: 30,
+                  lineHeight: 1,
+                  cursor: featuredStartIndex === 0 ? 'not-allowed' : 'pointer',
+                  opacity: featuredStartIndex === 0 ? 0.35 : 1,
+                }}
+                aria-label="Previous featured images"
+              >
+                &lt;
+              </button>
+
+              <div className="fresh-picks-grid" style={{ flex: 1 }}>
+                {featuredDeal.images
+                  .slice(featuredStartIndex, featuredStartIndex + 3)
+                  .map((img) => (
+                    <div key={`featured-${featuredDeal._id}-${img.image}`} className="fresh-pick-card">
+                      <div className="pick-image-wrapper">
+                        <img
+                          src={imageUrl(img.image)}
+                          alt={featuredDeal.title}
+                          className="pick-image"
+                          onError={(e) => {
+                            e.target.src = '/placeholder-image.png';
+                          }}
+                        />
+                      </div>
+                      <div className="pick-info">
+                        <p className="pick-price">{featuredDeal.dealOffer}</p>
+                        <button
+                          className="pick-btn"
+                          onClick={() => handleShopDeal(() => navigate(buildDealRedirectPath(featuredDeal, img)))}
+                        >
+                          {img.buttonName}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setFeaturedStartIndex((prev) =>
+                    Math.min(Math.max(0, (featuredDeal.images?.length || 0) - 3), prev + 1)
+                  )
+                }
+                disabled={featuredStartIndex >= Math.max(0, (featuredDeal.images?.length || 0) - 3)}
+                style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: '50%',
+                  border: '2px solid #222',
+                  background: 'white',
+                  fontSize: 30,
+                  lineHeight: 1,
+                  cursor:
+                    featuredStartIndex >= Math.max(0, (featuredDeal.images?.length || 0) - 3)
+                      ? 'not-allowed'
+                      : 'pointer',
+                  opacity: featuredStartIndex >= Math.max(0, (featuredDeal.images?.length || 0) - 3) ? 0.35 : 1,
+                }}
+                aria-label="Next featured images"
+              >
+                &gt;
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className="deals-category-wrapper">
           <ShopByCategory />

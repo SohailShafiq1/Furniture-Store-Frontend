@@ -167,6 +167,27 @@
   width: 100%;
 }
 
+.deals-spring-banner {
+  width: 100%;
+  margin: 50px 0 40px;
+  overflow: hidden;
+}
+
+.deals-spring-banner picture {
+  display: block;
+  width: 100%;
+}
+
+.deals-spring-banner .deals-banner-image {
+  position: static;
+  top: auto;
+  left: auto;
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
 .deals-category-wrapper .category-container,
 .deals-category-wrapper .shop-by-category {
   max-width: none !important;

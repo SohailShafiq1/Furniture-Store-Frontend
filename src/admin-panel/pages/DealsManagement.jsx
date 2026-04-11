@@ -12,6 +12,7 @@ const DealsManagement = () => {
   const [title, setTitle] = useState('');
   const [dealOffer, setDealOffer] = useState('');
   const [showOnHomePage, setShowOnHomePage] = useState(false);
+  const [isFeaturedDeal, setIsFeaturedDeal] = useState(false);
   const [promoEnabled, setPromoEnabled] = useState(false);
   const [promoHighlightText, setPromoHighlightText] = useState('Extra 5% OFF');
   const [promoNormalText, setPromoNormalText] = useState('A small boost for your tax refund season.');
@@ -41,6 +42,7 @@ const DealsManagement = () => {
     setTitle('');
     setDealOffer('');
     setShowOnHomePage(false);
+    setIsFeaturedDeal(false);
     setPromoEnabled(false);
     setPromoHighlightText('Extra 5% OFF');
     setPromoNormalText('A small boost for your tax refund season.');
@@ -100,8 +102,8 @@ const DealsManagement = () => {
 
     // Allow users to pick files in multiple selections without replacing previous ones.
     const mergedFiles = [...images, ...incomingFiles];
-    if (mergedFiles.length > 3) {
-      setError('You can upload up to 3 images (minimum 2 for new deals)');
+    if (mergedFiles.length > 10) {
+      setError('You can upload up to 10 images (minimum 2 for new deals)');
       e.target.value = '';
       return;
     }
@@ -153,12 +155,12 @@ const DealsManagement = () => {
     }
 
     if (!editingId) {
-      if (images.length < 2 || images.length > 3) {
-        setError('Please upload 2 or 3 images for new deals');
+      if (images.length < 2 || images.length > 10) {
+        setError('Please upload between 2 and 10 images for new deals');
         return;
       }
-    } else if (images.length > 0 && (images.length < 2 || images.length > 3)) {
-      setError('If replacing images, upload 2 or 3 images');
+    } else if (images.length > 0 && (images.length < 2 || images.length > 10)) {
+      setError('If replacing images, upload between 2 and 10 images');
       return;
     }
 
@@ -167,6 +169,7 @@ const DealsManagement = () => {
       formData.append('title', title);
       formData.append('dealOffer', dealOffer);
       formData.append('showOnHomePage', String(showOnHomePage));
+      formData.append('isFeaturedDeal', String(isFeaturedDeal));
       formData.append('promoEnabled', String(promoEnabled));
       formData.append('promoHighlightText', promoHighlightText);
       formData.append('promoNormalText', promoNormalText);
@@ -211,6 +214,7 @@ const DealsManagement = () => {
     setTitle(deal.title);
     setDealOffer(deal.dealOffer);
     setShowOnHomePage(!!deal.showOnHomePage);
+    setIsFeaturedDeal(!!deal.isFeaturedDeal);
     setPromoEnabled(!!deal.promoStrip?.enabled);
     setPromoHighlightText(deal.promoStrip?.highlightText || 'Extra 5% OFF');
     setPromoNormalText(deal.promoStrip?.normalText || 'A small boost for your tax refund season.');
@@ -346,6 +350,16 @@ const DealsManagement = () => {
           <label className="form-label checkbox-label">
             <input
               type="checkbox"
+              checked={isFeaturedDeal}
+              onChange={(e) => setIsFeaturedDeal(e.target.checked)}
+              style={{ marginRight: 8 }}
+            />
+            Mark as Featured Deal
+          </label>
+
+          <label className="form-label checkbox-label">
+            <input
+              type="checkbox"
               checked={promoEnabled}
               onChange={(e) => setPromoEnabled(e.target.checked)}
               style={{ marginRight: 8 }}
@@ -421,12 +435,12 @@ const DealsManagement = () => {
             </div>
           </div>
 
-          <label className="form-label">Images (2-3)</label>
+          <label className="form-label">Images (2-10)</label>
           <input type="file" accept="image/*" multiple onChange={handleImagesChange} />
           <p className="helper">
             {editingId
-              ? 'Leave images empty to keep existing images. If you upload new images, upload 2-3 files.'
-              : 'Upload exactly 2 or 3 images.'}
+              ? 'Leave images empty to keep existing images. If you upload new images, upload 2 to 10 files.'
+              : 'Upload between 2 and 10 images.'}
           </p>
 
           <div className="preview-grid">
