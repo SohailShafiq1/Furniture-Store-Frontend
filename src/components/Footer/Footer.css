@@ -30,6 +30,7 @@
 .footer-col ul { list-style:none; padding:0; margin:0 }
 .footer-col ul li { margin-bottom:10px; font-size:14px; color:var(--color-text-secondary); cursor:pointer }
 .footer-col ul li:hover { text-decoration:underline; color: var(--color-accent); }
+.footer-list-link { color: inherit; text-decoration: none; }
 .footer-col p { margin:0 0 10px; font-size:14px; color:var(--color-text-secondary) }
 .footer-logo { width:180px; display:block; margin-bottom:20px }
 .about-text { color:var(--color-text-secondary); font-size:13px; line-height:1.7; margin-bottom:20px }

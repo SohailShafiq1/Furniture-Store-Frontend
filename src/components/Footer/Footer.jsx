@@ -89,20 +89,20 @@ export default function Footer() {
         <div className="footer-col">
           <h4>About Us</h4>
           <ul>
-            <li>Our Story</li>
+            <li><Link to="/about-us" className="footer-list-link" onClick={handleBackToTop}>Our Story</Link></li>
             <li>Why Dimond Modern Furniture?</li>
             <li>Reviews</li>
-            <li>Financing</li>
-            <li>News & Blog</li>
+            <li><Link to="/financing" className="footer-list-link">Financing</Link></li>
+            <li><Link to="/news" className="footer-list-link">News & Blog</Link></li>
             <li>Careers</li>
           </ul>
         </div>
         <div className="footer-col">
           <h4>Resources</h4>
           <ul>
-            <li>Track My Order</li>
+            <li><Link to="/track-order" className="footer-list-link">Track My Order</Link></li>
             <li>Damage Claim</li>
-            <li>Return Policy</li>
+            <li><Link to="/return-policy" className="footer-list-link">Return Policy</Link></li>
             <li>Delivery Policy</li>
             <li>Shipping Protection Plan</li>
             <li>FAQs</li>
