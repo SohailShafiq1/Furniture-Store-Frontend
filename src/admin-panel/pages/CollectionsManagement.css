@@ -1,0 +1,145 @@
+.collections-management {
+  padding: 36px;
+  max-width: 1320px;
+  margin: 0 auto;
+}
+
+.collections-management h1 {
+  margin-bottom: 20px;
+}
+
+.top-action-row {
+  margin-bottom: 18px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 22px;
+  margin-bottom: 22px;
+}
+
+.section-block {
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 14px;
+  margin-top: 12px;
+}
+
+.section-block h3 {
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+.nested-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.nested-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.nested-card-header h4 {
+  margin: 0;
+}
+
+.target-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.preview-image {
+  width: 180px;
+  height: 130px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 8px;
+}
+
+.form-actions-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.secondary-btn {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.collections-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.collections-table th,
+.collections-table td {
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+  vertical-align: top;
+  padding: 10px;
+}
+
+.table-thumb {
+  width: 95px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.actions-col {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.mini {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background: #f9fafb;
+  cursor: pointer;
+}
+
+.mini.danger {
+  background: #fee2e2;
+  border-color: #fecaca;
+}
+
+.helper,
+.muted {
+  color: #6b7280;
+}
+
+.small {
+  font-size: 0.85rem;
+}
+
+@media (max-width: 900px) {
+  .target-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .preview-image {
+    width: 100%;
+    max-width: 260px;
+  }
+}

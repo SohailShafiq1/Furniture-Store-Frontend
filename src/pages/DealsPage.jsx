@@ -370,7 +370,7 @@ export default function DealsPage() {
           </picture>
           <div className="deals-spring-banner-cta">
             <h3>Up to 70% Off</h3>
-            <button type="button" onClick={() => navigate('/category/bedroom')}>
+            <button type="button" onClick={() => navigate('/deals/collection?name=Bedroom')}>
               Shop Bedroom
             </button>
           </div>

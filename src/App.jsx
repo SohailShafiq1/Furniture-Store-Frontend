@@ -16,6 +16,7 @@ import ContactPage from './pages/ContactPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TrackOrderPage from './pages/TrackOrderPage';
 import DealsPage from './pages/DealsPage';
+import DealsCollectionPage from './pages/DealsCollectionPage';
 import './App.css';
 import './admin-panel/admin-panel.css';
 import AdminLogin from './admin-panel/pages/AdminLogin';
@@ -32,6 +33,7 @@ import StoreManagement from './admin-panel/pages/StoreManagement';
 import FinancingManagement from './admin-panel/pages/FinancingManagement';
 import AnalyticsDashboard from './admin-panel/pages/AnalyticsDashboard';
 import DealsManagement from './admin-panel/pages/DealsManagement';
+import CollectionsManagement from './admin-panel/pages/CollectionsManagement';
 import ProtectedRoute from './admin-panel/components/ProtectedRoute';
 import CheckoutPage from './pages/CheckoutPage';
 import CartPage from './pages/CartPage';
@@ -55,6 +57,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/deals" element={<DealsPage />} />
+        <Route path="/deals/collection" element={<DealsCollectionPage />} />
         <Route path="/contact-us" element={<ContactPage />} />
         <Route path="/category/:categoryId" element={<CategoryPage />} />
         <Route path="/category/:categoryId/sub/:subcategoryName" element={<CategoryPage />} />
@@ -178,6 +181,14 @@ function App() {
           element={
             <ProtectedRoute>
               <DealsManagement />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/collections"
+          element={
+            <ProtectedRoute>
+              <CollectionsManagement />
             </ProtectedRoute>
           }
         />

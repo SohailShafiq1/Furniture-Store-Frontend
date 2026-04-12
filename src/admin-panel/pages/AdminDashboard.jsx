@@ -45,6 +45,10 @@ const AdminDashboard = () => {
             <h3>Manage Deals</h3>
             <p>Create deals with images and category redirect button</p>
           </Link>
+          <Link to="/admin/collections" className="dashboard-card">
+            <h3>Create a collection</h3>
+            <p>Add main banner, multiple product buttons, and deal box</p>
+          </Link>
           <Link to="/admin/categories" className="dashboard-card">
             <h3>Manage Categories</h3>
             <p>Add and manage categories and sub-categories</p>
