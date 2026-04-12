@@ -45,6 +45,8 @@ import WhyDimondFurniturePage from './pages/WhyDimondFurniturePage';
 import AllCollectionsPage from './pages/AllCollectionsPage';
 import ReviewsPage from './pages/ReviewsPage';
 import CareersPage from './pages/CareersPage';
+import DamageClaimPage from './pages/DamageClaimPage';
+import DamageClaimsManagement from './admin-panel/pages/DamageClaimsManagement';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -80,6 +82,7 @@ function App() {
         <Route path="/all-collections" element={<AllCollectionsPage />} />
         <Route path="/reviews" element={<ReviewsPage />} />
         <Route path="/careers" element={<CareersPage />} />
+        <Route path="/damage-claim" element={<DamageClaimPage />} />
         <Route path="/category/:categoryId" element={<CategoryPage />} />
         <Route path="/category/:categoryId/sub/:subcategoryName" element={<CategoryPage />} />
         <Route path="/product/:categoryId/:productId" element={<ProductDetailPage />} />
@@ -210,6 +213,14 @@ function App() {
           element={
             <ProtectedRoute>
               <CollectionsManagement />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/damage-claims"
+          element={
+            <ProtectedRoute>
+              <DamageClaimsManagement />
             </ProtectedRoute>
           }
         />

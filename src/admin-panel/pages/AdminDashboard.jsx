@@ -65,6 +65,10 @@ const AdminDashboard = () => {
             <h3>Manage Orders</h3>
             <p>View and manage customer orders, update status, send updates</p>
           </Link>
+          <Link to="/admin/damage-claims" className="dashboard-card">
+            <h3>Damage Claims</h3>
+            <p>Review customer damage claim forms and uploaded evidence</p>
+          </Link>
           <Link to="/admin/analytics" className="dashboard-card">
             <h3>Analytics Dashboard</h3>
             <p>View sales, revenue, products performance and trends</p>

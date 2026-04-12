@@ -1,0 +1,234 @@
+.damage-claim-page {
+  background: #ececec;
+  padding: 24px 16px 60px;
+}
+
+.damage-claim-hero {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.damage-claim-hero h1 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  font-weight: 800;
+  color: #14161a;
+}
+
+.damage-claim-form-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.damage-claim-form {
+  width: min(920px, 100%);
+  background: #f4f4f4;
+  border: 1px solid #d0d0d0;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.08);
+  padding: 0 24px 28px;
+}
+
+.damage-claim-banner {
+  margin: 0 -24px;
+  background: #f57e00;
+  color: #141414;
+  text-align: center;
+  font-size: 32px;
+  font-weight: 700;
+  padding: 16px 12px;
+}
+
+.damage-claim-logo-wrap {
+  display: flex;
+  justify-content: center;
+  padding-top: 18px;
+}
+
+.damage-claim-logo {
+  width: min(280px, 100%);
+}
+
+.damage-claim-form h2 {
+  margin: 30px 0 14px;
+  text-align: center;
+  font-size: 32px;
+  font-weight: 700;
+  color: #22262b;
+}
+
+.damage-claim-form h3 {
+  margin: 16px 0 10px;
+  font-size: 24px;
+  line-height: 1.4;
+}
+
+.damage-claim-form p {
+  margin: 0 0 18px;
+  font-size: 16px;
+  line-height: 1.7;
+  color: #3a3f45;
+}
+
+.damage-claim-group {
+  margin-bottom: 18px;
+}
+
+.damage-claim-group label {
+  display: block;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.damage-claim-group small {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: #50555b;
+}
+
+.damage-claim-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.damage-claim-grid.two-col {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.damage-claim-form input,
+.damage-claim-form textarea {
+  width: 100%;
+  border: 1px solid #c8cdd3;
+  background: #fff;
+  font-size: 16px;
+  padding: 11px 12px;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.damage-claim-inline-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+  font-size: 16px;
+}
+
+.damage-claim-inline-check input {
+  width: auto;
+}
+
+.damage-claim-radio-row {
+  display: flex;
+  gap: 22px;
+}
+
+.damage-claim-radio-row label {
+  font-weight: 500;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+}
+
+.damage-claim-radio-row input {
+  width: auto;
+}
+
+.damage-claim-checklist {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.damage-claim-checklist label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.damage-claim-checklist input {
+  width: auto;
+}
+
+.damage-claim-terms {
+  margin-bottom: 10px;
+  color: #3f444a;
+  background: #f7f7f7;
+}
+
+.damage-claim-submit-wrap {
+  padding-top: 8px;
+  display: flex;
+  justify-content: center;
+}
+
+.damage-claim-submit-wrap button {
+  border: 0;
+  background: #f57e00;
+  color: #fff;
+  font-size: 20px;
+  font-weight: 700;
+  min-width: 180px;
+  border-radius: 6px;
+  padding: 13px 28px;
+  cursor: pointer;
+}
+
+.damage-claim-submit-wrap button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.damage-claim-success,
+.damage-claim-error {
+  border-radius: 4px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  font-size: 15px;
+}
+
+.damage-claim-success {
+  background: #e8f7ee;
+  border: 1px solid #a5dbbb;
+  color: #1d5a34;
+}
+
+.damage-claim-error {
+  background: #fdebea;
+  border: 1px solid #f1b1ae;
+  color: #8f201a;
+}
+
+@media (max-width: 768px) {
+  .damage-claim-form {
+    padding: 0 16px 24px;
+  }
+
+  .damage-claim-banner {
+    margin: 0 -16px;
+    font-size: 26px;
+    padding: 14px 10px;
+  }
+
+  .damage-claim-form h2 {
+    font-size: 24px;
+  }
+
+  .damage-claim-form h3 {
+    font-size: 20px;
+  }
+
+  .damage-claim-group label {
+    font-size: 16px;
+  }
+
+  .damage-claim-grid.two-col {
+    grid-template-columns: 1fr;
+  }
+}
