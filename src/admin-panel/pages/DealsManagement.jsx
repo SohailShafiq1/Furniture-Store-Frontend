@@ -7,6 +7,7 @@ const DealsManagement = () => {
   const { token } = useAdminAuth();
 
   const [categories, setCategories] = useState([]);
+  const [collections, setCollections] = useState([]);
   const [deals, setDeals] = useState([]);
 
   const [title, setTitle] = useState('');
@@ -17,8 +18,6 @@ const DealsManagement = () => {
   const [promoHighlightText, setPromoHighlightText] = useState('Extra 5% OFF');
   const [promoNormalText, setPromoNormalText] = useState('A small boost for your tax refund season.');
   const [promoCode, setPromoCode] = useState('SS5OFF');
-  const [categoryId, setCategoryId] = useState('');
-  const [subCategoryName, setSubCategoryName] = useState('');
   const [images, setImages] = useState([]);
   const [imageActions, setImageActions] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
@@ -31,11 +30,21 @@ const DealsManagement = () => {
   const [error, setError] = useState('');
 
   const categoriesEndpoint = useMemo(() => `${import.meta.env.VITE_API_URL}/categories`, []);
+  const collectionsEndpoint = useMemo(() => `${import.meta.env.VITE_API_URL}/collections`, []);
   const dealsEndpoint = useMemo(() => `${import.meta.env.VITE_API_URL}/deals`, []);
   const backendRoot = useMemo(() => import.meta.env.VITE_API_URL.replace('/api', ''), []);
 
   const jsonConfig = useMemo(() => ({ headers: { Authorization: `Bearer ${token}` } }), [token]);
   const multipartConfig = useMemo(() => ({ headers: { Authorization: `Bearer ${token}` } }), [token]);
+
+  const createEmptyImageAction = () => ({
+    buttonName: '',
+    targetType: 'category',
+    categoryId: '',
+    subCategoryName: '',
+    subSubCategoryName: '',
+    collectionId: '',
+  });
 
   const resetForm = () => {
     imagePreviews.forEach((p) => URL.revokeObjectURL(p));
@@ -47,8 +56,6 @@ const DealsManagement = () => {
     setPromoHighlightText('Extra 5% OFF');
     setPromoNormalText('A small boost for your tax refund season.');
     setPromoCode('SS5OFF');
-    setCategoryId('');
-    setSubCategoryName('');
     setImages([]);
     setImageActions([]);
     setImagePreviews([]);
@@ -66,6 +73,11 @@ const DealsManagement = () => {
     setDeals(Array.isArray(res.data) ? res.data : []);
   };
 
+  const fetchCollections = async () => {
+    const res = await axios.get(`${collectionsEndpoint}/all`);
+    setCollections(Array.isArray(res.data) ? res.data : []);
+  };
+
   useEffect(() => {
     const currentHome = deals.find((deal) => deal.showOnHomePage);
     setHomeDealId(currentHome?._id || '');
@@ -76,6 +88,7 @@ const DealsManagement = () => {
       try {
         setError('');
         await fetchCategories();
+        await fetchCollections();
         await fetchDeals();
       } catch (err) {
         setError(err.response?.data?.message || 'Failed to load deals data');
@@ -84,17 +97,17 @@ const DealsManagement = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const selectedCategory = useMemo(
-    () => categories.find((c) => c._id === categoryId),
-    [categories, categoryId]
-  );
+  const getCategoryById = (id) => categories.find((c) => c._id === id);
 
-  const selectedSub = useMemo(
-    () => selectedCategory?.subCategories?.find((s) => s.name === subCategoryName),
-    [selectedCategory, subCategoryName]
-  );
+  const getSubCategoryByAction = (action) => {
+    const category = getCategoryById(action?.categoryId);
+    return category?.subCategories?.find((sub) => sub.name === action?.subCategoryName) || null;
+  };
 
-  const hasSubSubs = (selectedSub?.subSubCategories?.length || 0) > 0;
+  const hasSubSubsForAction = (action) => {
+    const sub = getSubCategoryByAction(action);
+    return (sub?.subSubCategories?.length || 0) > 0;
+  };
 
   const handleImagesChange = (e) => {
     const incomingFiles = Array.from(e.target.files || []);
@@ -112,7 +125,7 @@ const DealsManagement = () => {
     setImages(mergedFiles);
     setImageActions([
       ...imageActions,
-      ...incomingFiles.map(() => ({ buttonName: '', subSubCategoryName: '' })),
+      ...incomingFiles.map(() => createEmptyImageAction()),
     ]);
     setImagePreviews(mergedPreviews);
     setError('');
@@ -120,6 +133,13 @@ const DealsManagement = () => {
   };
 
   const buildDealRedirectPath = (deal) => {
+    const redirectType = deal.redirectTarget?.targetType || 'category';
+    if (redirectType === 'collection') {
+      const name = deal.redirectTarget?.collectionName;
+      if (!name) return '/deals/collection';
+      return `/deals/collection?name=${encodeURIComponent(name)}`;
+    }
+
     const catId = deal.redirectTarget?.categoryId;
     const subName = deal.redirectTarget?.subCategoryName;
     const subSub = deal.redirectTarget?.subSubCategoryName;
@@ -139,19 +159,32 @@ const DealsManagement = () => {
       return;
     }
 
-    if (!categoryId || !subCategoryName) {
-      setError('Please select a category and sub-category');
+    const activeActions = images.length > 0 ? imageActions : editExistingImages;
+
+    if (activeActions.some((a) => !a.buttonName?.trim())) {
+      setError('Please add button name for every image');
       return;
     }
 
-    if (imageActions.some((a) => !a.buttonName?.trim())) {
-      setError('Please add button name for every selected image');
-      return;
-    }
+    for (let i = 0; i < activeActions.length; i += 1) {
+      const action = activeActions[i] || {};
+      const label = `Image ${i + 1}`;
 
-    if (hasSubSubs && imageActions.some((a) => !a.subSubCategoryName?.trim())) {
-      setError('Please select sub-sub-category for every selected image');
-      return;
+      if (action.targetType === 'collection') {
+        if (!action.collectionId) {
+          setError(`${label}: please select a collection`);
+          return;
+        }
+      } else {
+        if (!action.categoryId || !action.subCategoryName) {
+          setError(`${label}: please select category and sub-category`);
+          return;
+        }
+        if (hasSubSubsForAction(action) && !action.subSubCategoryName?.trim()) {
+          setError(`${label}: please select sub-sub-category`);
+          return;
+        }
+      }
     }
 
     if (!editingId) {
@@ -174,8 +207,6 @@ const DealsManagement = () => {
       formData.append('promoHighlightText', promoHighlightText);
       formData.append('promoNormalText', promoNormalText);
       formData.append('promoCode', promoCode);
-      formData.append('categoryId', categoryId);
-      formData.append('subCategoryName', subCategoryName);
       formData.append(
         'imageActions',
         JSON.stringify(
@@ -183,7 +214,11 @@ const DealsManagement = () => {
             ? imageActions
             : editExistingImages.map((img) => ({
                 buttonName: img.buttonName || '',
-                subSubCategoryName: img.subSubCategoryName || '',
+                targetType: img.targetType || 'category',
+                categoryId: img.targetType === 'category' ? img.categoryId || '' : '',
+                subCategoryName: img.targetType === 'category' ? img.subCategoryName || '' : '',
+                subSubCategoryName: img.targetType === 'category' ? img.subSubCategoryName || '' : '',
+                collectionId: img.targetType === 'collection' ? img.collectionId || '' : '',
               }))
         )
       );
@@ -219,16 +254,51 @@ const DealsManagement = () => {
     setPromoHighlightText(deal.promoStrip?.highlightText || 'Extra 5% OFF');
     setPromoNormalText(deal.promoStrip?.normalText || 'A small boost for your tax refund season.');
     setPromoCode(deal.promoStrip?.code || 'SS5OFF');
-    setCategoryId(String(deal.redirectTarget.categoryId));
-    setSubCategoryName(deal.redirectTarget.subCategoryName);
     setImages([]);
     setImageActions([]);
     setImagePreviews([]);
-    const existing = (deal.images || []).map((img) =>
-      typeof img === 'string'
-        ? { image: img, buttonName: deal.buttonName || '', subSubCategoryName: deal.redirectTarget?.subSubCategoryName || '' }
-        : img
-    );
+    const fallbackTarget = {
+      targetType: deal.redirectTarget?.targetType || 'category',
+      categoryId: deal.redirectTarget?.categoryId ? String(deal.redirectTarget.categoryId) : '',
+      subCategoryName: deal.redirectTarget?.subCategoryName || '',
+      subSubCategoryName: deal.redirectTarget?.subSubCategoryName || '',
+      collectionId: deal.redirectTarget?.collectionId ? String(deal.redirectTarget.collectionId) : '',
+    };
+
+    const existing = (deal.images || []).map((img) => {
+      if (typeof img === 'string') {
+        return {
+          image: img,
+          buttonName: deal.buttonName || '',
+          targetType: fallbackTarget.targetType,
+          categoryId: fallbackTarget.categoryId,
+          subCategoryName: fallbackTarget.subCategoryName,
+          subSubCategoryName: fallbackTarget.subSubCategoryName,
+          collectionId: fallbackTarget.collectionId,
+        };
+      }
+
+      const imgTarget = img.target || {};
+      const imgTargetType = imgTarget.targetType || fallbackTarget.targetType;
+      return {
+        ...img,
+        buttonName: img.buttonName || '',
+        targetType: imgTargetType,
+        categoryId:
+          imgTargetType === 'category'
+            ? String(imgTarget.categoryId || fallbackTarget.categoryId || '')
+            : '',
+        subCategoryName: imgTargetType === 'category' ? imgTarget.subCategoryName || fallbackTarget.subCategoryName || '' : '',
+        subSubCategoryName:
+          imgTargetType === 'category'
+            ? imgTarget.subSubCategoryName || img.subSubCategoryName || fallbackTarget.subSubCategoryName || ''
+            : '',
+        collectionId:
+          imgTargetType === 'collection'
+            ? String(imgTarget.collectionId || fallbackTarget.collectionId || '')
+            : '',
+      };
+    });
     setEditExistingImages(existing);
   };
 
@@ -382,58 +452,7 @@ const DealsManagement = () => {
             </>
           )}
 
-          <div className="triple-select">
-            <div>
-              <label className="form-label">Category</label>
-              <select
-                value={categoryId}
-                onChange={(e) => {
-                  setCategoryId(e.target.value);
-                  setSubCategoryName('');
-                  setImageActions((prev) => prev.map((a) => ({ ...a, subSubCategoryName: '' })));
-                }}
-                required
-              >
-                <option value="">Select category</option>
-                {categories.map((c) => (
-                  <option key={c._id} value={c._id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="form-label">Sub-category</label>
-              <select
-                value={subCategoryName}
-                onChange={(e) => {
-                  setSubCategoryName(e.target.value);
-                  setImageActions((prev) => prev.map((a) => ({ ...a, subSubCategoryName: '' })));
-                }}
-                required
-                disabled={!categoryId}
-              >
-                <option value="">Select sub-category</option>
-                {(selectedCategory?.subCategories || []).map((s) => (
-                  <option key={s.name} value={s.name}>
-                    {s.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="form-label">Sub-sub-category rule</label>
-              <select
-                value=""
-                onChange={() => {}}
-                disabled
-              >
-                <option value="">{hasSubSubs ? 'Select per image below' : 'No sub-sub-categories for this sub-category'}</option>
-              </select>
-            </div>
-          </div>
+          <p className="helper">Set button name and target route separately for each image below.</p>
 
           <label className="form-label">Images (2-10)</label>
           <input type="file" accept="image/*" multiple onChange={handleImagesChange} />
@@ -460,16 +479,106 @@ const DealsManagement = () => {
                       style={{ marginTop: 6 }}
                     />
                     <select
+                      value={img.targetType || 'category'}
+                      onChange={(e) =>
+                        setEditExistingImages((prev) =>
+                          prev.map((x, i) =>
+                            i === idx
+                              ? {
+                                  ...x,
+                                  targetType: e.target.value,
+                                  categoryId: e.target.value === 'category' ? x.categoryId || '' : '',
+                                  subCategoryName: e.target.value === 'category' ? x.subCategoryName || '' : '',
+                                  subSubCategoryName: '',
+                                  collectionId: e.target.value === 'collection' ? x.collectionId || '' : '',
+                                }
+                              : x
+                          )
+                        )
+                      }
+                    >
+                      <option value="category">Category / Sub-category</option>
+                      <option value="collection">Collection</option>
+                    </select>
+                    {img.targetType === 'collection' ? (
+                      <select
+                        value={img.collectionId || ''}
+                        onChange={(e) =>
+                          setEditExistingImages((prev) =>
+                            prev.map((x, i) => (i === idx ? { ...x, collectionId: e.target.value } : x))
+                          )
+                        }
+                      >
+                        <option value="">Select collection</option>
+                        {collections.map((collection) => (
+                          <option key={collection._id} value={collection._id}>
+                            {collection.name}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <>
+                        <select
+                          value={img.categoryId || ''}
+                          onChange={(e) =>
+                            setEditExistingImages((prev) =>
+                              prev.map((x, i) =>
+                                i === idx
+                                  ? {
+                                      ...x,
+                                      categoryId: e.target.value,
+                                      subCategoryName: '',
+                                      subSubCategoryName: '',
+                                    }
+                                  : x
+                              )
+                            )
+                          }
+                        >
+                          <option value="">Select category</option>
+                          {categories.map((c) => (
+                            <option key={c._id} value={c._id}>
+                              {c.name}
+                            </option>
+                          ))}
+                        </select>
+                        <select
+                          value={img.subCategoryName || ''}
+                          onChange={(e) =>
+                            setEditExistingImages((prev) =>
+                              prev.map((x, i) =>
+                                i === idx ? { ...x, subCategoryName: e.target.value, subSubCategoryName: '' } : x
+                              )
+                            )
+                          }
+                          disabled={!img.categoryId}
+                        >
+                          <option value="">Select sub-category</option>
+                          {(getCategoryById(img.categoryId)?.subCategories || []).map((s) => (
+                            <option key={s.name} value={s.name}>
+                              {s.name}
+                            </option>
+                          ))}
+                        </select>
+                      </>
+                    )}
+                    <select
                       value={img.subSubCategoryName || ''}
                       onChange={(e) =>
                         setEditExistingImages((prev) =>
                           prev.map((x, i) => (i === idx ? { ...x, subSubCategoryName: e.target.value } : x))
                         )
                       }
-                      disabled={!hasSubSubs}
+                      disabled={img.targetType === 'collection' || !hasSubSubsForAction(img)}
                     >
-                      <option value="">{hasSubSubs ? 'Select sub-sub-category' : 'No sub-sub-categories'}</option>
-                      {(selectedSub?.subSubCategories || []).map((ss) => (
+                      <option value="">
+                        {img.targetType === 'collection'
+                          ? 'Not required for collection target'
+                          : hasSubSubsForAction(img)
+                          ? 'Select sub-sub-category'
+                          : 'No sub-sub-categories'}
+                      </option>
+                      {(getSubCategoryByAction(img)?.subSubCategories || []).map((ss) => (
                         <option key={ss.name} value={ss.name}>
                           {ss.name}
                         </option>
@@ -491,16 +600,109 @@ const DealsManagement = () => {
                   style={{ marginTop: 6 }}
                 />
                 <select
+                  value={imageActions[idx]?.targetType || 'category'}
+                  onChange={(e) =>
+                    setImageActions((prev) =>
+                      prev.map((a, i) =>
+                        i === idx
+                          ? {
+                              ...a,
+                              targetType: e.target.value,
+                              categoryId: e.target.value === 'category' ? a.categoryId || '' : '',
+                              subCategoryName: e.target.value === 'category' ? a.subCategoryName || '' : '',
+                              subSubCategoryName: '',
+                              collectionId: e.target.value === 'collection' ? a.collectionId || '' : '',
+                            }
+                          : a
+                      )
+                    )
+                  }
+                >
+                  <option value="category">Category / Sub-category</option>
+                  <option value="collection">Collection</option>
+                </select>
+                {(imageActions[idx]?.targetType || 'category') === 'collection' ? (
+                  <select
+                    value={imageActions[idx]?.collectionId || ''}
+                    onChange={(e) =>
+                      setImageActions((prev) =>
+                        prev.map((a, i) => (i === idx ? { ...a, collectionId: e.target.value } : a))
+                      )
+                    }
+                  >
+                    <option value="">Select collection</option>
+                    {collections.map((collection) => (
+                      <option key={collection._id} value={collection._id}>
+                        {collection.name}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <>
+                    <select
+                      value={imageActions[idx]?.categoryId || ''}
+                      onChange={(e) =>
+                        setImageActions((prev) =>
+                          prev.map((a, i) =>
+                            i === idx
+                              ? {
+                                  ...a,
+                                  categoryId: e.target.value,
+                                  subCategoryName: '',
+                                  subSubCategoryName: '',
+                                }
+                              : a
+                          )
+                        )
+                      }
+                    >
+                      <option value="">Select category</option>
+                      {categories.map((c) => (
+                        <option key={c._id} value={c._id}>
+                          {c.name}
+                        </option>
+                      ))}
+                    </select>
+                    <select
+                      value={imageActions[idx]?.subCategoryName || ''}
+                      onChange={(e) =>
+                        setImageActions((prev) =>
+                          prev.map((a, i) =>
+                            i === idx ? { ...a, subCategoryName: e.target.value, subSubCategoryName: '' } : a
+                          )
+                        )
+                      }
+                      disabled={!imageActions[idx]?.categoryId}
+                    >
+                      <option value="">Select sub-category</option>
+                      {(getCategoryById(imageActions[idx]?.categoryId)?.subCategories || []).map((s) => (
+                        <option key={s.name} value={s.name}>
+                          {s.name}
+                        </option>
+                      ))}
+                    </select>
+                  </>
+                )}
+                <select
                   value={imageActions[idx]?.subSubCategoryName || ''}
                   onChange={(e) =>
                     setImageActions((prev) =>
                       prev.map((a, i) => (i === idx ? { ...a, subSubCategoryName: e.target.value } : a))
                     )
                   }
-                  disabled={!hasSubSubs}
+                  disabled={
+                    (imageActions[idx]?.targetType || 'category') === 'collection' ||
+                    !hasSubSubsForAction(imageActions[idx])
+                  }
                 >
-                  <option value="">{hasSubSubs ? 'Select sub-sub-category' : 'No sub-sub-categories'}</option>
-                  {(selectedSub?.subSubCategories || []).map((ss) => (
+                  <option value="">
+                    {(imageActions[idx]?.targetType || 'category') === 'collection'
+                      ? 'Not required for collection target'
+                      : hasSubSubsForAction(imageActions[idx])
+                      ? 'Select sub-sub-category'
+                      : 'No sub-sub-categories'}
+                  </option>
+                  {(getSubCategoryByAction(imageActions[idx])?.subSubCategories || []).map((ss) => (
                     <option key={ss.name} value={ss.name}>
                       {ss.name}
                     </option>
@@ -562,12 +764,21 @@ const DealsManagement = () => {
                     <td>{(deal.images || []).map((img) => (typeof img === 'string' ? deal.buttonName || 'Button' : img.buttonName)).join(', ')}</td>
                     <td>
                       <div className="target-cell">
-                        <div>
-                          <strong>{deal.redirectTarget?.categoryName}</strong>
-                        </div>
-                        <div className="muted small">
-                          {deal.redirectTarget?.subCategoryName}
-                        </div>
+                        {deal.redirectTarget?.targetType === 'collection' ? (
+                          <>
+                            <div>
+                              <strong>Collection</strong>
+                            </div>
+                            <div className="muted small">{deal.redirectTarget?.collectionName}</div>
+                          </>
+                        ) : (
+                          <>
+                            <div>
+                              <strong>{deal.redirectTarget?.categoryName}</strong>
+                            </div>
+                            <div className="muted small">{deal.redirectTarget?.subCategoryName}</div>
+                          </>
+                        )}
                         <div className="muted small mono">{buildDealRedirectPath(deal)}</div>
                       </div>
                     </td>

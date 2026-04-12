@@ -8,9 +8,24 @@ import { API_BASE_URL, BACKEND_URL } from '../config/api';
 import './DealsPage.css';
 
 const buildDealRedirectPath = (deal, imageItem) => {
-  const catId = deal.redirectTarget?.categoryId;
-  const subName = deal.redirectTarget?.subCategoryName;
-  const subSub = imageItem?.subSubCategoryName || deal.redirectTarget?.subSubCategoryName;
+  const itemTarget = imageItem?.target || null;
+  const isValidCollectionTarget =
+    itemTarget?.targetType === 'collection' && !!itemTarget?.collectionName;
+  const isValidCategoryTarget =
+    itemTarget?.targetType === 'category' && !!itemTarget?.categoryId && !!itemTarget?.subCategoryName;
+  const redirectSource = isValidCollectionTarget || isValidCategoryTarget ? itemTarget : deal.redirectTarget || {};
+  const redirectType = redirectSource.targetType || 'category';
+
+  if (redirectType === 'collection') {
+    const collectionName = redirectSource.collectionName;
+    if (!collectionName) return '/deals/collection';
+    return `/deals/collection?name=${encodeURIComponent(collectionName)}`;
+  }
+
+  const catId = redirectSource.categoryId;
+  const subName = redirectSource.subCategoryName;
+  const subSub =
+    redirectSource.subSubCategoryName || imageItem?.subSubCategoryName || deal.redirectTarget?.subSubCategoryName;
 
   const basePath = `/category/${catId}/sub/${encodeURIComponent(subName)}`;
   if (!subSub) return basePath;
