@@ -61,8 +61,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                 <button className="auth-close-btn" onClick={onClose}>&times;</button>
                 
                 <div className="auth-logo">
-                    <h2 style={{ color: '#FF6B00', fontWeight: '800', margin: 0 }}>LUNA</h2>
-                    <p style={{ margin: 0, fontSize: '12px', letterSpacing: '2px', fontWeight: '600' }}>FURNITURE</p>
+                    <img src="/logo.svg" alt="Luna Furniture" className="auth-logo-img" />
                 </div>
 
                 <h3 className="auth-title">
