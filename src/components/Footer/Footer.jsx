@@ -2,6 +2,10 @@ import { Link } from 'react-router-dom';
 import './Footer.css';
 import StayInTouch from './StayInTouch';
 export default function Footer() {
+  const handleBackToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <footer className="site-footer">
       <StayInTouch />
@@ -48,7 +52,20 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="back-to-top">Back to top</div>
+      <div
+        className="back-to-top"
+        role="button"
+        tabIndex={0}
+        onClick={handleBackToTop}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleBackToTop();
+          }
+        }}
+      >
+        Back to top
+      </div>
 
       <div className="footer-main">
         <div className="footer-col about">
