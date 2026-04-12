@@ -91,7 +91,7 @@ export default function Footer() {
           <ul>
             <li><Link to="/about-us" className="footer-list-link" onClick={handleBackToTop}>Our Story</Link></li>
             <li><Link to="/why-dimond-modern-furniture" className="footer-list-link" onClick={handleBackToTop}>Why Dimond Modern Furniture?</Link></li>
-            <li>Reviews</li>
+            <li><Link to="/reviews" className="footer-list-link" onClick={handleBackToTop}>Reviews</Link></li>
             <li><Link to="/financing" className="footer-list-link">Financing</Link></li>
             <li><Link to="/news" className="footer-list-link">News & Blog</Link></li>
             <li>Careers</li>

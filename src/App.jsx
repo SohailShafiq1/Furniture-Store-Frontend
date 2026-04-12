@@ -43,6 +43,7 @@ import ProfileSettingsPage from './pages/ProfileSettingsPage';
 import AboutUsPage from './pages/AboutUsPage';
 import WhyDimondFurniturePage from './pages/WhyDimondFurniturePage';
 import AllCollectionsPage from './pages/AllCollectionsPage';
+import ReviewsPage from './pages/ReviewsPage';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -76,6 +77,7 @@ function App() {
         <Route path="/about-us" element={<AboutUsPage />} />
         <Route path="/why-dimond-modern-furniture" element={<WhyDimondFurniturePage />} />
         <Route path="/all-collections" element={<AllCollectionsPage />} />
+        <Route path="/reviews" element={<ReviewsPage />} />
         <Route path="/category/:categoryId" element={<CategoryPage />} />
         <Route path="/category/:categoryId/sub/:subcategoryName" element={<CategoryPage />} />
         <Route path="/product/:categoryId/:productId" element={<ProductDetailPage />} />
