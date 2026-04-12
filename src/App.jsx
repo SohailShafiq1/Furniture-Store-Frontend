@@ -41,6 +41,8 @@ import OrderSuccessPage from './pages/OrderSuccessPage';
 import MyOrdersPage from './pages/MyOrdersPage';
 import ProfileSettingsPage from './pages/ProfileSettingsPage';
 import AboutUsPage from './pages/AboutUsPage';
+import WhyDimondFurniturePage from './pages/WhyDimondFurniturePage';
+import AllCollectionsPage from './pages/AllCollectionsPage';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -72,6 +74,8 @@ function App() {
         <Route path="/deals/collection" element={<DealsCollectionPage />} />
         <Route path="/contact-us" element={<ContactPage />} />
         <Route path="/about-us" element={<AboutUsPage />} />
+        <Route path="/why-dimond-modern-furniture" element={<WhyDimondFurniturePage />} />
+        <Route path="/all-collections" element={<AllCollectionsPage />} />
         <Route path="/category/:categoryId" element={<CategoryPage />} />
         <Route path="/category/:categoryId/sub/:subcategoryName" element={<CategoryPage />} />
         <Route path="/product/:categoryId/:productId" element={<ProductDetailPage />} />
