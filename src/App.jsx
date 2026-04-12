@@ -46,6 +46,7 @@ import AllCollectionsPage from './pages/AllCollectionsPage';
 import ReviewsPage from './pages/ReviewsPage';
 import CareersPage from './pages/CareersPage';
 import DamageClaimPage from './pages/DamageClaimPage';
+import ShippingProtectionPlanPage from './pages/ShippingProtectionPlanPage';
 import DamageClaimsManagement from './admin-panel/pages/DamageClaimsManagement';
 
 function ScrollToTop() {
@@ -83,6 +84,7 @@ function App() {
         <Route path="/reviews" element={<ReviewsPage />} />
         <Route path="/careers" element={<CareersPage />} />
         <Route path="/damage-claim" element={<DamageClaimPage />} />
+        <Route path="/shipping-protection-plan" element={<ShippingProtectionPlanPage />} />
         <Route path="/category/:categoryId" element={<CategoryPage />} />
         <Route path="/category/:categoryId/sub/:subcategoryName" element={<CategoryPage />} />
         <Route path="/product/:categoryId/:productId" element={<ProductDetailPage />} />

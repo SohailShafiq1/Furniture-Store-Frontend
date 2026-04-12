@@ -104,7 +104,7 @@ export default function Footer() {
             <li><Link to="/damage-claim" className="footer-list-link" onClick={handleBackToTop}>Damage Claim</Link></li>
             <li><Link to="/return-policy" className="footer-list-link">Return Policy</Link></li>
             <li>Delivery Policy</li>
-            <li>Shipping Protection Plan</li>
+            <li><Link to="/shipping-protection-plan" className="footer-list-link" onClick={handleBackToTop}>Shipping Protection Plan</Link></li>
             <li>FAQs</li>
           </ul>
         </div>
