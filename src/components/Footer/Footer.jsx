@@ -94,7 +94,7 @@ export default function Footer() {
             <li><Link to="/reviews" className="footer-list-link" onClick={handleBackToTop}>Reviews</Link></li>
             <li><Link to="/financing" className="footer-list-link">Financing</Link></li>
             <li><Link to="/news" className="footer-list-link">News & Blog</Link></li>
-            <li>Careers</li>
+            <li><Link to="/careers" className="footer-list-link" onClick={handleBackToTop}>Careers</Link></li>
           </ul>
         </div>
         <div className="footer-col">
