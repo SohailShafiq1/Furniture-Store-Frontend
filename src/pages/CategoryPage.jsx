@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useCategoryData } from '../hooks/useCategoryData';
 import { useProductsByCategory } from '../hooks/useProductsByCategory';
@@ -47,6 +47,201 @@ const StarIcon = ({ filled }) => (
   </svg>
 );
 
+const normalizeFilterText = (value) => String(value || '').trim();
+const normalizeKeyPart = (value) => normalizeFilterText(value).toLowerCase().replace(/[^a-z0-9]+/g, '_');
+
+const addOptionCount = (sectionMap, key, label, value, type = 'text', extra = {}) => {
+  const cleanLabel = normalizeFilterText(label);
+  const cleanValue = normalizeFilterText(value);
+
+  if (!cleanLabel || !cleanValue) return;
+
+  if (!sectionMap.has(key)) {
+    sectionMap.set(key, {
+      key,
+      label: cleanLabel,
+      type,
+      optionsMap: new Map()
+    });
+  }
+
+  const section = sectionMap.get(key);
+  const current = section.optionsMap.get(cleanValue) || { value: cleanValue, count: 0, ...extra };
+  section.optionsMap.set(cleanValue, {
+    ...current,
+    ...extra,
+    count: current.count + 1
+  });
+};
+
+const getValuesForFilterKey = (product, filterKey) => {
+  if (!product) return [];
+
+  if (filterKey === 'productType') {
+    return [product.subSubCategoryName, product.subCategoryName].filter(Boolean).map(normalizeFilterText);
+  }
+
+  if (filterKey === 'availability') {
+    return [Number(product.quantity || 0) > 0 ? 'In Stock' : 'Out of Stock'];
+  }
+
+  if (filterKey === 'color') {
+    const selectedColors = Array.isArray(product.selectedColors) ? product.selectedColors : [];
+    const customColors = Array.isArray(product.customColors) ? product.customColors.map((c) => c?.name) : [];
+    return [...selectedColors, ...customColors].filter(Boolean).map(normalizeFilterText);
+  }
+
+  if (filterKey === 'variation') {
+    return (Array.isArray(product.variations) ? product.variations : [])
+      .map((variation) => variation?.name)
+      .filter(Boolean)
+      .map(normalizeFilterText);
+  }
+
+  if (filterKey.startsWith('spec:')) {
+    const targetKey = filterKey.replace('spec:', '');
+    const specs = Array.isArray(product.specifications) ? product.specifications : [];
+    const values = [];
+
+    specs.forEach((group) => {
+      (Array.isArray(group?.fields) ? group.fields : []).forEach((field) => {
+        if (normalizeKeyPart(field?.name) !== targetKey) return;
+        (Array.isArray(field?.values) ? field.values : []).forEach((value) => {
+          const cleanValue = normalizeFilterText(value);
+          if (cleanValue) values.push(cleanValue);
+        });
+      });
+    });
+
+    return values;
+  }
+
+  return [];
+};
+
+const buildDynamicFilterSections = (products) => {
+  const sectionMap = new Map();
+  const priceValues = products
+    .map((product) => Number(product?.price))
+    .filter((value) => Number.isFinite(value) && value >= 0);
+
+  products.forEach((product) => {
+    const seenBySection = new Map();
+
+    const markSeen = (sectionKey, optionValue) => {
+      const cleanValue = normalizeFilterText(optionValue);
+      if (!cleanValue) return false;
+      if (!seenBySection.has(sectionKey)) seenBySection.set(sectionKey, new Set());
+      const set = seenBySection.get(sectionKey);
+      if (set.has(cleanValue)) return false;
+      set.add(cleanValue);
+      return true;
+    };
+
+    getValuesForFilterKey(product, 'productType').forEach((value) => {
+      if (!markSeen('productType', value)) return;
+      addOptionCount(sectionMap, 'productType', 'Product Type', value);
+    });
+
+    getValuesForFilterKey(product, 'availability').forEach((value) => {
+      if (!markSeen('availability', value)) return;
+      addOptionCount(sectionMap, 'availability', 'Availability', value);
+    });
+
+    const customColorHexByName = new Map(
+      (Array.isArray(product.customColors) ? product.customColors : [])
+        .filter((color) => color?.name)
+        .map((color) => [normalizeFilterText(color.name).toLowerCase(), color.hex || ''])
+    );
+
+    getValuesForFilterKey(product, 'color').forEach((value) => {
+      if (!markSeen('color', value)) return;
+      addOptionCount(sectionMap, 'color', 'Color', value, 'color', {
+        hex: customColorHexByName.get(value.toLowerCase()) || ''
+      });
+    });
+
+    getValuesForFilterKey(product, 'variation').forEach((value) => {
+      if (!markSeen('variation', value)) return;
+      addOptionCount(sectionMap, 'variation', 'Variation', value);
+    });
+
+    const specs = Array.isArray(product.specifications) ? product.specifications : [];
+    specs.forEach((group) => {
+      (Array.isArray(group?.fields) ? group.fields : []).forEach((field) => {
+        const fieldName = normalizeFilterText(field?.name);
+        if (!fieldName) return;
+        const sectionKey = `spec:${normalizeKeyPart(fieldName)}`;
+
+        (Array.isArray(field?.values) ? field.values : []).forEach((value) => {
+          if (!markSeen(sectionKey, value)) return;
+          addOptionCount(sectionMap, sectionKey, fieldName, value);
+        });
+      });
+    });
+  });
+
+  const fixedOrder = ['productType', 'availability', 'price', 'color', 'variation'];
+  const sections = Array.from(sectionMap.values()).map((section) => ({
+    key: section.key,
+    label: section.label,
+    type: section.type,
+    options: Array.from(section.optionsMap.values()).sort((a, b) => b.count - a.count || a.value.localeCompare(b.value))
+  }));
+
+  const derivedMin = priceValues.length > 0 ? Math.floor(Math.min(...priceValues)) : 0;
+  const derivedMaxRaw = priceValues.length > 0 ? Math.ceil(Math.max(...priceValues)) : 10000;
+  const derivedMax = derivedMaxRaw <= derivedMin ? derivedMin + 1 : derivedMaxRaw;
+
+  const withPrice = [
+    ...sections,
+    {
+      key: 'price',
+      label: 'Price',
+      type: 'price',
+      options: [],
+      meta: {
+        min: derivedMin,
+        max: derivedMax,
+        step: 1
+      }
+    }
+  ];
+
+  return withPrice.sort((a, b) => {
+    const ia = fixedOrder.indexOf(a.key);
+    const ib = fixedOrder.indexOf(b.key);
+    if (ia !== -1 && ib !== -1) return ia - ib;
+    if (ia !== -1) return -1;
+    if (ib !== -1) return 1;
+    return a.label.localeCompare(b.label);
+  });
+};
+
+const applyFilters = (products, filters) => {
+  let filtered = [...products];
+
+  if (filters?.price?.min) {
+    filtered = filtered.filter((product) => Number(product.price) >= Number(filters.price.min));
+  }
+
+  if (filters?.price?.max) {
+    filtered = filtered.filter((product) => Number(product.price) <= Number(filters.price.max));
+  }
+
+  Object.entries(filters || {}).forEach(([filterKey, selectedValues]) => {
+    if (filterKey === 'price' || !Array.isArray(selectedValues) || selectedValues.length === 0) return;
+
+    const selectedSet = new Set(selectedValues.map((value) => normalizeFilterText(value).toLowerCase()));
+    filtered = filtered.filter((product) => {
+      const values = getValuesForFilterKey(product, filterKey).map((value) => value.toLowerCase());
+      return values.some((value) => selectedSet.has(value));
+    });
+  });
+
+  return filtered;
+};
+
 export default function CategoryPage() {
   const { categoryId, subcategoryName } = useParams();
   const location = useLocation();
@@ -63,12 +258,29 @@ export default function CategoryPage() {
   const [activeSubSub, setActiveSubSub] = useState(null);
   const [viewMode, setViewMode] = useState('grid');
   const [showMobileFilters, setShowMobileFilters] = useState(false);
-  const [appliedFilters, setAppliedFilters] = useState({
-    productType: [],
-    availability: [],
-    color: [],
-    price: { min: '', max: '' }
-  });
+  const [appliedFilters, setAppliedFilters] = useState({ price: { min: '', max: '' } });
+
+  const resetFilters = () => ({ price: { min: '', max: '' } });
+
+  const baseProducts = useMemo(() => {
+    let items = [...categoryProducts];
+
+    if (subcategoryName) {
+      items = items.filter(
+        (product) => product.subCategoryName?.trim().toLowerCase() === subcategoryName.trim().toLowerCase()
+      );
+    }
+
+    if (activeSubSub) {
+      items = items.filter(
+        (product) => product.subSubCategoryName?.trim().toLowerCase() === activeSubSub.trim().toLowerCase()
+      );
+    }
+
+    return items;
+  }, [categoryProducts, subcategoryName, activeSubSub]);
+
+  const filterSections = useMemo(() => buildDynamicFilterSections(baseProducts), [baseProducts]);
 
   // Update products when categoryProducts change or subcategory changes
   useEffect(() => {
@@ -76,12 +288,7 @@ export default function CategoryPage() {
     if (!subSubFromQuery) {
       setActiveSubSub(null); // Reset sub-sub filter when changing sub-category
     }
-    setAppliedFilters({
-      productType: [],
-      availability: [],
-      color: [],
-      price: { min: '', max: '' }
-    });
+    setAppliedFilters(resetFilters());
 
     if (!subcategoryName) {
       setProducts(categoryProducts);
@@ -99,12 +306,7 @@ export default function CategoryPage() {
     if (!subcategoryName || !subSubFromQuery) return;
 
     setActiveSubSub(subSubFromQuery);
-    setAppliedFilters({
-      productType: [],
-      availability: [],
-      color: [],
-      price: { min: '', max: '' }
-    });
+    setAppliedFilters(resetFilters());
 
     const filtered = categoryProducts.filter(
       (p) =>
@@ -115,37 +317,20 @@ export default function CategoryPage() {
   }, [subSubFromQuery, subcategoryName, categoryProducts]);
 
   const handleFilterChange = (filterType, value) => {
-    // Determine the base set of products to filter from
-    // If we have a subcategory, we only filter within that subcategory
-    let baseProducts = categoryProducts;
-    if (subcategoryName) {
-      baseProducts = categoryProducts.filter(
-        p => p.subCategoryName?.trim().toLowerCase() === subcategoryName.trim().toLowerCase()
-      );
-    }
-    // If we have an active sub-sub-category, further narrow the base
-    if (activeSubSub) {
-      baseProducts = baseProducts.filter(
-        p => p.subSubCategoryName?.trim().toLowerCase() === activeSubSub.trim().toLowerCase()
-      );
-    }
-
     if (filterType === 'clearAll') {
-      const newFilters = {
-        productType: [],
-        availability: [],
-        color: [],
-        price: { min: '', max: '' }
-      };
+      const newFilters = resetFilters();
       setAppliedFilters(newFilters);
       setProducts(baseProducts);
       return;
     }
 
-    // Update filters state
-    let newFilters = { ...appliedFilters };
+    let newFilters = { ...appliedFilters, price: { ...appliedFilters.price } };
     if (filterType === 'clear') {
-      newFilters[value] = [];
+      if (value === 'price') {
+        newFilters.price = { min: '', max: '' };
+      } else {
+        newFilters[value] = [];
+      }
     } else if (filterType === 'price') {
       newFilters.price = value;
     } else {
@@ -155,23 +340,10 @@ export default function CategoryPage() {
         : [...currentValues, value];
       newFilters[filterType] = newValues;
     }
+
     setAppliedFilters(newFilters);
 
-    // Apply filters to the base set
-    let filtered = [...baseProducts];
-
-    // Filter by type (this is tricky because Sidebar has hardcoded values currently)
-    if (newFilters.productType.length > 0 && !newFilters.productType.includes('All')) {
-      // For now, if Sidebar is hardcoded, we might not match actual product attributes
-      // But we apply it anyway
-      filtered = filtered.filter(p => newFilters.productType.includes(p.name) || newFilters.productType.some(t => p.description?.includes(t)));
-    }
-
-    // Filter by price
-    if (newFilters.price.min) filtered = filtered.filter(p => p.price >= Number(newFilters.price.min));
-    if (newFilters.price.max) filtered = filtered.filter(p => p.price <= Number(newFilters.price.max));
-
-    setProducts(filtered);
+    setProducts(applyFilters(baseProducts, newFilters));
   };
 
   // Handle Sub-Sub-Category Filtering logic separately to simplify clicks
@@ -180,12 +352,7 @@ export default function CategoryPage() {
     const subNameFromUrl = subcategoryName;
 
     // Reset applied filters when switching sub-sub categories to avoid conflicts
-    setAppliedFilters({
-      productType: [],
-      availability: [],
-      color: [],
-      price: { min: '', max: '' }
-    });
+    setAppliedFilters(resetFilters());
 
     if (!ssName) {
       // Reset to all products in sub-category
@@ -357,6 +524,7 @@ export default function CategoryPage() {
               categoryId={categoryId}
               onFilterChange={handleFilterChange}
               appliedFilters={appliedFilters}
+              filterSections={filterSections}
             />
           </aside>
 
@@ -453,6 +621,7 @@ export default function CategoryPage() {
               categoryId={categoryId}
               onFilterChange={handleFilterChange}
               appliedFilters={appliedFilters}
+              filterSections={filterSections}
             />
           </div>
           <div className="luna-modal-footer">

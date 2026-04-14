@@ -218,14 +218,14 @@
 /* Main Layout */
 .luna-main-layout {
   display: grid;
-  grid-template-columns: 260px 1fr;
-  gap: 40px;
+  grid-template-columns: 340px 1fr;
+  gap: 32px;
   margin-bottom: 80px;
 }
 
 .luna-sidebar {
   border-right: 1px solid var(--luna-border);
-  padding-right: 20px;
+  padding-right: 24px;
 }
 
 /* Product Grid */
