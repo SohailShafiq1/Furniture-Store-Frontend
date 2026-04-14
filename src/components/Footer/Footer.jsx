@@ -8,7 +8,7 @@ export default function Footer() {
 
   return (
     <footer className="site-footer">
-      <StayInTouch />
+      {/* <StayInTouch /> */}
 
       <div className="benefits-strip">
         <div className="benefit">
@@ -105,7 +105,7 @@ export default function Footer() {
             <li><Link to="/return-policy" className="footer-list-link">Return Policy</Link></li>
             <li>Delivery Policy</li>
             <li><Link to="/shipping-protection-plan" className="footer-list-link" onClick={handleBackToTop}>Shipping Protection Plan</Link></li>
-            <li>FAQs</li>
+            <li><Link to="/faqs" className="footer-list-link" onClick={handleBackToTop}>FAQs</Link></li>
           </ul>
         </div>
         <div className="footer-col">

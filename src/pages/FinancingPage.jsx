@@ -40,7 +40,9 @@ const FinancingPage = () => {
         const res = await fetch(companiesEndpoint);
         if (!res.ok) throw new Error(`Failed to load financing companies (${res.status})`);
         const data = await res.json();
-        setCompanies(Array.isArray(data) ? data : []);
+        const companiesArray = Array.isArray(data) ? data : [];
+        setCompanies(companiesArray);
+        setCollapsedConditions(new Set(companiesArray.map(c => c._id)));
       } catch (err) {
         setCompanies([]);
         setCompaniesError(err.message || 'Failed to load financing companies');

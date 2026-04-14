@@ -145,6 +145,7 @@ export default function WhyDimondFurniturePage() {
             </div>
           </div>
         </section>
+        
       </main>
       <Footer />
     </>
