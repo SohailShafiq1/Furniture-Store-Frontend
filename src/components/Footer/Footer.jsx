@@ -1,4 +1,15 @@
 import { Link } from 'react-router-dom';
+import {
+  FaCcAmazonPay,
+  FaCcAmex,
+  FaApplePay,
+  FaCcDinersClub,
+  FaCcDiscover,
+  FaGooglePay,
+  FaCcMastercard,
+  FaCcVisa
+} from 'react-icons/fa';
+import { SiShopify } from 'react-icons/si';
 import './Footer.css';
 import StayInTouch from './StayInTouch';
 export default function Footer() {
@@ -75,15 +86,15 @@ export default function Footer() {
           <p className="about-text">Our Furniture Store, a top 100 U.S. furniture retailer, offers stylish and affordable furniture with fast delivery and a seamless shopping experience. Shop our wide selection of high-quality furniture, including sofas, beds, dining sets, and more.</p>
 
           <div className="payment-icons" aria-label="Accepted payment methods">
-            <span className="pay-pill">Amazon</span>
-            <span className="pay-pill">AMEX</span>
-            <span className="pay-pill">Apple Pay</span>
-            <span className="pay-pill">Diners</span>
-            <span className="pay-pill">Discover</span>
-            <span className="pay-pill">Google Pay</span>
-            <span className="pay-pill">Mastercard</span>
-            <span className="pay-pill">Shop Pay</span>
-            <span className="pay-pill">Visa</span>
+            <span className="pay-pill pay-pill--amazon"><FaCcAmazonPay className="pay-pill-icon" aria-hidden="true" />Amazon</span>
+            <span className="pay-pill pay-pill--amex"><FaCcAmex className="pay-pill-icon" aria-hidden="true" />AMEX</span>
+            <span className="pay-pill pay-pill--apple"><FaApplePay className="pay-pill-icon" aria-hidden="true" />Apple Pay</span>
+            <span className="pay-pill pay-pill--diners"><FaCcDinersClub className="pay-pill-icon" aria-hidden="true" />Diners</span>
+            <span className="pay-pill pay-pill--discover"><FaCcDiscover className="pay-pill-icon" aria-hidden="true" />Discover</span>
+            <span className="pay-pill pay-pill--google"><FaGooglePay className="pay-pill-icon" aria-hidden="true" />Google Pay</span>
+            <span className="pay-pill pay-pill--mastercard"><FaCcMastercard className="pay-pill-icon" aria-hidden="true" />Mastercard</span>
+            <span className="pay-pill pay-pill--shop"><SiShopify className="pay-pill-icon" aria-hidden="true" />Shop Pay</span>
+            <span className="pay-pill pay-pill--visa"><FaCcVisa className="pay-pill-icon" aria-hidden="true" />Visa</span>
           </div>
         </div>
         <div className="footer-col">
