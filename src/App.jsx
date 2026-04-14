@@ -43,6 +43,7 @@ import ProfileSettingsPage from './pages/ProfileSettingsPage';
 import AboutUsPage from './pages/AboutUsPage';
 import WhyDimondFurniturePage from './pages/WhyDimondFurniturePage';
 import FAQSPage from './pages/FAQSPage';
+import DeliveryPolicyPage from './pages/DeliveryPolicyPage';
 import AllCollectionsPage from './pages/AllCollectionsPage';
 import ReviewsPage from './pages/ReviewsPage';
 import CareersPage from './pages/CareersPage';
@@ -82,6 +83,7 @@ function App() {
         <Route path="/about-us" element={<AboutUsPage />} />
         <Route path="/why-dimond-modern-furniture" element={<WhyDimondFurniturePage />} />
         <Route path="/faqs" element={<FAQSPage />} />
+        <Route path="/delivery-policy" element={<DeliveryPolicyPage />} />
         <Route path="/all-collections" element={<AllCollectionsPage />} />
         <Route path="/reviews" element={<ReviewsPage />} />
         <Route path="/careers" element={<CareersPage />} />

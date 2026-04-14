@@ -103,7 +103,7 @@ export default function Footer() {
             <li><Link to="/track-order" className="footer-list-link">Track My Order</Link></li>
             <li><Link to="/damage-claim" className="footer-list-link" onClick={handleBackToTop}>Damage Claim</Link></li>
             <li><Link to="/return-policy" className="footer-list-link">Return Policy</Link></li>
-            <li>Delivery Policy</li>
+            <li><Link to="/delivery-policy" className="footer-list-link" onClick={handleBackToTop}>Delivery Policy</Link></li>
             <li><Link to="/shipping-protection-plan" className="footer-list-link" onClick={handleBackToTop}>Shipping Protection Plan</Link></li>
             <li><Link to="/faqs" className="footer-list-link" onClick={handleBackToTop}>FAQs</Link></li>
           </ul>
