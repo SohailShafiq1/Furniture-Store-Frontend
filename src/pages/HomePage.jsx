@@ -17,6 +17,8 @@ import TopBrands from '../components/TopBrands/TopBrands';
 import NewsUpdates from '../components/NewsUpdates/NewsUpdates';
 import Footer from '../components/Footer/Footer';
 
+
+// checking is sohail 
 const buildDealRedirectPath = (deal, imageItem) => {
   const catId = deal?.redirectTarget?.categoryId;
   const subName = deal?.redirectTarget?.subCategoryName;
