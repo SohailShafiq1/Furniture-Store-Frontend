@@ -50,6 +50,7 @@ import CareersPage from './pages/CareersPage';
 import DamageClaimPage from './pages/DamageClaimPage';
 import ShippingProtectionPlanPage from './pages/ShippingProtectionPlanPage';
 import DamageClaimsManagement from './admin-panel/pages/DamageClaimsManagement';
+import StickyBottomBar from './components/common/StickyBottomBar';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -231,6 +232,7 @@ function App() {
           }
         />
       </Routes>
+      <StickyBottomBar />
     </div>
   );
 }
