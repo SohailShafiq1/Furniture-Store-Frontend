@@ -21,6 +21,33 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 24px;
+  flex: 1;
+}
+
+.spring-picks-carousel-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.spring-picks-arrow {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid #222;
+  background: #fff;
+  font-size: 30px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+}
+
+.spring-picks-arrow:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
 }
 
 .spring-pick-card {
@@ -35,6 +62,10 @@
   aspect-ratio: 1.2;
   overflow: hidden;
   background-color: #f5f5f5;
+}
+
+.pick-image-wrapper.pick-clickable {
+  cursor: pointer;
 }
 
 .pick-image {
@@ -111,6 +142,17 @@
 @media (max-width: 768px) {
   .top-spring-picks {
     padding: 48px 16px;
+  }
+
+  .spring-picks-carousel-row {
+    gap: 8px;
+  }
+
+  .spring-picks-arrow {
+    width: 36px;
+    height: 36px;
+    font-size: 24px;
+    border-width: 1.5px;
   }
 
   .spring-picks-grid {

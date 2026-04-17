@@ -1,0 +1,35 @@
+.instagram-posts-manager .admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.instagram-posts-manager .admin-form input,
+.instagram-posts-manager .admin-form textarea,
+.instagram-posts-manager .admin-form select {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+}
+
+.instagram-posts-manager .instagram-media-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.instagram-posts-manager .instagram-media-card img,
+.instagram-posts-manager .instagram-media-card video {
+  width: 100%;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #f8fafc;
+}
+
+.instagram-posts-manager .helper {
+  margin-bottom: 6px;
+}

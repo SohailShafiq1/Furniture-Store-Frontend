@@ -400,6 +400,7 @@ export default function HomePage() {
   const [homeContent, setHomeContent] = useState([]);
   const [loading, setLoading] = useState(true);
   const [homeDeal, setHomeDeal] = useState(null);
+  const [homeInstagramPost, setHomeInstagramPost] = useState(null);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -466,8 +467,49 @@ export default function HomePage() {
     fetchHomeDeal();
   }, []);
 
-  const homeDealItems = (homeDeal?.images || [])
-    .slice(0, 3)
+  useEffect(() => {
+    const fetchInstagramHomePost = async () => {
+      try {
+        const res = await axios.get(`${API_BASE_URL}/home-content/instagram-posts/public`);
+        const posts = Array.isArray(res.data) ? res.data : [];
+        const selected = posts.find((post) => post.showOnHomePage);
+        setHomeInstagramPost(selected || null);
+      } catch (err) {
+        console.error('Error fetching instagram posts:', err);
+        setHomeInstagramPost(null);
+      }
+    };
+
+    fetchInstagramHomePost();
+  }, []);
+
+  const prioritizedDealSource = homeInstagramPost || homeDeal;
+
+  const buildInstagramClick = (url) => () => {
+    if (!url) return;
+    window.location.href = url;
+  };
+
+  const homeDealItems = homeInstagramPost
+    ? (homeInstagramPost?.media || [])
+        .map((mediaItem, idx) => {
+          const rawFile = mediaItem?.file || '';
+          const source = rawFile
+            ? (rawFile.startsWith('http') ? rawFile : `${BACKEND_URL}/${rawFile}`)
+            : '';
+
+          return {
+            id: `${homeInstagramPost?._id || 'instagram'}-${idx}`,
+            image: source,
+            mediaType: mediaItem?.mediaType || (String(rawFile).toLowerCase().match(/\.(mp4|webm|mov)$/) ? 'video' : 'image'),
+            title: homeInstagramPost?.title,
+            priceLabel: homeInstagramPost?.dealOffer,
+            buttonText: mediaItem?.buttonName || 'Shop now',
+            onClick: buildInstagramClick(mediaItem?.redirectUrl)
+          };
+        })
+        .filter((item) => item.image)
+    : (homeDeal?.images || [])
     .map((img, idx) => {
       const rawImage = typeof img === 'string' ? img : img?.image;
       const image = rawImage
@@ -478,6 +520,7 @@ export default function HomePage() {
       return {
         id: `${homeDeal?._id || 'deal'}-${idx}`,
         image,
+        mediaType: 'image',
         title: homeDeal?.title,
         priceLabel: homeDeal?.dealOffer,
         buttonText,
@@ -497,13 +540,13 @@ export default function HomePage() {
       <HeroSection />
       <ShopByCategory />
       <PromoStrip
-        title={homeDeal?.promoStrip?.enabled ? homeDeal?.promoStrip?.highlightText : ''}
-        subtitle={homeDeal?.promoStrip?.enabled ? homeDeal?.promoStrip?.normalText : ''}
-        code={homeDeal?.promoStrip?.enabled ? homeDeal?.promoStrip?.code : ''}
+        title={prioritizedDealSource?.promoStrip?.enabled ? prioritizedDealSource?.promoStrip?.highlightText : ''}
+        subtitle={prioritizedDealSource?.promoStrip?.enabled ? prioritizedDealSource?.promoStrip?.normalText : ''}
+        code={prioritizedDealSource?.promoStrip?.enabled ? prioritizedDealSource?.promoStrip?.code : ''}
       />
       <TopSpringPicks
         items={homeDealItems}
-        title={homeDeal?.title || 'Top Deals'}
+        title={prioritizedDealSource?.title || 'Top Deals'}
       />
       <FinancingPromo />
       <SlidingBanner />

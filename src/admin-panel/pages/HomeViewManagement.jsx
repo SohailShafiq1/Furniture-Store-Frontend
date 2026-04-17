@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAdminAuth } from '../context/AdminAuthContext';
+import InstagramPostsManager from './InstagramPostsManager';
 import './HomeViewManagement.css';
 
 const HomeViewManagement = () => {
@@ -30,6 +31,7 @@ const HomeViewManagement = () => {
   const [savedContent, setSavedContent] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [showForm, setShowForm] = useState(true);
+  const [activeSection, setActiveSection] = useState('home');
   
   const { token } = useAdminAuth();
   const apiEndpoint = `${import.meta.env.VITE_API_URL}`;
@@ -340,6 +342,27 @@ const HomeViewManagement = () => {
   return (
     <div className="home-view-management">
       <h1>Home Page Content Management</h1>
+
+      <div className="home-view-tabs">
+        <button
+          type="button"
+          className={`home-view-tab-btn ${activeSection === 'home' ? 'active' : ''}`}
+          onClick={() => setActiveSection('home')}
+        >
+          Home Content
+        </button>
+        <button
+          type="button"
+          className={`home-view-tab-btn ${activeSection === 'instagram' ? 'active' : ''}`}
+          onClick={() => setActiveSection('instagram')}
+        >
+          Instagram Posts Adding
+        </button>
+      </div>
+
+      {activeSection === 'instagram' && <InstagramPostsManager />}
+      {activeSection === 'home' && (
+        <>
       
       {message && (
         <div className="success-toast" onClick={() => setMessage('')}>
@@ -726,6 +749,9 @@ const HomeViewManagement = () => {
         <div className="no-content-message">
           <p>No saved content yet. Click "Add New Content" to create your first home page content.</p>
         </div>
+      )}
+
+        </>
       )}
     </div>
   );
