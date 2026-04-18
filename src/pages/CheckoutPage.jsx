@@ -13,6 +13,10 @@ const CheckoutPage = () => {
   const { user, token } = useUserAuth();
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('Stripe');
+  const [tipEnabled, setTipEnabled] = useState(false);
+  const [selectedTipOption, setSelectedTipOption] = useState('none');
+  const [customTipInput, setCustomTipInput] = useState('');
+  const [appliedCustomTip, setAppliedCustomTip] = useState(0);
   const [guestEmail, setGuestEmail] = useState('');
   const [modal, setModal] = useState({ isOpen: false, title: '', message: '', type: 'info', action: null });
   const [pendingRemoveId, setPendingRemoveId] = useState(null);
@@ -109,14 +113,16 @@ const CheckoutPage = () => {
 
       const orderDetails = {
         shippingAddress,
-        paymentMethod
+        paymentMethod,
+        tipAmount,
+        totalWithTip: finalTotal
       };
 
       // For guest users, include email and cart items
       if (!user) {
         orderDetails.guestEmail = guestEmail;
         orderDetails.items = cart.items;
-        orderDetails.totalPrice = cart.totalPrice;
+        orderDetails.totalPrice = finalTotal;
       }
 
       const res = await axios.post(`${API_BASE_URL}/orders/checkout`, {
@@ -165,6 +171,49 @@ const CheckoutPage = () => {
   const getImageUrl = (imagePath) => {
     if (!imagePath) return '';
     return imagePath.startsWith('http') ? imagePath : `${BACKEND_URL}/${imagePath}`;
+  };
+
+  const subtotal = Number(cart.totalPrice || 0);
+  const parsedCustomTip = Number.parseFloat(customTipInput) || 0;
+  const selectedTipPercent = Number.parseFloat(selectedTipOption) || 0;
+
+  const tipAmount = !tipEnabled
+    ? 0
+    : selectedTipOption === 'custom'
+      ? Math.max(0, appliedCustomTip)
+      : selectedTipOption === 'none'
+        ? 0
+        : (subtotal * selectedTipPercent) / 100;
+
+  const finalTotal = subtotal + tipAmount;
+
+  const formatCurrency = (amount) => `$${Number(amount || 0).toFixed(2)}`;
+
+  const handleTipToggle = (checked) => {
+    setTipEnabled(checked);
+    if (!checked) {
+      setSelectedTipOption('none');
+      setCustomTipInput('');
+      setAppliedCustomTip(0);
+    }
+  };
+
+  const handleSelectTipOption = (option) => {
+    setSelectedTipOption(option);
+    if (option !== 'custom') {
+      setAppliedCustomTip(0);
+    }
+  };
+
+  const updateCustomTipBy = (delta) => {
+    const nextValue = Math.max(0, parsedCustomTip + delta);
+    setCustomTipInput(nextValue === 0 ? '' : nextValue.toFixed(2));
+  };
+
+  const handleApplyCustomTip = () => {
+    const nextValue = Math.max(0, parsedCustomTip);
+    setAppliedCustomTip(nextValue);
+    setSelectedTipOption(nextValue > 0 ? 'custom' : 'none');
   };
 
   return (
@@ -295,6 +344,69 @@ const CheckoutPage = () => {
               </div>
             </section>
 
+            <section className="form-section tip-section">
+              <h3>Add tip</h3>
+              <div className="tip-box">
+                <label className="tip-support-row">
+                  <input
+                    type="checkbox"
+                    checked={tipEnabled}
+                    onChange={(e) => handleTipToggle(e.target.checked)}
+                  />
+                  <span>Show your support for the team at Luna Furniture</span>
+                </label>
+
+                {tipEnabled && (
+                  <>
+                    <div className="tip-options-grid">
+                      {[1, 3, 5].map((percent) => (
+                        <button
+                          key={percent}
+                          type="button"
+                          className={`tip-option-btn ${selectedTipOption === String(percent) ? 'selected' : ''}`}
+                          onClick={() => handleSelectTipOption(String(percent))}
+                        >
+                          <span className="tip-percent">{percent}%</span>
+                          <span className="tip-value">{formatCurrency((subtotal * percent) / 100)}</span>
+                        </button>
+                      ))}
+
+                      <button
+                        type="button"
+                        className={`tip-option-btn ${selectedTipOption === 'none' ? 'selected' : ''}`}
+                        onClick={() => handleSelectTipOption('none')}
+                      >
+                        <span className="tip-percent">None</span>
+                      </button>
+                    </div>
+
+                    <div className="tip-custom-row">
+                      <div className="tip-custom-input-wrap">
+                        <input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          placeholder="Custom tip"
+                          value={customTipInput}
+                          onChange={(e) => setCustomTipInput(e.target.value)}
+                        />
+                        <div className="tip-custom-stepper">
+                          <button type="button" onClick={() => updateCustomTipBy(-1)} aria-label="Decrease tip">-</button>
+                          <button type="button" onClick={() => updateCustomTipBy(1)} aria-label="Increase tip">+</button>
+                        </div>
+                      </div>
+
+                      <button type="button" className="tip-apply-btn" onClick={handleApplyCustomTip}>
+                        Add tip
+                      </button>
+                    </div>
+
+                    <p className="tip-thankyou">Thank you, we appreciate it.</p>
+                  </>
+                )}
+              </div>
+            </section>
+
             <button type="submit" className="place-order-btn" disabled={loading}>
               {loading ? 'Processing...' : paymentMethod === 'COD' ? 'Place Order' : 'Proceed to Payment'}
             </button>
@@ -335,7 +447,11 @@ const CheckoutPage = () => {
             <div className="summary-totals-box">
               <div className="summary-line">
                 <span>Subtotal</span>
-                <span>${cart.totalPrice.toFixed(2)}</span>
+                <span>{formatCurrency(subtotal)}</span>
+              </div>
+              <div className="summary-line">
+                <span>Tip</span>
+                <span>{formatCurrency(tipAmount)}</span>
               </div>
               <div className="summary-line">
                 <span>Shipping</span>
@@ -343,7 +459,7 @@ const CheckoutPage = () => {
               </div>
               <div className="summary-total-line">
                 <span>Total</span>
-                <span>${cart.totalPrice.toFixed(2)}</span>
+                <span>{formatCurrency(finalTotal)}</span>
               </div>
             </div>
             {/* <button 
