@@ -9,6 +9,7 @@ import Footer from '../components/Footer/Footer';
 import Modal from '../components/Modal/Modal';
 import ReviewSection from '../components/ReviewSection/ReviewSection';
 import ProductCarousel from '../components/ProductCarousel/ProductCarousel';
+import ShopByCategory from '../components/ShopByCategory/ShopByCategory';
 import './ProductDetailPage.css';
 
 const StarIcon = ({ filled }) => (
@@ -936,6 +937,9 @@ export default function ProductDetailPage() {
 
         {/* Customer Reviews Section */}
         <ReviewSection product={product} onReviewAdded={fetchProductData} />
+
+        {/* Shop by Category Section */}
+        <ShopByCategory />
       </div>
 
       <Footer />
