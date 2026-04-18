@@ -2,11 +2,221 @@ import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { useUserAuth } from '../context/UserAuthContext';
 import { API_BASE_URL, BACKEND_URL } from '../config/api';
+import { STRIPE_PUBLISHABLE_KEY } from '../config/stripe';
+import { loadStripe } from '@stripe/stripe-js';
+import {
+  Elements,
+  CardNumberElement,
+  CardExpiryElement,
+  CardCvcElement,
+  useStripe,
+  useElements
+} from '@stripe/react-stripe-js';
+import { FaCcAmex, FaCcMastercard, FaCcVisa } from 'react-icons/fa';
 import axios from 'axios';
 import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
 import Modal from '../components/Modal/Modal';
 import './CheckoutPage.css';
+
+const stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY);
+
+const stripeElementOptions = {
+  style: {
+    base: {
+      fontSize: '18px',
+      color: '#1f2937',
+      '::placeholder': {
+        color: '#9ca3af'
+      }
+    },
+    invalid: {
+      color: '#dc2626'
+    }
+  }
+};
+
+const InlineStripeCardForm = ({
+  user,
+  token,
+  guestEmail,
+  cart,
+  attribution,
+  shippingAddress,
+  tipAmount,
+  finalTotal,
+  loading,
+  setLoading,
+  onPaymentSuccess,
+  onPaymentError,
+  validateCheckoutInputs
+}) => {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [billingName, setBillingName] = useState('');
+  const [useShippingAsBilling, setUseShippingAsBilling] = useState(true);
+  const [cardError, setCardError] = useState('');
+
+  const handleInlineCardPayment = async () => {
+    setCardError('');
+
+    const validationError = validateCheckoutInputs();
+    if (validationError) {
+      onPaymentError(validationError, 'warning');
+      return;
+    }
+
+    if (!stripe || !elements) {
+      onPaymentError('Payment form is still loading. Please try again in a moment.');
+      return;
+    }
+
+    const cardNumberElement = elements.getElement(CardNumberElement);
+    if (!cardNumberElement) {
+      onPaymentError('Card details are required.');
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const orderDetails = {
+        shippingAddress,
+        paymentMethod: 'Stripe',
+        tipAmount,
+        totalWithTip: finalTotal,
+        inlineCard: true
+      };
+
+      if (!user) {
+        orderDetails.guestEmail = guestEmail;
+        orderDetails.items = cart.items;
+        orderDetails.totalPrice = finalTotal;
+      }
+
+      const checkoutRes = await axios.post(
+        `${API_BASE_URL}/orders/checkout`,
+        {
+          orderDetails,
+          attribution: attribution || cart.attribution
+        },
+        {
+          ...(user && token && { headers: { Authorization: `Bearer ${token}` } })
+        }
+      );
+
+      if (!checkoutRes.data?.clientSecret || !checkoutRes.data?.orderId) {
+        throw new Error('Could not initialize card payment.');
+      }
+
+      const billingNameToUse = useShippingAsBilling
+        ? `${shippingAddress.firstName || ''} ${shippingAddress.lastName || ''}`.trim()
+        : billingName;
+
+      const confirmResult = await stripe.confirmCardPayment(checkoutRes.data.clientSecret, {
+        payment_method: {
+          card: cardNumberElement,
+          billing_details: {
+            name: billingNameToUse || undefined,
+            email: user?.email || guestEmail || undefined,
+            phone: shippingAddress.phone || undefined,
+            address: {
+              line1: shippingAddress.address || undefined,
+              city: shippingAddress.city || undefined,
+              state: shippingAddress.state || undefined,
+              postal_code: shippingAddress.zipCode || undefined,
+              country: 'US'
+            }
+          }
+        }
+      });
+
+      if (confirmResult.error) {
+        setCardError(confirmResult.error.message || 'Card payment failed.');
+        return;
+      }
+
+      const paymentIntentId = confirmResult.paymentIntent?.id;
+      if (!paymentIntentId) {
+        throw new Error('Payment did not complete successfully.');
+      }
+
+      await axios.post(
+        `${API_BASE_URL}/orders/confirm-inline-payment`,
+        {
+          orderId: checkoutRes.data.orderId,
+          paymentIntentId
+        },
+        {
+          ...(user && token && { headers: { Authorization: `Bearer ${token}` } })
+        }
+      );
+
+      await onPaymentSuccess();
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || err.message || 'Inline card payment failed.';
+      onPaymentError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="inline-card-panel">
+      <div className="inline-card-header">
+        <span className="inline-card-title">Credit card</span>
+        <div className="inline-card-brands">
+          <FaCcVisa className="card-brand-icon visa" title="Visa" aria-label="Visa" />
+          <FaCcMastercard className="card-brand-icon mastercard" title="Mastercard" aria-label="Mastercard" />
+          <FaCcAmex className="card-brand-icon amex" title="American Express" aria-label="American Express" />
+        </div>
+      </div>
+
+      <div className="inline-card-field full-width">
+        <label>Card number</label>
+        <CardNumberElement options={stripeElementOptions} />
+      </div>
+
+      <div className="inline-card-grid-two">
+        <div className="inline-card-field">
+          <label>Expiration date (MM / YY)</label>
+          <CardExpiryElement options={stripeElementOptions} />
+        </div>
+        <div className="inline-card-field">
+          <label>Security code</label>
+          <CardCvcElement options={stripeElementOptions} />
+        </div>
+      </div>
+
+      {!useShippingAsBilling && (
+        <div className="inline-card-field full-width">
+          <label>Name on card</label>
+          <input
+            type="text"
+            value={billingName}
+            onChange={(e) => setBillingName(e.target.value)}
+            placeholder="Name on card"
+          />
+        </div>
+      )}
+
+      <label className="inline-card-billing-checkbox">
+        <input
+          type="checkbox"
+          checked={useShippingAsBilling}
+          onChange={(e) => setUseShippingAsBilling(e.target.checked)}
+        />
+        <span>Use shipping address as billing address</span>
+      </label>
+
+      {cardError && <p className="inline-card-error">{cardError}</p>}
+
+      <button type="button" className="place-order-btn inline-card-pay-btn" onClick={handleInlineCardPayment} disabled={loading || !stripe}>
+        {loading ? 'Processing...' : 'Pay Securely'}
+      </button>
+    </div>
+  );
+};
 
 const CheckoutPage = () => {
   const { cart, clearCart, removeFromCart, attribution } = useCart();
@@ -29,6 +239,25 @@ const CheckoutPage = () => {
     zipCode: '',
     phone: ''
   });
+
+  const validateCheckoutInputs = () => {
+    if (cart.items.length === 0) {
+      return 'Your cart is empty. Please add items before checking out.';
+    }
+
+    if (!user && !guestEmail) {
+      return 'Please enter your email address to proceed with checkout.';
+    }
+
+    const requiredFields = ['firstName', 'lastName', 'address', 'city', 'state', 'zipCode', 'phone'];
+    const missingFields = requiredFields.filter(field => !shippingAddress[field] || shippingAddress[field].trim() === '');
+
+    if (missingFields.length > 0) {
+      return `Please fill in all shipping address fields: ${missingFields.join(', ')}`;
+    }
+
+    return null;
+  };
 
   const handleInputChange = (e) => {
     setShippingAddress({ ...shippingAddress, [e.target.name]: e.target.value });
@@ -57,6 +286,10 @@ const CheckoutPage = () => {
     window.location.href = 'https://shop.app/checkout/70294831400/cn/hWNALQaLzoPDaXKClxvrGQZo/en-us/shoppay_login?_cs=3.AMPS&_r=AQABhJnE0Q6d8xdadaJ9zbkvPQ7O_-5J9WDqTwN3WoXeaXU&redirect_source=direct_checkout_cart&tracking_unique=54d14bfd-b392-4631-80c3-7d52a566ccbf&tracking_visit=bc86648d-209a-4fa6-9a98-8d2296b8d750';
   };
 
+  const handleKlarnaAffirmRedirect = () => {
+    window.location.href = 'https://payments.klarna.com/prequalification/index.html?prequal_session_id=b0b10762-00f2-4b1d-b55d-91a2176cb94b&token=eyJwcmVxdWFsX3Nlc3Npb25faWQiOiJiMGIxMDc2Mi0wMGYyLTRiMWQtYjU1ZC05MWEyMTc2Y2I5NGIiLCJyZWdpb24iOiJ1cyIsImxvY2FsZSI6ImVuX1VTIn0&locale=en_US&show_close_button=true';
+  };
+
   const handleGooglePayRedirect = () => {
     // TODO: Integrate with Stripe's Google Pay API or your Google Pay setup
     alert('Google Pay integration coming soon!');
@@ -65,39 +298,28 @@ const CheckoutPage = () => {
 
   const handleCheckout = async (e) => {
     e.preventDefault();
-    
-    if (cart.items.length === 0) {
+    const validationError = validateCheckoutInputs();
+    if (validationError) {
       setModal({
         isOpen: true,
-        title: 'Empty Cart',
-        message: 'Your cart is empty. Please add items before checking out.',
+        title: 'Checkout Details Required',
+        message: validationError,
         type: 'warning'
       });
       return;
     }
 
-    // Validate email for guest users
-    if (!user && !guestEmail) {
-      setModal({
-        isOpen: true,
-        title: 'Email Required',
-        message: 'Please enter your email address to proceed with checkout.',
-        type: 'warning'
-      });
+    if (paymentMethod === 'Stripe') {
       return;
     }
 
-    // Validate shipping address fields
-    const requiredFields = ['firstName', 'lastName', 'address', 'city', 'state', 'zipCode', 'phone'];
-    const missingFields = requiredFields.filter(field => !shippingAddress[field] || shippingAddress[field].trim() === '');
-    
-    if (missingFields.length > 0) {
-      setModal({
-        isOpen: true,
-        title: 'Incomplete Address',
-        message: `Please fill in all shipping address fields: ${missingFields.join(', ')}`,
-        type: 'warning'
-      });
+    if (paymentMethod === 'ShopPay') {
+      handleShopPayRedirect();
+      return;
+    }
+
+    if (paymentMethod === 'Klarna' || paymentMethod === 'Affirm') {
+      handleKlarnaAffirmRedirect();
       return;
     }
 
@@ -297,29 +519,99 @@ const CheckoutPage = () => {
                   <div className="payment-radio-wrapper">
                     <input type="radio" name="paymentMethod" value="Stripe" checked={paymentMethod === 'Stripe'} readOnly />
                     <div className="payment-labels">
-                      <span className="payment-main-label">Credit / Debit Card</span>
-                      <span className="payment-sub-label">Secure payment with Stripe</span>
+                      <span className="payment-main-label">Credit card</span>
+                      <span className="payment-sub-label">Pay directly on this page</span>
                     </div>
                   </div>
                   <div className="payment-logos">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" />
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" />
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" />
+                    <FaCcVisa className="card-brand-icon visa" title="Visa" aria-label="Visa" />
+                    <FaCcMastercard className="card-brand-icon mastercard" title="Mastercard" aria-label="Mastercard" />
+                    <FaCcAmex className="card-brand-icon amex" title="American Express" aria-label="American Express" />
+                  </div>
+                </div>
+
+                {paymentMethod === 'Stripe' && (
+                  <div className="payment-inline-card-wrap">
+                    <Elements stripe={stripePromise}>
+                      <InlineStripeCardForm
+                        user={user}
+                        token={token}
+                        guestEmail={guestEmail}
+                        cart={cart}
+                        attribution={attribution}
+                        shippingAddress={shippingAddress}
+                        tipAmount={tipAmount}
+                        finalTotal={finalTotal}
+                        loading={loading}
+                        setLoading={setLoading}
+                        validateCheckoutInputs={validateCheckoutInputs}
+                        onPaymentSuccess={async () => {
+                          await clearCart();
+                          setModal({
+                            isOpen: true,
+                            title: 'Payment Successful',
+                            message: 'Your card payment was successful and your order is confirmed.',
+                            type: 'success'
+                          });
+                        }}
+                        onPaymentError={(message, type = 'error') => {
+                          setModal({
+                            isOpen: true,
+                            title: type === 'warning' ? 'Checkout Details Required' : 'Payment Failed',
+                            message,
+                            type
+                          });
+                        }}
+                      />
+                    </Elements>
+                  </div>
+                )}
+
+                <div 
+                  className={`payment-group-option ${paymentMethod === 'ShopPay' ? 'selected' : ''}`}
+                  onClick={() => setPaymentMethod('ShopPay')}
+                >
+                  <div className="payment-radio-wrapper">
+                    <input type="radio" name="paymentMethod" value="ShopPay" checked={paymentMethod === 'ShopPay'} readOnly />
+                    <div className="payment-labels">
+                      <span className="payment-main-label">Shop Pay</span>
+                      <span className="payment-sub-label">Pay in full or in installments</span>
+                    </div>
+                  </div>
+                  <div className="payment-logos">
+                    <span className="payment-text-logo shop">shop</span>
                   </div>
                 </div>
 
                 <div 
-                  className={`payment-group-option ${paymentMethod === 'ApplePay' ? 'selected' : ''}`}
-                  onClick={() => setPaymentMethod('ApplePay')}
+                  className={`payment-group-option ${paymentMethod === 'Klarna' ? 'selected' : ''}`}
+                  onClick={() => setPaymentMethod('Klarna')}
                 >
                   <div className="payment-radio-wrapper">
-                    <input type="radio" name="paymentMethod" value="ApplePay" checked={paymentMethod === 'ApplePay'} readOnly />
+                    <input type="radio" name="paymentMethod" value="Klarna" checked={paymentMethod === 'Klarna'} readOnly />
                     <div className="payment-labels">
-                      <span className="payment-main-label">Apple Pay</span>
+                      <span className="payment-main-label">Klarna</span>
+                      <span className="payment-sub-label">Flexible payments</span>
                     </div>
                   </div>
                   <div className="payment-logos">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b0/Apple_Pay_logo.svg" alt="Apple Pay" />
+                    <span className="payment-text-logo klarna">Klarna</span>
+                  </div>
+                </div>
+
+                <div 
+                  className={`payment-group-option ${paymentMethod === 'Affirm' ? 'selected' : ''}`}
+                  onClick={() => setPaymentMethod('Affirm')}
+                >
+                  <div className="payment-radio-wrapper">
+                    <input type="radio" name="paymentMethod" value="Affirm" checked={paymentMethod === 'Affirm'} readOnly />
+                    <div className="payment-labels">
+                      <span className="payment-main-label">Affirm</span>
+                      <span className="payment-sub-label">Pay over time</span>
+                    </div>
+                  </div>
+                  <div className="payment-logos">
+                    <span className="payment-text-logo affirm">affirm</span>
                   </div>
                 </div>
 
@@ -353,7 +645,7 @@ const CheckoutPage = () => {
                     checked={tipEnabled}
                     onChange={(e) => handleTipToggle(e.target.checked)}
                   />
-                  <span>Show your support for the team at Luna Furniture</span>
+                  <span>Show your support for the team at Dimond Modern Furniture</span>
                 </label>
 
                 {tipEnabled && (
@@ -407,9 +699,11 @@ const CheckoutPage = () => {
               </div>
             </section>
 
-            <button type="submit" className="place-order-btn" disabled={loading}>
-              {loading ? 'Processing...' : paymentMethod === 'COD' ? 'Place Order' : 'Proceed to Payment'}
-            </button>
+            {paymentMethod !== 'Stripe' && (
+              <button type="submit" className="place-order-btn" disabled={loading}>
+                {loading ? 'Processing...' : paymentMethod === 'COD' ? 'Place Order' : 'Proceed to Payment'}
+              </button>
+            )}
           </form>
 
           <aside className="order-summary">

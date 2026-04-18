@@ -270,6 +270,25 @@
   gap: 12px;
 }
 
+.card-brand-icon {
+  width: 36px;
+  height: 24px;
+  color: #1f2937;
+  flex-shrink: 0;
+}
+
+.card-brand-icon.visa {
+  color: #1a1f71;
+}
+
+.card-brand-icon.mastercard {
+  color: #eb001b;
+}
+
+.card-brand-icon.amex {
+  color: #2e77bb;
+}
+
 .payment-logos img {
   height: 28px;
   width: auto;
@@ -280,6 +299,154 @@
 
 .payment-logos img:hover {
   filter: brightness(1);
+}
+
+.payment-inline-card-wrap {
+  margin-top: -2px;
+}
+
+.payment-inline-card-wrap .inline-card-panel {
+  margin-top: 0;
+}
+
+.payment-text-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 800;
+  font-size: 0.9rem;
+  letter-spacing: 0.2px;
+}
+
+.payment-text-logo.shop {
+  color: #5a31f4;
+  border: 1px solid rgba(90, 49, 244, 0.35);
+  background: rgba(90, 49, 244, 0.08);
+}
+
+.payment-text-logo.klarna {
+  color: #111;
+  border: 1px solid rgba(255, 182, 209, 0.8);
+  background: #ffb6d1;
+}
+
+.payment-text-logo.affirm {
+  color: #1b365d;
+  border: 1px solid rgba(27, 54, 93, 0.3);
+  background: rgba(27, 54, 93, 0.08);
+  text-transform: lowercase;
+}
+
+/* Inline card payment */
+.inline-card-panel {
+  margin-top: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-secondary);
+  padding: 18px;
+}
+
+.inline-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.inline-card-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.inline-card-brands {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.inline-card-brands .card-brand-icon {
+  width: 34px;
+  height: 22px;
+}
+
+.inline-card-brands img {
+  height: 24px;
+  width: auto;
+  object-fit: contain;
+  border-radius: 4px;
+  background: #fff;
+  padding: 2px 4px;
+  border: 1px solid #ececec;
+}
+
+.inline-card-grid-two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.inline-card-field {
+  border: 1.5px solid var(--color-border);
+  border-radius: 10px;
+  background: #fff;
+  padding: 10px 12px;
+}
+
+.inline-card-field.full-width {
+  margin-top: 10px;
+}
+
+.inline-card-field label {
+  display: block;
+  font-size: 0.82rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.inline-card-field input {
+  width: 100%;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+}
+
+.inline-card-field .StripeElement {
+  padding: 4px 0;
+}
+
+.inline-card-billing-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.inline-card-billing-checkbox input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--color-accent);
+}
+
+.inline-card-error {
+  margin: 12px 0 0;
+  color: #dc2626;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.inline-card-pay-btn {
+  margin-top: 16px;
 }
 
 /* Tip Section */
@@ -641,6 +808,10 @@
 
   .checkout-container h1 {
     font-size: 1.8rem;
+  }
+
+  .inline-card-grid-two {
+    grid-template-columns: 1fr;
   }
 
   .tip-options-grid {
