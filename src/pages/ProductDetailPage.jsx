@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useUserAuth } from '../context/UserAuthContext';
 import { useCart } from '../context/CartContext';
 import { useProductsByCategory } from '../hooks/useProductsByCategory';
-import { BACKEND_URL } from '../config/api';
+import { API_BASE_URL, BACKEND_URL } from '../config/api';
 import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
 import Modal from '../components/Modal/Modal';
@@ -59,17 +59,120 @@ export default function ProductDetailPage() {
   const { addToCart } = useCart();
   
   const [product, setProduct] = useState(null);
+  const [allProducts, setAllProducts] = useState([]);
+  const [collections, setCollections] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const getCategoryId = (value) => {
+    if (!value) return '';
+    if (typeof value === 'string') return value;
+    return value._id || '';
+  };
+
+  const normalizeName = (value) => String(value || '').trim().toLowerCase();
+
+  const isMatchingTarget = (target = {}, currentProduct = null) => {
+    if (!currentProduct) return false;
+
+    const targetType = target?.targetType;
+    const currentCategoryId = getCategoryId(currentProduct.category);
+    const currentSubCategory = normalizeName(currentProduct.subCategoryName);
+    const currentSubSubCategory = normalizeName(currentProduct.subSubCategoryName);
+
+    if (targetType === 'product') {
+      return String(target?.productId || '') === String(currentProduct._id || '');
+    }
+
+    if (String(target?.categoryId || '') !== String(currentCategoryId || '')) {
+      return false;
+    }
+
+    if (targetType === 'category') return true;
+
+    if (targetType === 'subCategory') {
+      return normalizeName(target?.subCategoryName) === currentSubCategory;
+    }
+
+    if (targetType === 'subSubCategory') {
+      return (
+        normalizeName(target?.subCategoryName) === currentSubCategory &&
+        normalizeName(target?.subSubCategoryName) === currentSubSubCategory
+      );
+    }
+
+    return false;
+  };
+
+  const resolveProductsFromTarget = (target = {}, products = []) => {
+    const targetType = target?.targetType;
+    const targetCategoryId = String(target?.categoryId || '');
+    const targetSubCategory = normalizeName(target?.subCategoryName);
+    const targetSubSubCategory = normalizeName(target?.subSubCategoryName);
+
+    if (!Array.isArray(products) || products.length === 0) return [];
+
+    if (targetType === 'product') {
+      return products.filter((p) => String(p._id) === String(target?.productId || ''));
+    }
+
+    if (targetType === 'category') {
+      return products.filter((p) => String(getCategoryId(p.category)) === targetCategoryId);
+    }
+
+    if (targetType === 'subCategory') {
+      return products.filter(
+        (p) =>
+          String(getCategoryId(p.category)) === targetCategoryId &&
+          normalizeName(p.subCategoryName) === targetSubCategory
+      );
+    }
+
+    if (targetType === 'subSubCategory') {
+      return products.filter(
+        (p) =>
+          String(getCategoryId(p.category)) === targetCategoryId &&
+          normalizeName(p.subCategoryName) === targetSubCategory &&
+          normalizeName(p.subSubCategoryName) === targetSubSubCategory
+      );
+    }
+
+    return [];
+  };
+
+  const toCarouselProduct = (p, options = {}) => ({
+    id: p._id,
+    name: p.name,
+    brand: p.brandId || 'Luna',
+    currentPrice: `$${p.price}`,
+    originalPrice: p.discount > 0 ? `$${(p.price / (1 - p.discount / 100)).toFixed(2)}` : '',
+    image: getImageUrl(p.images?.[0] || p.image),
+    rating: p.rating || 0,
+    reviews: p.numReviews || 0,
+    badge: p.discount > 0 ? (options.saleBadge || 'Spring Sale') : '',
+    stockStatus: options.includeStock ? 'In Stock' : undefined,
+    targetPath: `/product/${getCategoryId(p.category)}/${p._id}`
+  });
   
   const fetchProductData = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${BACKEND_URL}/api/products/all`);
-      const allProducts = await res.json();
-      const foundProduct = allProducts.find(p => p._id === productId);
+      const [productsRes, collectionsRes] = await Promise.all([
+        fetch(`${BACKEND_URL}/api/products/all`),
+        fetch(`${API_BASE_URL}/collections/all`)
+      ]);
+
+      const productsData = await productsRes.json();
+      const collectionsData = collectionsRes.ok ? await collectionsRes.json() : [];
+
+      const productsList = Array.isArray(productsData) ? productsData : [];
+      const foundProduct = productsList.find(p => p._id === productId);
+
       setProduct(foundProduct);
+      setAllProducts(productsList);
+      setCollections(Array.isArray(collectionsData) ? collectionsData : []);
     } catch (err) {
       console.error('Error fetching product details:', err);
+      setCollections([]);
     } finally {
       setLoading(false);
     }
@@ -126,6 +229,152 @@ export default function ProductDetailPage() {
     if (!imagePath) return '';
     return imagePath.startsWith('http') ? imagePath : `${BACKEND_URL}/${imagePath}`;
   };
+
+  const recommendationPool = allProducts.length > 0 ? allProducts : categoryProducts;
+  const currentCategoryId = getCategoryId(product.category);
+  const currentSubCategoryName = normalizeName(product.subCategoryName);
+  const productCollectionName = normalizeName(product.collectionName);
+
+  const exploreCollectionProducts = (() => {
+    const sameCollection = (collections || []).find(
+      (collection) =>
+        normalizeName(collection?.name) === productCollectionName ||
+        normalizeName(collection?.mainBanner?.title) === productCollectionName
+    );
+
+    const fallbackCollections = (collections || []).filter((collection) =>
+      (collection?.collectionItems || []).some((item) => isMatchingTarget(item?.target, product))
+    );
+
+    const sourceCollections = sameCollection ? [sameCollection] : fallbackCollections;
+    const linkedCollectionItems = sourceCollections
+      .flatMap((collection) => collection?.collectionItems || [])
+      .sort((a, b) => {
+        const priority = {
+          product: 1,
+          subSubCategory: 2,
+          subCategory: 3,
+          category: 4
+        };
+        const aPriority = priority[a?.target?.targetType] || 99;
+        const bPriority = priority[b?.target?.targetType] || 99;
+        return aPriority - bPriority;
+      });
+
+    const seen = new Set();
+    const result = [];
+    const priority = {
+      product: 1,
+      subSubCategory: 2,
+      subCategory: 3,
+      category: 4
+    };
+
+    const addCandidates = (items = []) => {
+      items.forEach((candidate) => {
+        if (!candidate || String(candidate._id) === String(product._id)) return;
+        if (seen.has(candidate._id)) return;
+        seen.add(candidate._id);
+        result.push(candidate);
+      });
+    };
+
+    linkedCollectionItems.forEach((item) => {
+      const targetProducts = resolveProductsFromTarget(item?.target, recommendationPool);
+      addCandidates(targetProducts);
+    });
+
+    if (result.length === 0) {
+      const otherCollections = (collections || []).filter(
+        (collection) => String(collection?._id || '') !== String(sameCollection?._id || '')
+      );
+
+      const fallbackCollectionList = otherCollections.length > 0 ? otherCollections : collections || [];
+
+      const otherCollectionItems = fallbackCollectionList
+        .flatMap((collection) => collection?.collectionItems || [])
+        .sort((a, b) => {
+          const aPriority = priority[a?.target?.targetType] || 99;
+          const bPriority = priority[b?.target?.targetType] || 99;
+          return aPriority - bPriority;
+        });
+
+      otherCollectionItems.forEach((item) => {
+        const targetProducts = resolveProductsFromTarget(item?.target, recommendationPool);
+        addCandidates(targetProducts);
+      });
+    }
+
+    if (result.length === 0) {
+      const nonCurrentProducts = recommendationPool.filter(
+        (p) => p && String(p._id) !== String(product._id)
+      );
+      addCandidates(nonCurrentProducts);
+    }
+
+    return result.slice(0, 5).map((p) =>
+      toCarouselProduct(p, { saleBadge: 'Anniversary Sale', includeStock: true })
+    );
+  })();
+
+  const exploreCollectionIds = new Set(exploreCollectionProducts.map((p) => String(p.id)));
+
+  const youMayAlsoLikeProducts = (() => {
+    const seen = new Set();
+    const matched = [];
+
+    const addItems = (items = []) => {
+      items.forEach((item) => {
+        if (!item || String(item._id) === String(product._id)) return;
+        if (exploreCollectionIds.has(String(item._id))) return;
+        if (seen.has(item._id)) return;
+        seen.add(item._id);
+        matched.push(item);
+      });
+    };
+
+    const strictSubCategoryMatches = recommendationPool.filter(
+      (p) =>
+        p &&
+        String(p._id) !== String(product._id) &&
+        String(getCategoryId(p.category)) === String(currentCategoryId) &&
+        normalizeName(p.subCategoryName) === currentSubCategoryName
+    );
+
+    const otherCategoryProducts = recommendationPool.filter(
+      (p) =>
+        p &&
+        String(p._id) !== String(product._id) &&
+        String(getCategoryId(p.category)) !== String(currentCategoryId)
+    );
+
+    const sameCategoryFallback = recommendationPool.filter(
+      (p) =>
+        p &&
+        String(p._id) !== String(product._id) &&
+        String(getCategoryId(p.category)) === String(currentCategoryId)
+    );
+
+    // Keep recommendations highly relevant first.
+    addItems(strictSubCategoryMatches.slice(0, 3));
+
+    // Blend in products from other categories.
+    addItems(otherCategoryProducts.slice(0, 2));
+
+    if (matched.length < 5) {
+      addItems(strictSubCategoryMatches);
+    }
+
+    if (matched.length < 5) {
+      addItems(sameCategoryFallback);
+    }
+
+    if (matched.length < 5) {
+      addItems(otherCategoryProducts);
+    }
+
+    return matched.slice(0, 5).map((p) => toCarouselProduct(p));
+  })();
 
   const handlePrevImage = () => {
     setMainImageIndex((prev) => (prev - 1 + galleryImages.length) % galleryImages.length);
@@ -654,26 +903,34 @@ export default function ProductDetailPage() {
         </div>
 
         {/* Similar Products Section */}
-        {categoryProducts && categoryProducts.filter(p => p._id !== product._id).length > 0 && (
+        {(youMayAlsoLikeProducts.length > 0 || exploreCollectionProducts.length > 0) && (
           <div className="pd-similar-section">
-            <ProductCarousel 
-              title="You may also like" 
-              products={categoryProducts
-                .filter(p => p._id !== productId)
-                .slice(0, 5)
-                .map(p => ({
-                  id: p._id,
-                  name: p.name,
-                  brand: p.brandId || 'Luna',
-                  currentPrice: `$${p.price}`,
-                  originalPrice: p.discount > 0 ? `$${(p.price / (1 - p.discount / 100)).toFixed(2)}` : '',
-                  image: getImageUrl(p.images?.[0] || p.image),
-                  rating: p.rating || 0,
-                  reviews: p.numReviews || 0,
-                  badge: p.discount > 0 ? 'Spring Sale' : ''
-                }))
-              } 
-            />
+            {youMayAlsoLikeProducts.length > 0 && (
+              <ProductCarousel 
+                title="You may also like" 
+                products={youMayAlsoLikeProducts}
+                onProductClick={(clickedProduct) => {
+                  if (clickedProduct?.targetPath) {
+                    navigate(clickedProduct.targetPath);
+                  }
+                }}
+              />
+            )}
+
+            {exploreCollectionProducts.length > 0 && (
+              <div className="pd-explore-collections-section">
+                <ProductCarousel 
+                  title="Explore the collections" 
+                  showViewAll={false}
+                  products={exploreCollectionProducts}
+                  onProductClick={(clickedProduct) => {
+                    if (clickedProduct?.targetPath) {
+                      navigate(clickedProduct.targetPath);
+                    }
+                  }}
+                />
+              </div>
+            )}
           </div>
         )}
 

@@ -604,9 +604,13 @@
 }
 
 .pd-similar-section .product-carousel-title {
-    font-size: 28px;
-    font-weight: 700;
-    margin-bottom: 32px;
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 28px;
+}
+
+.pd-explore-collections-section {
+  margin-top: 24px;
 }
 
 /* Share Section */
