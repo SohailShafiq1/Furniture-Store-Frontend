@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAdminAuth } from '../context/AdminAuthContext';
+import { API_BASE_URL } from '../../config/api';
+import { getImageUrl, getAlternateImageUrl } from '../../utils/imageUrl';
 import '../admin-panel.css'; 
 
 const ProductManagement = () => {
@@ -95,10 +97,20 @@ const ProductManagement = () => {
     // Track existing images separately from new images
     const [existingImages, setExistingImages] = useState([]);
 
-    const apiBase = import.meta.env.VITE_API_URL;
-    const backendRoot = apiBase.replace('/api', '');
+    const apiBase = API_BASE_URL;
     const config = { headers: { Authorization: `Bearer ${token}` } };
     const multipartConfig = { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' } };
+
+    const handleImageError = (originalPath) => (event) => {
+        const img = event.currentTarget;
+        if (img.dataset.fallbackTried === 'true') return;
+
+        const fallbackSrc = getAlternateImageUrl(img.src, originalPath);
+        if (fallbackSrc) {
+            img.dataset.fallbackTried = 'true';
+            img.src = fallbackSrc;
+        }
+    };
 
     useEffect(() => {
         fetchInitialData();
@@ -1233,8 +1245,9 @@ const ProductManagement = () => {
                                                     {existingImages.map((imgPath, idx) => (
                                                         <div key={idx} style={{ position: 'relative' }}>
                                                             <img 
-                                                                src={`${backendRoot}/${imgPath}`} 
+                                                                src={getImageUrl(imgPath)}
                                                                 alt={`Existing ${idx + 1}`}
+                                                                onError={handleImageError(imgPath)}
                                                                 style={{ width: '100%', height: '80px', objectFit: 'cover', borderRadius: '5px', border: idx === 0 ? '2px solid #10b981' : '1px solid #d1d5db' }}
                                                             />
                                                             {idx === 0 && <span style={{ position: 'absolute', top: '2px', right: '2px', background: '#10b981', color: 'white', fontSize: '10px', padding: '2px 6px', borderRadius: '3px' }}>Main</span>}
@@ -1342,7 +1355,7 @@ const ProductManagement = () => {
                     {filteredProducts.map(prod => (
                         <div key={prod._id} className="category-node" style={{ borderRadius: '20px', border: '1px solid #f1f5f9', background: 'white', overflow: 'hidden', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)', padding: '20px' }}>
                             <div className="cat-info" style={{ display: 'flex', gap: '24px', alignItems: 'flex-start' }}>
-                                <img src={`${backendRoot}/${prod.image}`} alt="" style={{ width: '100px', height: '100px', borderRadius: '14px', objectFit: 'cover', border: '1px solid #f1f5f9' }} />
+                                <img src={getImageUrl(prod.image)} alt="" onError={handleImageError(prod.image)} style={{ width: '100px', height: '100px', borderRadius: '14px', objectFit: 'cover', border: '1px solid #f1f5f9' }} />
                                 <div style={{ flex: 1 }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                         <h3 
