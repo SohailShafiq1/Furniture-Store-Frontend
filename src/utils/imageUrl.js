@@ -6,10 +6,13 @@ import { BACKEND_URL } from '../config/api';
  * @returns {string} - The complete image URL
  */
 export const getImageUrl = (imagePath) => {
-  if (!imagePath) return '/placeholder.png';
+  if (!imagePath) return '/1.png';
 
   // If it's already a full URL, return as is
   if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    if (imagePath.includes('api.bellarosefurniture.com/uploads/')) {
+      return imagePath.replace('api.bellarosefurniture.com', 'www.bellarosefurniture.com');
+    }
     return imagePath;
   }
 
@@ -23,7 +26,10 @@ export const getImageUrl = (imagePath) => {
 
   // Ensure no double slashes
   backendUrl = backendUrl.replace(/\/+$/, '');
-  imagePath = imagePath.replace(/^\/+/, '');
+  imagePath = String(imagePath)
+    .replace(/\\/g, '/')
+    .replace(/^\/+/, '')
+    .replace(/^api\/+/, '');
 
   return `${backendUrl}/${imagePath}`;
 };
@@ -31,4 +37,4 @@ export const getImageUrl = (imagePath) => {
 /**
  * Get a fallback image for broken images
  */
-export const getPlaceholderImage = () => '/placeholder.png';
+export const getPlaceholderImage = () => '/1.png';

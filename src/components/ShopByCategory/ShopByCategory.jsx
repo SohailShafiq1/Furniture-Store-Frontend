@@ -15,12 +15,6 @@ export default function ShopByCategory() {
     );
   }
 
-  // Debug: Log categories and URLs
-  categories.forEach(cat => {
-    const imageUrl = getImageUrl(cat.image);
-    console.log(`Category: ${cat.name}, Image Path: ${cat.image}, Full URL: ${imageUrl}`);
-  });
-
   return (
     <section className="shop-by-category">
       <h2 className="category-heading" data-aos="fade-up">Shop by Category</h2>
@@ -42,8 +36,11 @@ export default function ShopByCategory() {
                   className="category-image" 
                   loading="lazy"
                   onError={(e) => {
-                    console.error(`Failed to load image: ${imageUrl}`, e);
-                    e.target.src = getPlaceholderImage(); // Fallback image
+                    const fallbackImage = getPlaceholderImage();
+                    if (!e.currentTarget.src.endsWith(fallbackImage)) {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = fallbackImage;
+                    }
                   }}
                 />
               </div>

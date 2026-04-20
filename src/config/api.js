@@ -7,7 +7,29 @@ if (apiUrl && !apiUrl.startsWith('http://') && !apiUrl.startsWith('https://')) {
 }
 
 const API_BASE_URL = apiUrl;
-const BACKEND_URL = (apiUrl || 'http://localhost:5001/api').replace(/\/api\/?$/, '') || 'http://localhost:5001';
+const derivedBackendUrl = (apiUrl || 'http://localhost:5001/api').replace(/\/api\/?$/, '') || 'http://localhost:5001';
+
+// Optional override for image/static host when assets are served from a different domain.
+let backendUrl = import.meta.env.VITE_ASSET_URL || derivedBackendUrl;
+
+// Keep URL formatting consistent.
+if (backendUrl && !backendUrl.startsWith('http://') && !backendUrl.startsWith('https://')) {
+  backendUrl = 'https://' + backendUrl;
+}
+backendUrl = backendUrl.replace(/\/+$/, '');
+
+// Production safeguard: uploads are served from www while API calls use api subdomain.
+try {
+  const apiHost = new URL(API_BASE_URL).hostname;
+  const backendHost = new URL(backendUrl).hostname;
+  if (apiHost === 'api.bellarosefurniture.com' && backendHost === 'api.bellarosefurniture.com') {
+    backendUrl = 'https://www.bellarosefurniture.com';
+  }
+} catch {
+  // Ignore URL parsing issues and keep derived values.
+}
+
+const BACKEND_URL = backendUrl;
 
 // Helper to ensure URLs are always valid
 export const getApiUrl = () => {
@@ -19,8 +41,7 @@ export const getApiUrl = () => {
 };
 
 export const getBackendUrl = () => {
-  const url = getApiUrl();
-  return url.replace(/\/api\/?$/, '') || 'http://localhost:5001';
+  return BACKEND_URL;
 };
 
 export { API_BASE_URL, BACKEND_URL };

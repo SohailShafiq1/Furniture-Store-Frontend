@@ -11,7 +11,6 @@ export const useCategoryData = () => {
       try {
         setLoading(true);
         const url = `${API_BASE_URL}/categories/all`;
-        console.log('Fetching categories from:', url);
         
         const response = await fetch(url);
         
