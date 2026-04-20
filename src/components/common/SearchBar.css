@@ -10,6 +10,7 @@
   margin: 0;
   border: 1px solid #e6e6e6;
   max-width: 920px;
+  z-index: 1;
 }
 
 .search-icon {
@@ -41,7 +42,7 @@
   top: calc(100% + 12px);
   left: 0;
   right: 0;
-  z-index: 3350;
+  z-index: 4050;
   background: #fff;
   border: 1px solid #e5e5e5;
   border-radius: 22px;

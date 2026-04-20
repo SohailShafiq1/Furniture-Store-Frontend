@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCategoryData } from '../../hooks/useCategoryData';
 import './Navigation.css';
@@ -9,9 +8,15 @@ const ChevronIcon = () => (
   </svg>
 );
 
-export default function Navigation({ activeMenu, onCategoryHover }) {
-  const [isOpen, setIsOpen] = useState(false);
+export default function Navigation({ activeMenu, onCategoryHover, isOpen: controlledIsOpen, onOpenChange }) {
   const { categories, loading } = useCategoryData();
+  const isOpen = typeof controlledIsOpen === 'boolean' ? controlledIsOpen : false;
+
+  const toggleMenu = () => {
+    if (typeof onOpenChange === 'function') {
+      onOpenChange(!isOpen);
+    }
+  };
 
   // Transform backend categories to navigation items
   const navItems = categories.map((category) => ({
@@ -36,7 +41,7 @@ export default function Navigation({ activeMenu, onCategoryHover }) {
   return (
     <nav className="navigation">
       {/* Hamburger for mobile */}
-      <button className="menu-toggle" onClick={() => setIsOpen(!isOpen)} aria-label="Toggle menu">
+      <button className="menu-toggle" onClick={toggleMenu} aria-label="Toggle menu" aria-expanded={isOpen}>
         <span className={isOpen ? 'open' : ''}></span>
         <span className={isOpen ? 'open' : ''}></span>
         <span className={isOpen ? 'open' : ''}></span>

@@ -105,8 +105,8 @@
   }
 
   .nav-list {
-    position: absolute;
-    top: 100%;
+    position: fixed;
+    top: 138px;
     left: 0;
     right: 0;
     background-color: white;
@@ -114,14 +114,14 @@
     gap: 0;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
     max-height: 0;
-    overflow: hidden;
+    overflow-y: auto;
     transition: max-height 0.3s ease;
-    z-index: 3300;
+    z-index: 4000;
     border-top: 1px solid #eee;
   }
 
   .nav-list.active {
-    max-height: 500px;
+    max-height: calc(100vh - 138px);
   }
 
   .nav-item {

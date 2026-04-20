@@ -15,6 +15,7 @@ export default function Header() {
   const [activeMenu, setActiveMenu] = useState(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [activeBannerIndex, setActiveBannerIndex] = useState(0);
   const [latestNewsId, setLatestNewsId] = useState(null);
   const { user, logout } = useUserAuth();
@@ -25,6 +26,7 @@ export default function Header() {
 
   useEffect(() => {
     setIsMobileSearchOpen(false);
+    setIsMobileNavOpen(false);
   }, [location.pathname]);
 
   useEffect(() => {
@@ -138,7 +140,10 @@ export default function Header() {
           <button
             className={`header-icon-btn mobile-search-toggle ${isMobileSearchOpen ? 'active' : ''}`}
             title="Search"
-            onClick={() => setIsMobileSearchOpen((prev) => !prev)}
+            onClick={() => {
+              setIsMobileNavOpen(false);
+              setIsMobileSearchOpen((prev) => !prev);
+            }}
             aria-label="Toggle search"
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -234,7 +239,15 @@ export default function Header() {
 
       {/* Row 2: Nav links | Financing + Luna Premium */}
       <div className="header-nav-row">
-        <Navigation activeMenu={activeMenu} onCategoryHover={setActiveMenu} />
+        <Navigation
+          activeMenu={activeMenu}
+          onCategoryHover={setActiveMenu}
+          isOpen={isMobileNavOpen}
+          onOpenChange={(nextOpen) => {
+            setIsMobileSearchOpen(false);
+            setIsMobileNavOpen(nextOpen);
+          }}
+        />
         <div className="nav-row-right">
           <Link to="/financing" className="financing-link">Financing / Lease to Own</Link>
           {/* <Link to="/premium" className="premium-action-btn">Luna Premium</Link> */}
