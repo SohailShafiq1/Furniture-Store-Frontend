@@ -34,6 +34,7 @@ const DynamicPromoBanners = ({ homeContent }) => {
   const navigate = useNavigate();
   const [startIndex, setStartIndex] = useState(0);
   const [visibleCount, setVisibleCount] = useState(2);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     setStartIndex(0);
@@ -41,7 +42,9 @@ const DynamicPromoBanners = ({ homeContent }) => {
 
   useEffect(() => {
     const updateVisibleCount = () => {
-      setVisibleCount(window.innerWidth <= 768 ? 1 : 2);
+      const mobile = window.innerWidth <= 768;
+      setVisibleCount(mobile ? 1 : 2);
+      setIsMobile(mobile);
     };
 
     updateVisibleCount();
@@ -56,8 +59,8 @@ const DynamicPromoBanners = ({ homeContent }) => {
 
   const maxStart = Math.max(0, homeContent.promotionPhotos.length - visibleCount);
   const visibleBanners = useMemo(
-    () => homeContent.promotionPhotos.slice(startIndex, startIndex + visibleCount),
-    [homeContent.promotionPhotos, startIndex, visibleCount]
+    () => isMobile ? homeContent.promotionPhotos : homeContent.promotionPhotos.slice(startIndex, startIndex + visibleCount),
+    [homeContent.promotionPhotos, startIndex, visibleCount, isMobile]
   );
 
   return (
@@ -68,7 +71,7 @@ const DynamicPromoBanners = ({ homeContent }) => {
           alignItems: 'center',
           gap: '14px'
         }}>
-          {homeContent.promotionPhotos.length > visibleCount && (
+          {!isMobile && homeContent.promotionPhotos.length > visibleCount && (
             <button
               type="button"
               onClick={() => setStartIndex((prev) => Math.max(0, prev - 1))}
@@ -97,7 +100,7 @@ const DynamicPromoBanners = ({ homeContent }) => {
 
           <div style={{
             display: 'grid',
-            gridTemplateColumns: `repeat(${visibleCount}, minmax(0, 1fr))`,
+            gridTemplateColumns: isMobile ? '1fr' : `repeat(${visibleCount}, minmax(0, 1fr))`,
             gap: '32px',
             flex: 1
           }}>
@@ -114,7 +117,7 @@ const DynamicPromoBanners = ({ homeContent }) => {
               <div style={{
                 position: 'relative',
                 width: '100%',
-                paddingBottom: '75%',
+                paddingBottom: '100%',
                 overflow: 'hidden',
                 backgroundColor: 'var(--color-secondary)',
                 borderRadius: '8px 8px 0 0'
@@ -215,7 +218,7 @@ const DynamicPromoBanners = ({ homeContent }) => {
           ))}
         </div>
 
-        {homeContent.promotionPhotos.length > visibleCount && (
+        {!isMobile && homeContent.promotionPhotos.length > visibleCount && (
           <button
             type="button"
             onClick={() => setStartIndex((prev) => Math.min(maxStart, prev + 1))}
