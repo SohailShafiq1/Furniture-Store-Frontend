@@ -37,37 +37,40 @@
 }
 
 .products-scroll-container {
-  overflow-x: auto;
-  overflow-y: hidden;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  scrollbar-color: #ccc #f5f5f5;
+  overflow: hidden;
 }
 
-.products-scroll-container::-webkit-scrollbar {
-  height: 8px;
-}
-
-.products-scroll-container::-webkit-scrollbar-track {
-  background: #f5f5f5;
-  border-radius: 4px;
-}
-
-.products-scroll-container::-webkit-scrollbar-thumb {
-  background: #ccc;
-  border-radius: 4px;
-}
-
-.products-scroll-container::-webkit-scrollbar-thumb:hover {
-  background: #999;
+.products-carousel-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
 
 .products-grid {
   display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(280px, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 20px;
-  padding-bottom: 12px;
+  flex: 1;
+}
+
+.products-arrow {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid #222;
+  background: #fff;
+  font-size: 30px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+}
+
+.products-arrow:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
 }
 
 .product-card {
@@ -224,7 +227,7 @@
 /* Responsive */
 @media (max-width: 1024px) {
   .products-grid {
-    grid-auto-columns: minmax(260px, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
   }
 
@@ -242,6 +245,17 @@
     margin-bottom: 24px;
   }
 
+  .products-carousel-row {
+    gap: 8px;
+  }
+
+  .products-arrow {
+    width: 36px;
+    height: 36px;
+    font-size: 24px;
+    border-width: 1.5px;
+  }
+
   .product-carousel-title {
     font-size: 28px;
   }
@@ -251,7 +265,7 @@
   }
 
   .products-grid {
-    grid-auto-columns: minmax(240px, 1fr);
+    grid-template-columns: 1fr;
     gap: 14px;
   }
 }
@@ -263,11 +277,6 @@
 
   .product-carousel-title {
     font-size: 24px;
-  }
-
-  .products-grid {
-    grid-auto-columns: minmax(200px, 280px);
-    gap: 12px;
   }
 
   .product-name {

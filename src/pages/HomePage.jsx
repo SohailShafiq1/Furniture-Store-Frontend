@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useUserAuth } from '../context/UserAuthContext';
 import { API_BASE_URL, BACKEND_URL } from '../config/api';
@@ -32,20 +32,76 @@ const buildDealRedirectPath = (deal, imageItem) => {
 // Dynamic PromoBanners Component that accepts custom data
 const DynamicPromoBanners = ({ homeContent }) => {
   const navigate = useNavigate();
+  const [startIndex, setStartIndex] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(2);
+
+  useEffect(() => {
+    setStartIndex(0);
+  }, [homeContent?.promotionPhotos]);
+
+  useEffect(() => {
+    const updateVisibleCount = () => {
+      setVisibleCount(window.innerWidth <= 768 ? 1 : 2);
+    };
+
+    updateVisibleCount();
+    window.addEventListener('resize', updateVisibleCount);
+
+    return () => window.removeEventListener('resize', updateVisibleCount);
+  }, []);
   
   if (!homeContent?.promotionPhotos || homeContent.promotionPhotos.length === 0) {
     return null;
   }
 
+  const maxStart = Math.max(0, homeContent.promotionPhotos.length - visibleCount);
+  const visibleBanners = useMemo(
+    () => homeContent.promotionPhotos.slice(startIndex, startIndex + visibleCount),
+    [homeContent.promotionPhotos, startIndex, visibleCount]
+  );
+
   return (
     <div style={{ width: '100%', padding: '60px 40px', backgroundColor: 'var(--color-background)' }}>
       <div style={{ maxWidth: '1480px', margin: '0 auto' }}>
         <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(2, 1fr)',
-          gap: '32px'
+          display: 'flex',
+          alignItems: 'center',
+          gap: '14px'
         }}>
-          {homeContent.promotionPhotos.map((banner, idx) => (
+          {homeContent.promotionPhotos.length > visibleCount && (
+            <button
+              type="button"
+              onClick={() => setStartIndex((prev) => Math.max(0, prev - 1))}
+              disabled={startIndex === 0}
+              aria-label="Previous promo banner"
+              style={{
+                width: '44px',
+                height: '44px',
+                borderRadius: '50%',
+                border: '2px solid #222',
+                background: '#fff',
+                fontSize: '30px',
+                lineHeight: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: 0,
+                cursor: 'pointer',
+                flexShrink: 0,
+                opacity: startIndex === 0 ? 0.35 : 1
+              }}
+            >
+              &lsaquo;
+            </button>
+          )}
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: `repeat(${visibleCount}, minmax(0, 1fr))`,
+            gap: '32px',
+            flex: 1
+          }}>
+            {visibleBanners.map((banner, idx) => (
             <div key={idx} data-aos="fade-up" data-aos-delay={idx * 100} style={{
               display: 'flex',
               flexDirection: 'column',
@@ -117,6 +173,7 @@ const DynamicPromoBanners = ({ homeContent }) => {
 
                 {banner.buttonName && (
                   <button
+                    type="button"
                     onClick={() => {
                       if (banner.buttonSubcategory && homeContent.selectedCategory) {
                         navigate(`/category/${homeContent.selectedCategory._id}`, {
@@ -157,6 +214,34 @@ const DynamicPromoBanners = ({ homeContent }) => {
             </div>
           ))}
         </div>
+
+        {homeContent.promotionPhotos.length > visibleCount && (
+          <button
+            type="button"
+            onClick={() => setStartIndex((prev) => Math.min(maxStart, prev + 1))}
+            disabled={startIndex >= maxStart}
+            aria-label="Next promo banner"
+            style={{
+              width: '44px',
+              height: '44px',
+              borderRadius: '50%',
+              border: '2px solid #222',
+              background: '#fff',
+              fontSize: '30px',
+              lineHeight: 1,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 0,
+              cursor: 'pointer',
+              flexShrink: 0,
+              opacity: startIndex >= maxStart ? 0.35 : 1
+            }}
+          >
+            &rsaquo;
+          </button>
+        )}
+      </div>
       </div>
     </div>
   );
@@ -165,6 +250,17 @@ const DynamicPromoBanners = ({ homeContent }) => {
 // Dynamic Subcategory Component - Same as CategoryPage layout
 const DynamicSubcategoryComponent = ({ subcategoryName, selectedProducts, categoryId }) => {
   const navigate = useNavigate();
+  const [gridColumns, setGridColumns] = useState('repeat(4, 1fr)');
+
+  useEffect(() => {
+    const updateGridColumns = () => {
+      setGridColumns(window.innerWidth <= 768 ? '1fr' : 'repeat(4, 1fr)');
+    };
+
+    updateGridColumns();
+    window.addEventListener('resize', updateGridColumns);
+    return () => window.removeEventListener('resize', updateGridColumns);
+  }, []);
 
   const StarIcon = ({ filled }) => (
     <svg width="14" height="14" viewBox="0 0 24 24" fill={filled ? "#FFB800" : "none"} stroke={filled ? "#FFB800" : "#D1D1D1"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -185,7 +281,7 @@ const DynamicSubcategoryComponent = ({ subcategoryName, selectedProducts, catego
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
+          gridTemplateColumns: gridColumns,
           gap: '24px'
         }}>
           {selectedProducts.map((product) => (

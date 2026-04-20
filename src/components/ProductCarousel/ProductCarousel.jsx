@@ -1,8 +1,32 @@
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ProductCarousel.css';
 
 export default function ProductCarousel({ title, products, showViewAll = true, onProductClick }) {
   const navigate = useNavigate();
+  const [startIndex, setStartIndex] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(3);
+
+  useEffect(() => {
+    setStartIndex(0);
+  }, [products]);
+
+  useEffect(() => {
+    const updateVisibleCount = () => {
+      setVisibleCount(window.innerWidth <= 768 ? 1 : 3);
+    };
+
+    updateVisibleCount();
+    window.addEventListener('resize', updateVisibleCount);
+
+    return () => window.removeEventListener('resize', updateVisibleCount);
+  }, []);
+
+  const maxStart = Math.max(0, products.length - visibleCount);
+  const visibleProducts = useMemo(
+    () => products.slice(startIndex, startIndex + visibleCount),
+    [products, startIndex, visibleCount]
+  );
 
   const handleProductClick = (product) => {
     if (onProductClick) {
@@ -43,8 +67,21 @@ export default function ProductCarousel({ title, products, showViewAll = true, o
           {showViewAll && <a href="#" className="view-all-link">View all</a>}
         </div>
         <div className="products-scroll-container">
-          <div className="products-grid">
-            {products.map((product, idx) => (
+          <div className="products-carousel-row">
+            {products.length > visibleCount && (
+              <button
+                type="button"
+                className="products-arrow"
+                onClick={() => setStartIndex((prev) => Math.max(0, prev - 1))}
+                disabled={startIndex === 0}
+                aria-label="Previous products"
+              >
+                <span>&lsaquo;</span>
+              </button>
+            )}
+
+            <div className="products-grid">
+              {visibleProducts.map((product, idx) => (
               <div
                 key={product.id}
                 className="product-card"
@@ -84,7 +121,20 @@ export default function ProductCarousel({ title, products, showViewAll = true, o
                   </div>
                 </div>
               </div>
-            ))}
+              ))}
+            </div>
+
+            {products.length > visibleCount && (
+              <button
+                type="button"
+                className="products-arrow"
+                onClick={() => setStartIndex((prev) => Math.min(maxStart, prev + 1))}
+                disabled={startIndex >= maxStart}
+                aria-label="Next products"
+              >
+                <span>&rsaquo;</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
