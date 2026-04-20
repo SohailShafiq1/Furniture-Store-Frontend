@@ -2,13 +2,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
-import { API_BASE_URL, BACKEND_URL } from '../config/api';
+import { API_BASE_URL } from '../config/api';
+import { getAlternateImageUrl, getImageUrl } from '../utils/imageUrl';
 import './DealsCollectionPage.css';
-
-const imageUrl = (path) => {
-  if (!path) return '/placeholder-image.png';
-  return path.startsWith('http') ? path : `${BACKEND_URL}/${path}`;
-};
 
 const buildTargetPath = (target = {}) => {
   const type = target?.targetType;
@@ -138,10 +134,16 @@ export default function DealsCollectionPage() {
                     >
                       <div className="collection-product-image-wrap">
                         <img
-                          src={imageUrl(item.image)}
+                          src={getImageUrl(item.image)}
                           alt={item.name || 'Collection item'}
                           onError={(e) => {
-                            e.currentTarget.src = '/placeholder-image.png';
+                            const currentSrc = e.currentTarget.src;
+                            const alternateUrl = getAlternateImageUrl(currentSrc, item.image);
+                            if (alternateUrl && alternateUrl !== currentSrc) {
+                              e.currentTarget.src = alternateUrl;
+                            } else {
+                              e.currentTarget.onerror = null;
+                            }
                           }}
                         />
                       </div>
@@ -155,10 +157,16 @@ export default function DealsCollectionPage() {
                 <section className="collection-deal-box">
                   <div className="deal-box-media">
                     <img
-                      src={imageUrl(collection.dealBox.image)}
+                      src={getImageUrl(collection.dealBox.image)}
                       alt={collection.dealBox.title || 'Deal box image'}
                       onError={(e) => {
-                        e.currentTarget.src = '/placeholder-image.png';
+                        const currentSrc = e.currentTarget.src;
+                        const alternateUrl = getAlternateImageUrl(currentSrc, collection.dealBox.image);
+                        if (alternateUrl && alternateUrl !== currentSrc) {
+                          e.currentTarget.src = alternateUrl;
+                        } else {
+                          e.currentTarget.onerror = null;
+                        }
                       }}
                     />
                   </div>
