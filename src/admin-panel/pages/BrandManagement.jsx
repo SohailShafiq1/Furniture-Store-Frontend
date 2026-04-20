@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAdminAuth } from '../context/AdminAuthContext';
+import { API_BASE_URL } from '../../config/api';
+import { getImageUrl, getAlternateImageUrl } from '../../utils/imageUrl';
 import './BrandManagement.css';
 
 const BrandManagement = () => {
@@ -17,11 +19,21 @@ const BrandManagement = () => {
   const navigate = useNavigate();
 
   // Endpoints
-  const apiEndpoint = `${import.meta.env.VITE_API_URL}/brands`;
-  const backendRoot = import.meta.env.VITE_API_URL.replace('/api', '');
+  const apiEndpoint = `${API_BASE_URL}/brands`;
 
   const config = { headers: { Authorization: `Bearer ${token}` } };
   const multipartConfig = { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' } };
+
+  const handleImageError = (originalPath) => (event) => {
+    const img = event.currentTarget;
+    if (img.dataset.fallbackTried === 'true') return;
+
+    const fallbackSrc = getAlternateImageUrl(img.src, originalPath);
+    if (fallbackSrc) {
+      img.dataset.fallbackTried = 'true';
+      img.src = fallbackSrc;
+    }
+  };
 
   const fetchBrands = async () => {
     try {
@@ -197,7 +209,7 @@ const BrandManagement = () => {
               <div key={brand._id} className="brand-card">
                 {brand.image && (
                   <div className="brand-image">
-                    <img src={`${backendRoot}/${brand.image}`} alt={brand.name} />
+                    <img src={getImageUrl(brand.image)} alt={brand.name} onError={handleImageError(brand.image)} />
                   </div>
                 )}
                 <div className="brand-content">
