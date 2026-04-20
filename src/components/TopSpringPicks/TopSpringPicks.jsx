@@ -3,13 +3,28 @@ import './TopSpringPicks.css';
 
 export default function TopSpringPicks({ items = [], title = 'Top Spring Picks' }) {
   const [startIndex, setStartIndex] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(3);
 
   useEffect(() => {
     setStartIndex(0);
   }, [items]);
 
-  const maxStart = Math.max(0, items.length - 3);
-  const visibleItems = useMemo(() => items.slice(startIndex, startIndex + 3), [items, startIndex]);
+  useEffect(() => {
+    const updateVisibleCount = () => {
+      setVisibleCount(window.innerWidth <= 768 ? 1 : 3);
+    };
+
+    updateVisibleCount();
+    window.addEventListener('resize', updateVisibleCount);
+
+    return () => window.removeEventListener('resize', updateVisibleCount);
+  }, []);
+
+  const maxStart = Math.max(0, items.length - visibleCount);
+  const visibleItems = useMemo(
+    () => items.slice(startIndex, startIndex + visibleCount),
+    [items, startIndex, visibleCount]
+  );
 
   if (!items.length) {
     return null;
@@ -20,7 +35,7 @@ export default function TopSpringPicks({ items = [], title = 'Top Spring Picks' 
       <div className="spring-picks-container">
         <h2 className="spring-picks-title">{title}</h2>
         <div className="spring-picks-carousel-row">
-          {items.length > 3 && (
+          {items.length > visibleCount && (
             <button
               type="button"
               className="spring-picks-arrow"
@@ -86,7 +101,7 @@ export default function TopSpringPicks({ items = [], title = 'Top Spring Picks' 
             ))}
           </div>
 
-          {items.length > 3 && (
+          {items.length > visibleCount && (
             <button
               type="button"
               className="spring-picks-arrow"
