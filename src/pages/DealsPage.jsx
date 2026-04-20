@@ -118,10 +118,20 @@ export default function DealsPage() {
 
   const [dealStartIndices, setDealStartIndices] = useState({});
   const [featuredStartIndex, setFeaturedStartIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     setFeaturedStartIndex(0);
   }, [featuredDeal?._id]);
+
+  useEffect(() => {
+    const updateIsMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    updateIsMobile();
+    window.addEventListener('resize', updateIsMobile);
+    return () => window.removeEventListener('resize', updateIsMobile);
+  }, []);
 
   useEffect(() => {
     const next = {};
@@ -134,6 +144,13 @@ export default function DealsPage() {
   const handleShopDeal = (onClick) => {
     onClick();
   };
+
+  const featuredVisibleCount = isMobile ? 1 : 3;
+  const featuredMaxStart = Math.max(0, (featuredDeal?.images?.length || 0) - featuredVisibleCount);
+
+  useEffect(() => {
+    setFeaturedStartIndex((prev) => Math.min(prev, featuredMaxStart));
+  }, [featuredMaxStart]);
 
   return (
     <>
@@ -421,7 +438,7 @@ export default function DealsPage() {
 
               <div className="fresh-picks-grid" style={{ flex: 1 }}>
                 {featuredDeal.images
-                  .slice(featuredStartIndex, featuredStartIndex + 3)
+                  .slice(featuredStartIndex, featuredStartIndex + featuredVisibleCount)
                   .map((img) => (
                     <div key={`featured-${featuredDeal._id}-${img.image}`} className="fresh-pick-card">
                       <div className="pick-image-wrapper">
@@ -449,12 +466,8 @@ export default function DealsPage() {
 
               <button
                 type="button"
-                onClick={() =>
-                  setFeaturedStartIndex((prev) =>
-                    Math.min(Math.max(0, (featuredDeal.images?.length || 0) - 3), prev + 1)
-                  )
-                }
-                disabled={featuredStartIndex >= Math.max(0, (featuredDeal.images?.length || 0) - 3)}
+                onClick={() => setFeaturedStartIndex((prev) => Math.min(featuredMaxStart, prev + 1))}
+                disabled={featuredStartIndex >= featuredMaxStart}
                 style={{
                   width: 44,
                   height: 44,
@@ -467,11 +480,8 @@ export default function DealsPage() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   padding: 0,
-                  cursor:
-                    featuredStartIndex >= Math.max(0, (featuredDeal.images?.length || 0) - 3)
-                      ? 'not-allowed'
-                      : 'pointer',
-                  opacity: featuredStartIndex >= Math.max(0, (featuredDeal.images?.length || 0) - 3) ? 0.35 : 1,
+                  cursor: featuredStartIndex >= featuredMaxStart ? 'not-allowed' : 'pointer',
+                  opacity: featuredStartIndex >= featuredMaxStart ? 0.35 : 1,
                 }}
                 aria-label="Next featured images"
               >
