@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import { useAdminAuth } from '../context/AdminAuthContext';
+import { API_BASE_URL } from '../../config/api';
+import { getImageUrl, getAlternateImageUrl } from '../../utils/imageUrl';
 import './CollectionsManagement.css';
 
 const emptyTarget = () => ({
@@ -54,14 +56,25 @@ const CollectionsManagement = () => {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
-  const apiBase = useMemo(() => import.meta.env.VITE_API_URL, []);
-  const backendRoot = useMemo(() => import.meta.env.VITE_API_URL.replace('/api', ''), []);
+  const apiBase = useMemo(() => API_BASE_URL, []);
   const jsonConfig = useMemo(() => ({ headers: { Authorization: `Bearer ${token}` } }), [token]);
   const multipartConfig = useMemo(() => ({ headers: { Authorization: `Bearer ${token}` } }), [token]);
 
   const toImageUrl = (path) => {
     if (!path) return '';
-    return path.startsWith('http') ? path : `${backendRoot}/${path}`;
+    if (path.startsWith('blob:')) return path;
+    return getImageUrl(path);
+  };
+
+  const handleImageError = (originalPath) => (event) => {
+    const img = event.currentTarget;
+    if (img.dataset.fallbackTried === 'true') return;
+
+    const fallbackSrc = getAlternateImageUrl(img.src, originalPath);
+    if (fallbackSrc) {
+      img.dataset.fallbackTried = 'true';
+      img.src = fallbackSrc;
+    }
   };
 
   const resetForm = () => {
@@ -610,6 +623,7 @@ const CollectionsManagement = () => {
                     className="preview-image"
                     src={item.imagePreview || toImageUrl(item.existingImage)}
                     alt="Collection item"
+                    onError={handleImageError(item.existingImage)}
                   />
                 )}
                 <input
@@ -640,6 +654,7 @@ const CollectionsManagement = () => {
                 className="preview-image"
                 src={form.dealBox.imagePreview || toImageUrl(form.dealBox.existingImage)}
                 alt="Deal box"
+                onError={handleImageError(form.dealBox.existingImage)}
               />
             )}
             <input
@@ -733,6 +748,7 @@ const CollectionsManagement = () => {
                           className="table-thumb"
                           src={toImageUrl(collection.collectionItems[0].image)}
                           alt="Collection"
+                          onError={handleImageError(collection.collectionItems[0].image)}
                         />
                       ) : (
                         <span className="muted">-</span>
