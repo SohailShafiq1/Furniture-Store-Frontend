@@ -502,8 +502,9 @@
   }
 
   .logo {
-    height: 38px;
-    transform: scale(2.8);
+    width: 132px;
+    height: auto;
+    transform: none;
   }
 
   .icon-group {
@@ -532,8 +533,9 @@
   }
 
   .logo {
-    height: 32px;
-    transform: scale(2.5);
+    width: 118px;
+    height: auto;
+    transform: none;
   }
 
   .header-icon-btn {

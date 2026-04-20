@@ -162,7 +162,7 @@
   }
 
   .search-input {
-    font-size: 13px;
+    font-size: 16px;
   }
 
   .search-results {
@@ -194,5 +194,9 @@
 
   .search-results {
     top: calc(100% + 8px);
+  }
+
+  .search-input {
+    font-size: 16px;
   }
 }
