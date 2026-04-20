@@ -147,7 +147,7 @@ export default function ProductDetailPage() {
     brand: p.brandId || 'Luna',
     currentPrice: `$${p.price}`,
     originalPrice: p.discount > 0 ? `$${(p.price / (1 - p.discount / 100)).toFixed(2)}` : '',
-    image: getImageUrl(p.images?.[0] || p.image),
+    image: buildImageUrl(p.images?.[0] || p.image),
     rating: p.rating || 0,
     reviews: p.numReviews || 0,
     badge: p.discount > 0 ? (options.saleBadge || 'Spring Sale') : '',
