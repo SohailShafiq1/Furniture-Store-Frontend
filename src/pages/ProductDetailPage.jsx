@@ -4,6 +4,7 @@ import { useUserAuth } from '../context/UserAuthContext';
 import { useCart } from '../context/CartContext';
 import { useProductsByCategory } from '../hooks/useProductsByCategory';
 import { API_BASE_URL, BACKEND_URL } from '../config/api';
+import { getAlternateImageUrl, getImageUrl as buildImageUrl } from '../utils/imageUrl';
 import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
 import Modal from '../components/Modal/Modal';
@@ -224,12 +225,6 @@ export default function ProductDetailPage() {
   const galleryImages = product.images && product.images.length > 0 
     ? product.images 
     : [product.image];
-
-  // Helper to ensure full image URL
-  const getImageUrl = (imagePath) => {
-    if (!imagePath) return '';
-    return imagePath.startsWith('http') ? imagePath : `${BACKEND_URL}/${imagePath}`;
-  };
 
   const recommendationPool = allProducts.length > 0 ? allProducts : categoryProducts;
   const currentCategoryId = getCategoryId(product.category);
@@ -457,7 +452,20 @@ export default function ProductDetailPage() {
               </button>
               
               <div className="pd-main-image">
-                <img src={getImageUrl(galleryImages[mainImageIndex])} alt={product.name} />
+                <img
+                  src={buildImageUrl(galleryImages[mainImageIndex])}
+                  alt={product.name}
+                  onError={(e) => {
+                    const originalPath = galleryImages[mainImageIndex];
+                    const currentSrc = e.currentTarget.src;
+                    const alternateUrl = getAlternateImageUrl(currentSrc, originalPath);
+                    if (alternateUrl && alternateUrl !== currentSrc) {
+                      e.currentTarget.src = alternateUrl;
+                    } else {
+                      e.currentTarget.onerror = null;
+                    }
+                  }}
+                />
               </div>
               
               <button className="pd-nav-btn pd-nav-next" onClick={handleNextImage}>
@@ -473,7 +481,19 @@ export default function ProductDetailPage() {
                   className={`pd-thumbnail ${mainImageIndex === idx ? 'active' : ''}`}
                   onClick={() => setMainImageIndex(idx)}
                 >
-                  <img src={getImageUrl(img)} alt={`View ${idx + 1}`} />
+                  <img
+                    src={buildImageUrl(img)}
+                    alt={`View ${idx + 1}`}
+                    onError={(e) => {
+                      const currentSrc = e.currentTarget.src;
+                      const alternateUrl = getAlternateImageUrl(currentSrc, img);
+                      if (alternateUrl && alternateUrl !== currentSrc) {
+                        e.currentTarget.src = alternateUrl;
+                      } else {
+                        e.currentTarget.onerror = null;
+                      }
+                    }}
+                  />
                 </button>
               ))}
             </div>

@@ -18,17 +18,6 @@ if (backendUrl && !backendUrl.startsWith('http://') && !backendUrl.startsWith('h
 }
 backendUrl = backendUrl.replace(/\/+$/, '');
 
-// Production safeguard: uploads are served from www while API calls use api subdomain.
-try {
-  const apiHost = new URL(API_BASE_URL).hostname;
-  const backendHost = new URL(backendUrl).hostname;
-  if (apiHost === 'api.bellarosefurniture.com' && backendHost === 'api.bellarosefurniture.com') {
-    backendUrl = 'https://www.bellarosefurniture.com';
-  }
-} catch {
-  // Ignore URL parsing issues and keep derived values.
-}
-
 const BACKEND_URL = backendUrl;
 
 // Helper to ensure URLs are always valid

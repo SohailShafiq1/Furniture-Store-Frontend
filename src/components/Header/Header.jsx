@@ -8,6 +8,7 @@ import { useUserAuth } from '../../context/UserAuthContext';
 import { useCart } from '../../context/CartContext';
 import { useCategoryData } from '../../hooks/useCategoryData';
 import { BACKEND_URL } from '../../config/api';
+import { getAlternateImageUrl, getImageUrl } from '../../utils/imageUrl';
 import './Header.css';
 
 export default function Header() {
@@ -221,10 +222,24 @@ export default function Header() {
         <div className="mega-menu" role="region" aria-label={`${activeNavItem.label} subcategories`}>
           <div className="mega-menu-grid">
             {activeNavItem.subcategories.map((sub) => {
-              const imageUrl = sub.image?.startsWith('http') ? sub.image : `${BACKEND_URL}/${sub.image}`;
+                  const imageUrl = getImageUrl(sub.image);
               return (
                 <Link key={sub.label} to={sub.href} className="mega-menu-item">
-                  <img src={imageUrl} alt={sub.label} className="mega-menu-image" loading="lazy" />
+                    <img
+                      src={imageUrl}
+                      alt={sub.label}
+                      className="mega-menu-image"
+                      loading="lazy"
+                      onError={(e) => {
+                        const currentSrc = e.currentTarget.src;
+                        const alternateUrl = getAlternateImageUrl(currentSrc, sub.image);
+                        if (alternateUrl && alternateUrl !== currentSrc) {
+                          e.currentTarget.src = alternateUrl;
+                        } else {
+                          e.currentTarget.onerror = null;
+                        }
+                      }}
+                    />
                   <span className="mega-menu-label">{sub.label}</span>
                 </Link>
               );

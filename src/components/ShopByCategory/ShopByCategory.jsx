@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useCategoryData } from '../../hooks/useCategoryData';
-import { getImageUrl, getPlaceholderImage } from '../../utils/imageUrl';
+import { getAlternateImageUrl, getImageUrl } from '../../utils/imageUrl';
 import './ShopByCategory.css';
 
 export default function ShopByCategory() {
@@ -36,10 +36,13 @@ export default function ShopByCategory() {
                   className="category-image" 
                   loading="lazy"
                   onError={(e) => {
-                    const fallbackImage = getPlaceholderImage();
-                    if (!e.currentTarget.src.endsWith(fallbackImage)) {
+                    const currentSrc = e.currentTarget.src;
+                    const alternateUrl = getAlternateImageUrl(currentSrc, cat.image);
+
+                    if (alternateUrl && alternateUrl !== currentSrc) {
+                      e.currentTarget.src = alternateUrl;
+                    } else {
                       e.currentTarget.onerror = null;
-                      e.currentTarget.src = fallbackImage;
                     }
                   }}
                 />

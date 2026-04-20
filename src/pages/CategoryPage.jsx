@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useCategoryData } from '../hooks/useCategoryData';
 import { useProductsByCategory } from '../hooks/useProductsByCategory';
-import { BACKEND_URL } from '../config/api';
+import { getAlternateImageUrl, getImageUrl } from '../utils/imageUrl';
 import FilterSidebar from '../components/FilterSidebar/FilterSidebar';
 import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
@@ -449,9 +449,17 @@ export default function CategoryPage() {
                   >
                     <div className="luna-subcat-img-wrapper">
                       <img 
-                        src={ss.image?.startsWith('http') ? ss.image : (ss.image ? `${BACKEND_URL}/${ss.image}` : '/placeholder-image.png')} 
+                        src={getImageUrl(ss.image)}
                         alt={ss.name} 
-                        onError={(e) => { e.target.src = '/placeholder-image.png'; }}
+                        onError={(e) => {
+                          const currentSrc = e.currentTarget.src;
+                          const alternateUrl = getAlternateImageUrl(currentSrc, ss.image);
+                          if (alternateUrl && alternateUrl !== currentSrc) {
+                            e.currentTarget.src = alternateUrl;
+                          } else {
+                            e.currentTarget.onerror = null;
+                          }
+                        }}
                       />
                     </div>
                     <span className="luna-subcat-label">{ss.name}</span>
@@ -470,9 +478,17 @@ export default function CategoryPage() {
                 >
                   <div className="luna-subcat-img-wrapper">
                     <img 
-                      src={sub.image?.startsWith('http') ? sub.image : `${BACKEND_URL}/${sub.image}`} 
+                      src={getImageUrl(sub.image)}
                       alt={sub.name} 
-                      onError={(e) => { e.target.src = '/placeholder-image.png'; }}
+                      onError={(e) => {
+                        const currentSrc = e.currentTarget.src;
+                        const alternateUrl = getAlternateImageUrl(currentSrc, sub.image);
+                        if (alternateUrl && alternateUrl !== currentSrc) {
+                          e.currentTarget.src = alternateUrl;
+                        } else {
+                          e.currentTarget.onerror = null;
+                        }
+                      }}
                     />
                   </div>
                   <span className="luna-subcat-label">{sub.name}</span>
@@ -549,7 +565,19 @@ export default function CategoryPage() {
                   >
                     <div className="luna-product-card">
                     <div className="luna-card-media">
-                      <img src={product.image?.startsWith('http') ? product.image : `${BACKEND_URL}/${product.image}`} alt={product.name} />
+                      <img
+                        src={getImageUrl(product.image)}
+                        alt={product.name}
+                        onError={(e) => {
+                          const currentSrc = e.currentTarget.src;
+                          const alternateUrl = getAlternateImageUrl(currentSrc, product.image);
+                          if (alternateUrl && alternateUrl !== currentSrc) {
+                            e.currentTarget.src = alternateUrl;
+                          } else {
+                            e.currentTarget.onerror = null;
+                          }
+                        }}
+                      />
                       
                       {product.badge && (
                         <div className="luna-badge-container">
