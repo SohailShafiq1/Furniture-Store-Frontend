@@ -44,7 +44,8 @@
   height: calc(100vh - 470px);
   min-height: 600px;
   gap: 0;
-  margin: 100px;
+  width: min(1400px, calc(100% - 48px));
+  margin: 32px auto;
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -307,6 +308,8 @@
     gap: 0;
     height: auto;
     min-height: auto;
+    width: calc(100% - 24px);
+    margin: 12px auto;
   }
 
   .stores-sidebar {
@@ -336,6 +339,8 @@
 
   .stores-wrapper {
     grid-template-columns: 1fr;
+    width: calc(100% - 16px);
+    margin: 8px auto;
   }
 
   .stores-sidebar {
