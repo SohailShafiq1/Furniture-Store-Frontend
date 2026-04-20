@@ -1,14 +1,32 @@
 import './TopBrands.css';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from '../../config/api';
+import { getImageUrl, getAlternateImageUrl } from '../../utils/imageUrl';
 
 export default function TopBrands() {
   const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [brokenBrandIds, setBrokenBrandIds] = useState({});
 
-  const apiEndpoint = `${import.meta.env.VITE_API_URL}/brands`;
-  const backendRoot = import.meta.env.VITE_API_URL.replace('/api', '');
+  const apiEndpoint = `${API_BASE_URL}/brands`;
+
+  const handleImageError = (brandId, imagePath) => (event) => {
+    const img = event.currentTarget;
+    const hasTriedFallback = img.dataset.fallbackTried === 'true';
+
+    if (!hasTriedFallback) {
+      const fallbackSrc = getAlternateImageUrl(img.src, imagePath);
+      if (fallbackSrc) {
+        img.dataset.fallbackTried = 'true';
+        img.src = fallbackSrc;
+        return;
+      }
+    }
+
+    setBrokenBrandIds((prev) => ({ ...prev, [brandId]: true }));
+  };
 
   useEffect(() => {
     const fetchBrands = async () => {
@@ -44,12 +62,13 @@ export default function TopBrands() {
           <div className="brands-grid">
             {brands.map((brand) => (
               <div key={brand._id} className="brand-item">
-                {brand.image ? (
+                {brand.image && !brokenBrandIds[brand._id] ? (
                   <img 
-                    src={`${backendRoot}/${brand.image}`} 
+                    src={getImageUrl(brand.image)}
                     alt={brand.name}
                     className="brand-logo"
                     title={brand.name}
+                    onError={handleImageError(brand._id, brand.image)}
                   />
                 ) : (
                   <div className="brand-placeholder">{brand.name}</div>
