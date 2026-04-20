@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import SearchBar from '../common/SearchBar';
 import Navigation from '../Navigation/Navigation';
 import AuthModal from '../common/AuthModal';
@@ -14,12 +14,18 @@ import './Header.css';
 export default function Header() {
   const [activeMenu, setActiveMenu] = useState(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const [activeBannerIndex, setActiveBannerIndex] = useState(0);
   const [latestNewsId, setLatestNewsId] = useState(null);
   const { user, logout } = useUserAuth();
   const { cart } = useCart();
   const { categories } = useCategoryData();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    setIsMobileSearchOpen(false);
+  }, [location.pathname]);
 
   useEffect(() => {
     const fetchLatestNews = async () => {
@@ -118,7 +124,7 @@ export default function Header() {
       </div>
 
       {/* Row 1: Logo | Search | Icons */}
-      <div className="header-top-row">
+      <div className={`header-top-row ${isMobileSearchOpen ? 'mobile-search-open' : ''}`}>
         {/* Logo */}
         <Link to="/" className="logo-container">
           <img src="/logo.svg" alt="Furniture Store" className="logo" />
@@ -129,6 +135,18 @@ export default function Header() {
 
         {/* Right Icons */}
         <div className="icon-group">
+          <button
+            className={`header-icon-btn mobile-search-toggle ${isMobileSearchOpen ? 'active' : ''}`}
+            title="Search"
+            onClick={() => setIsMobileSearchOpen((prev) => !prev)}
+            aria-label="Toggle search"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+              <circle cx="11" cy="11" r="7"></circle>
+              <path d="m20 20-3.5-3.5"></path>
+            </svg>
+          </button>
+
           <button 
             className="header-icon-btn" 
             title="Store Locations"
@@ -202,6 +220,12 @@ export default function Header() {
           </button>
         </div>
       </div>
+
+      {isMobileSearchOpen && (
+        <div className="header-mobile-search-panel">
+          <SearchBar autoFocus />
+        </div>
+      )}
 
       <AuthModal 
         isOpen={isAuthModalOpen} 

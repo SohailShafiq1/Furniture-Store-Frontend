@@ -4,7 +4,7 @@ import axios from 'axios';
 import { API_BASE_URL, BACKEND_URL } from '../../config/api';
 import './SearchBar.css';
 
-export default function SearchBar() {
+export default function SearchBar({ autoFocus = false }) {
   const [query, setQuery] = useState('');
   const [placeholder, setPlaceholder] = useState('');
   const [products, setProducts] = useState([]);
@@ -12,6 +12,13 @@ export default function SearchBar() {
   const [isOpen, setIsOpen] = useState(false);
   const inputRef = useRef(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (autoFocus) {
+      inputRef.current?.focus();
+      setIsOpen(true);
+    }
+  }, [autoFocus]);
 
   useEffect(() => {
     const fetchProducts = async () => {

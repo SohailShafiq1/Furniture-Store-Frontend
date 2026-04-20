@@ -285,6 +285,10 @@
   height: 24px;
 }
 
+.header-mobile-search-panel {
+  display: none;
+}
+
 /* ===== ROW 2: Nav | Financing + Premium ===== */
 .header-nav-row {
   display: flex;
@@ -454,6 +458,40 @@
     gap: 12px;
   }
 
+  .header-top-row > .search-bar {
+    display: none;
+  }
+
+  .logo-container {
+    flex: 0 0 50%;
+    max-width: 50%;
+    width: 50%;
+    height: 42px;
+  }
+
+  .icon-group {
+    flex: 0 0 50%;
+    max-width: 50%;
+    justify-content: flex-end;
+  }
+
+  .mobile-search-toggle.active {
+    background-color: #ececec;
+  }
+
+  .header-mobile-search-panel {
+    display: block;
+    padding: 10px 15px 12px;
+    border-top: 1px solid #efefef;
+    background: var(--color-background);
+  }
+
+  .header-mobile-search-panel .search-bar {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+  }
+
   .header-nav-row {
     padding: 0 15px;
   }
@@ -464,11 +502,16 @@
 
   .logo {
     height: 38px;
-    transform: scale(3.5);
+    transform: scale(2.8);
   }
 
   .icon-group {
     gap: 4px;
+  }
+
+  .header-icon-btn {
+    width: 40px;
+    height: 40px;
   }
 
   .header-icon-btn svg {
@@ -483,17 +526,27 @@
     gap: 8px;
   }
 
+  .logo-container {
+    height: 38px;
+  }
+
   .logo {
     height: 32px;
-    transform: scale(3.05);
+    transform: scale(2.5);
   }
 
   .header-icon-btn {
-    padding: 6px;
+    width: 36px;
+    height: 36px;
+    padding: 4px;
   }
 
   .header-icon-btn svg {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
+  }
+
+  .header-mobile-search-panel {
+    padding: 8px 12px 10px;
   }
 }
