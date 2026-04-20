@@ -87,7 +87,6 @@
 .search-input {
   flex: 1;
   padding: 10px 15px;
-  border: 1px solid #ddd;
   border-radius: 3px;
   font-size: 0.9rem;
   font-family: inherit;
