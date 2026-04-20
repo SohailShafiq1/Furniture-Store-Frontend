@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAdminAuth } from '../context/AdminAuthContext';
+import { API_BASE_URL } from '../../config/api';
+import { getImageUrl, getAlternateImageUrl } from '../../utils/imageUrl';
 import './FinancingManagement.css';
 
 const FinancingManagement = () => {
@@ -31,11 +33,21 @@ const FinancingManagement = () => {
   const navigate = useNavigate();
 
   // Endpoints
-  const apiEndpoint = `${import.meta.env.VITE_API_URL}/financing-companies`;
-  const backendRoot = import.meta.env.VITE_API_URL.replace('/api', '');
+  const apiEndpoint = `${API_BASE_URL}/financing-companies`;
 
   const config = { headers: { Authorization: `Bearer ${token}` } };
   const multipartConfig = { headers: { Authorization: `Bearer ${token}` } };
+
+  const handleImageError = (originalPath) => (event) => {
+    const img = event.currentTarget;
+    if (img.dataset.fallbackTried === 'true') return;
+
+    const fallbackSrc = getAlternateImageUrl(img.src, originalPath);
+    if (fallbackSrc) {
+      img.dataset.fallbackTried = 'true';
+      img.src = fallbackSrc;
+    }
+  };
 
   const fetchCompanies = async () => {
     try {
@@ -198,7 +210,7 @@ const FinancingManagement = () => {
       logo: null,
     });
     setEditDetailsPoints(parseDetailsPoints(company.details || ''));
-    setEditLogoPreview(company.logo ? `${backendRoot}/${company.logo}` : '');
+    setEditLogoPreview(company.logo ? getImageUrl(company.logo) : '');
   };
 
   const handleEditConditionChange = (index, field, value) => {
@@ -533,7 +545,12 @@ const FinancingManagement = () => {
                   <tr key={company._id}>
                     <td>
                       {company.logo ? (
-                        <img src={`${backendRoot}/${company.logo}`} alt={company.companyName} className="admin-company-logo-preview" />
+                        <img
+                          src={getImageUrl(company.logo)}
+                          alt={company.companyName}
+                          className="admin-company-logo-preview"
+                          onError={handleImageError(company.logo)}
+                        />
                       ) : (
                         <span>No logo</span>
                       )}

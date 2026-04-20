@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAdminAuth } from '../context/AdminAuthContext';
+import { API_BASE_URL } from '../../config/api';
+import { getImageUrl, getAlternateImageUrl } from '../../utils/imageUrl';
 import './CategoryManagement.css';
 
 const CategoryDetailPage = () => {
@@ -14,9 +16,19 @@ const CategoryDetailPage = () => {
     const { token } = useAdminAuth();
     const navigate = useNavigate();
 
-    const apiEndpoint = `${import.meta.env.VITE_API_URL}/categories`;
-    const backendRoot = import.meta.env.VITE_API_URL.replace('/api', '');
+    const apiEndpoint = `${API_BASE_URL}/categories`;
     const config = { headers: { Authorization: `Bearer ${token}` } };
+
+    const handleImageError = (originalPath) => (event) => {
+        const img = event.currentTarget;
+        if (img.dataset.fallbackTried === 'true') return;
+
+        const fallbackSrc = getAlternateImageUrl(img.src, originalPath);
+        if (fallbackSrc) {
+            img.dataset.fallbackTried = 'true';
+            img.src = fallbackSrc;
+        }
+    };
 
     useEffect(() => {
         const fetchCategory = async () => {
@@ -66,7 +78,7 @@ const CategoryDetailPage = () => {
             <button className="action-btn edit-btn" onClick={() => navigate('/admin/categories')}>← Back to Catalog</button>
             <div className="category-header-detail" style={{ background: 'white', padding: '2rem', borderRadius: '12px', marginTop: '1rem', boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}>
                 <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-                    <img src={`${backendRoot}/${category.image}`} alt="" style={{ width: '80px', height: '80px', borderRadius: '12px', objectFit: 'cover' }} />
+                    <img src={getImageUrl(category.image)} alt="" onError={handleImageError(category.image)} style={{ width: '80px', height: '80px', borderRadius: '12px', objectFit: 'cover' }} />
                     <div style={{ flex: 1 }}>
                         {editMode ? (
                             <div style={{ display: 'flex', gap: '10px' }}>
@@ -92,7 +104,7 @@ const CategoryDetailPage = () => {
                         <div key={i} className="category-node" style={{ cursor: 'pointer' }} onClick={() => navigate(`/admin/category/${categoryId}/sub/${encodeURIComponent(sub.name)}`)}>
                             <div className="category-header">
                                 <div className="cat-info">
-                                    <img src={`${backendRoot}/${sub.image}`} alt="" className="cat-main-img" />
+                                    <img src={getImageUrl(sub.image)} alt="" className="cat-main-img" onError={handleImageError(sub.image)} />
                                     <div className="cat-name-box">
                                         <h3>{sub.name}</h3>
                                         <span className="sub-count">Click to view/manage content</span>

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAdminAuth } from '../context/AdminAuthContext';
+import { API_BASE_URL } from '../../config/api';
+import { getImageUrl, getAlternateImageUrl } from '../../utils/imageUrl';
 import './CategoryManagement.css';
 
 const CategoryManagement = () => {
@@ -18,11 +20,21 @@ const CategoryManagement = () => {
     const navigate = useNavigate();
 
     // Endpoints
-    const apiEndpoint = `${import.meta.env.VITE_API_URL}/categories`;
-    const backendRoot = import.meta.env.VITE_API_URL.replace('/api', '');
+    const apiEndpoint = `${API_BASE_URL}/categories`;
 
     const config = { headers: { Authorization: `Bearer ${token}` } };
     const multipartConfig = { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' } };
+
+    const handleImageError = (originalPath) => (event) => {
+        const img = event.currentTarget;
+        if (img.dataset.fallbackTried === 'true') return;
+
+        const fallbackSrc = getAlternateImageUrl(img.src, originalPath);
+        if (fallbackSrc) {
+            img.dataset.fallbackTried = 'true';
+            img.src = fallbackSrc;
+        }
+    };
 
     const fetchCategories = async () => {
         try {
@@ -201,7 +213,7 @@ const CategoryManagement = () => {
                         <div key={cat._id} className="category-node" style={{ cursor: 'pointer' }} onClick={() => navigate(`/admin/category/${cat._id}`)}>
                             <div className="category-header">
                                 <div className="cat-info">
-                                    <img src={`${backendRoot}/${cat.image}`} alt="" className="cat-main-img" />
+                                    <img src={getImageUrl(cat.image)} alt="" className="cat-main-img" onError={handleImageError(cat.image)} />
                                     <div className="cat-name-box">
                                         <h3>{cat.name}</h3>
                                         <span className="sub-count">{cat.subCategories.length} Sub-categories (Click to open)</span>

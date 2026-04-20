@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import { useAdminAuth } from '../context/AdminAuthContext';
+import { API_BASE_URL } from '../../config/api';
+import { getImageUrl, getAlternateImageUrl } from '../../utils/imageUrl';
 import './DealsManagement.css';
 
 const DealsManagement = () => {
@@ -29,13 +31,29 @@ const DealsManagement = () => {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
-  const categoriesEndpoint = useMemo(() => `${import.meta.env.VITE_API_URL}/categories`, []);
-  const collectionsEndpoint = useMemo(() => `${import.meta.env.VITE_API_URL}/collections`, []);
-  const dealsEndpoint = useMemo(() => `${import.meta.env.VITE_API_URL}/deals`, []);
-  const backendRoot = useMemo(() => import.meta.env.VITE_API_URL.replace('/api', ''), []);
+  const categoriesEndpoint = useMemo(() => `${API_BASE_URL}/categories`, []);
+  const collectionsEndpoint = useMemo(() => `${API_BASE_URL}/collections`, []);
+  const dealsEndpoint = useMemo(() => `${API_BASE_URL}/deals`, []);
 
   const jsonConfig = useMemo(() => ({ headers: { Authorization: `Bearer ${token}` } }), [token]);
   const multipartConfig = useMemo(() => ({ headers: { Authorization: `Bearer ${token}` } }), [token]);
+
+  const toImageUrl = (path) => {
+    if (!path) return '';
+    if (String(path).startsWith('blob:')) return path;
+    return getImageUrl(path);
+  };
+
+  const handleImageError = (originalPath) => (event) => {
+    const img = event.currentTarget;
+    if (img.dataset.fallbackTried === 'true') return;
+
+    const fallbackSrc = getAlternateImageUrl(img.src, originalPath);
+    if (fallbackSrc) {
+      img.dataset.fallbackTried = 'true';
+      img.src = fallbackSrc;
+    }
+  };
 
   const createEmptyImageAction = () => ({
     buttonName: '',
@@ -467,7 +485,7 @@ const DealsManagement = () => {
               <>
                 {editExistingImages.map((img, idx) => (
                   <div key={`existing-${idx}`}>
-                    <img src={img.image?.startsWith('http') ? img.image : `${backendRoot}/${img.image}`} alt="" />
+                    <img src={toImageUrl(img.image)} alt="" onError={handleImageError(img.image)} />
                     <input
                       value={img.buttonName || ''}
                       onChange={(e) =>
@@ -748,11 +766,8 @@ const DealsManagement = () => {
                       {deal.images?.[0] ? (
                         <img
                           className="thumb"
-                          src={
-                            (typeof deal.images[0] === 'string' ? deal.images[0] : deal.images[0]?.image)?.startsWith('http')
-                              ? (typeof deal.images[0] === 'string' ? deal.images[0] : deal.images[0]?.image)
-                              : `${backendRoot}/${typeof deal.images[0] === 'string' ? deal.images[0] : deal.images[0]?.image}`
-                          }
+                          src={toImageUrl(typeof deal.images[0] === 'string' ? deal.images[0] : deal.images[0]?.image)}
+                          onError={handleImageError(typeof deal.images[0] === 'string' ? deal.images[0] : deal.images[0]?.image)}
                           alt=""
                         />
                       ) : (

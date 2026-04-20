@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
-import { API_BASE_URL, BACKEND_URL } from '../../config/api';
+import { API_BASE_URL } from '../../config/api';
+import { getImageUrl, getAlternateImageUrl } from '../../utils/imageUrl';
 import { useAdminAuth } from '../context/AdminAuthContext';
 import './DamageClaimsManagement.css';
 
 const toImageUrl = (path) => {
   if (!path) return null;
-  if (path.startsWith('http://') || path.startsWith('https://')) return path;
-  return `${BACKEND_URL}/${String(path).replace(/\\/g, '/')}`;
+  return getImageUrl(String(path).replace(/\\/g, '/'));
 };
 
 const formatBool = (value) => (value ? 'Yes' : 'No');
@@ -19,6 +19,17 @@ export default function DamageClaimsManagement() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [statusSaving, setStatusSaving] = useState(false);
+
+  const handleImageError = (originalPath) => (event) => {
+    const img = event.currentTarget;
+    if (img.dataset.fallbackTried === 'true') return;
+
+    const fallbackSrc = getAlternateImageUrl(img.src, originalPath);
+    if (fallbackSrc) {
+      img.dataset.fallbackTried = 'true';
+      img.src = fallbackSrc;
+    }
+  };
 
   const selectedImages = useMemo(() => {
     if (!selectedClaim) return [];
@@ -185,7 +196,7 @@ export default function DamageClaimsManagement() {
                   <div className="dcm-images">
                     {selectedImages.map((item) => (
                       <a key={item.label} href={toImageUrl(item.value)} target="_blank" rel="noreferrer" className="dcm-image-card">
-                        <img src={toImageUrl(item.value)} alt={item.label} />
+                        <img src={toImageUrl(item.value)} alt={item.label} onError={handleImageError(item.value)} />
                         <span>{item.label}</span>
                       </a>
                     ))}

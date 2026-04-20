@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import { useAdminAuth } from '../context/AdminAuthContext';
+import { API_BASE_URL } from '../../config/api';
+import { getImageUrl, getAlternateImageUrl } from '../../utils/imageUrl';
 import './DealsManagement.css';
 import './InstagramPostsManager.css';
 
@@ -9,9 +11,10 @@ const createEmptyMediaAction = () => ({
   redirectUrl: ''
 });
 
-const getMediaUrl = (raw, backendRoot) => {
+const getMediaUrl = (raw) => {
   if (!raw) return '';
-  return raw.startsWith('http') ? raw : `${backendRoot}/${raw}`;
+  if (raw.startsWith('blob:')) return raw;
+  return getImageUrl(raw);
 };
 
 const isVideoPath = (path) => /\.(mp4|webm|mov)$/i.test(String(path || ''));
@@ -36,9 +39,19 @@ const InstagramPostsManager = () => {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
-  const postsEndpoint = useMemo(() => `${import.meta.env.VITE_API_URL}/home-content/instagram-posts`, []);
-  const backendRoot = useMemo(() => import.meta.env.VITE_API_URL.replace('/api', ''), []);
+  const postsEndpoint = useMemo(() => `${API_BASE_URL}/home-content/instagram-posts`, []);
   const authConfig = useMemo(() => ({ headers: { Authorization: `Bearer ${token}` } }), [token]);
+
+  const handleImageError = (originalPath) => (event) => {
+    const img = event.currentTarget;
+    if (img.dataset.fallbackTried === 'true') return;
+
+    const fallbackSrc = getAlternateImageUrl(img.src, originalPath);
+    if (fallbackSrc) {
+      img.dataset.fallbackTried = 'true';
+      img.src = fallbackSrc;
+    }
+  };
 
   const resetForm = () => {
     mediaPreviews.forEach((preview) => {
@@ -330,9 +343,9 @@ const InstagramPostsManager = () => {
                 {existingMedia.map((item, index) => (
                   <div key={`existing-${index}`} className="instagram-media-card">
                     {item.mediaType === 'video' ? (
-                      <video src={getMediaUrl(item.file, backendRoot)} controls muted loop playsInline />
+                      <video src={getMediaUrl(item.file)} controls muted loop playsInline />
                     ) : (
-                      <img src={getMediaUrl(item.file, backendRoot)} alt="" />
+                      <img src={getMediaUrl(item.file)} alt="" onError={handleImageError(item.file)} />
                     )}
                     <input
                       value={item.buttonName}
@@ -420,7 +433,7 @@ const InstagramPostsManager = () => {
                 {posts.map((post) => {
                   const firstMedia = post.media?.[0];
                   const previewType = firstMedia?.mediaType || (isVideoPath(firstMedia?.file) ? 'video' : 'image');
-                  const previewUrl = getMediaUrl(firstMedia?.file, backendRoot);
+                  const previewUrl = getMediaUrl(firstMedia?.file);
 
                   return (
                     <tr key={post._id}>
@@ -429,7 +442,7 @@ const InstagramPostsManager = () => {
                           previewType === 'video' ? (
                             <video className="thumb" src={previewUrl} muted loop playsInline />
                           ) : (
-                            <img className="thumb" src={previewUrl} alt="" />
+                            <img className="thumb" src={previewUrl} alt="" onError={handleImageError(firstMedia?.file)} />
                           )
                         ) : (
                           <span className="muted">-</span>

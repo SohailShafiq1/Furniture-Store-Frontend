@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAdminAuth } from '../context/AdminAuthContext';
+import { API_BASE_URL } from '../../config/api';
+import { getImageUrl, getAlternateImageUrl } from '../../utils/imageUrl';
 import './CategoryManagement.css';
 
 const SubCategoryDetailPage = () => {
@@ -13,9 +15,19 @@ const SubCategoryDetailPage = () => {
     const { token } = useAdminAuth();
     const navigate = useNavigate();
 
-    const apiEndpoint = `${import.meta.env.VITE_API_URL}/categories`;
-    const backendRoot = import.meta.env.VITE_API_URL.replace('/api', '');
+    const apiEndpoint = `${API_BASE_URL}/categories`;
     const config = { headers: { Authorization: `Bearer ${token}` } };
+
+    const handleImageError = (originalPath) => (event) => {
+        const img = event.currentTarget;
+        if (img.dataset.fallbackTried === 'true') return;
+
+        const fallbackSrc = getAlternateImageUrl(img.src, originalPath);
+        if (fallbackSrc) {
+            img.dataset.fallbackTried = 'true';
+            img.src = fallbackSrc;
+        }
+    };
 
     useEffect(() => {
         const fetchSub = async () => {
@@ -52,7 +64,7 @@ const SubCategoryDetailPage = () => {
             <button className="action-btn edit-btn" onClick={() => navigate(`/admin/category/${categoryId}`)}>← Back to {subName} Parent Category</button>
             <div className="category-header-detail" style={{ background: 'white', padding: '2rem', borderRadius: '12px', marginTop: '1rem', boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}>
                 <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-                    <img src={`${backendRoot}/${subCategory.image}`} alt="" style={{ width: '80px', height: '80px', borderRadius: '12px', objectFit: 'cover' }} />
+                    <img src={getImageUrl(subCategory.image)} alt="" onError={handleImageError(subCategory.image)} style={{ width: '80px', height: '80px', borderRadius: '12px', objectFit: 'cover' }} />
                     <div style={{ flex: 1 }}>
                         {editMode ? (
                             <div style={{ display: 'flex', gap: '10px' }}>

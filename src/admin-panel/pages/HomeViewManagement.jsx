@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAdminAuth } from '../context/AdminAuthContext';
+import { API_BASE_URL } from '../../config/api';
+import { getImageUrl, getAlternateImageUrl } from '../../utils/imageUrl';
 import InstagramPostsManager from './InstagramPostsManager';
 import './HomeViewManagement.css';
 
@@ -34,10 +36,20 @@ const HomeViewManagement = () => {
   const [activeSection, setActiveSection] = useState('home');
   
   const { token } = useAdminAuth();
-  const apiEndpoint = `${import.meta.env.VITE_API_URL}`;
-  const backendRoot = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5001';
+  const apiEndpoint = `${API_BASE_URL}`;
 
   const config = { headers: { Authorization: `Bearer ${token}` } };
+
+  const handleImageError = (originalPath) => (event) => {
+    const img = event.currentTarget;
+    if (img.dataset.fallbackTried === 'true') return;
+
+    const fallbackSrc = getAlternateImageUrl(img.src, originalPath);
+    if (fallbackSrc) {
+      img.dataset.fallbackTried = 'true';
+      img.src = fallbackSrc;
+    }
+  };
 
   // Fetch all categories
   useEffect(() => {
@@ -313,8 +325,8 @@ const HomeViewManagement = () => {
       isVisible: content.isVisible !== false,
     });
     setImagePreview([
-      `${backendRoot}/${content.promotionPhotos[0]?.image}`,
-      `${backendRoot}/${content.promotionPhotos[1]?.image}`
+      getImageUrl(content.promotionPhotos[0]?.image),
+      getImageUrl(content.promotionPhotos[1]?.image)
     ]);
     setShowForm(true);
     window.scrollTo(0, 0);
@@ -613,9 +625,10 @@ const HomeViewManagement = () => {
                       <div className="product-info">
                         {product.image && (
                           <img
-                            src={`${backendRoot}/${product.image}`}
+                            src={getImageUrl(product.image)}
                             alt={product.name}
                             className="product-image"
+                            onError={handleImageError(product.image)}
                           />
                         )}
                         <div className="product-details">
@@ -710,8 +723,9 @@ const HomeViewManagement = () => {
                   {content.promotionPhotos.map((photo, idx) => (
                     <div key={idx} className="promotion-preview">
                       <img 
-                        src={`${backendRoot}/${photo.image}`} 
+                        src={getImageUrl(photo.image)}
                         alt={`Promotion ${idx + 1}`}
+                        onError={handleImageError(photo.image)}
                       />
                       <div className="photo-info">
                         <h4>{photo.heading}</h4>
