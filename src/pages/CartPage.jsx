@@ -2,13 +2,12 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useCart } from '../context/CartContext';
+import { getAlternateImageUrl, getImageUrl } from '../utils/imageUrl';
 import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
 import SlidingBanner from '../components/SlidingBanner/SlidingBanner';
 import './CartPage.css';
 import './ReviewsPage.css';
-
-const BACKEND_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5001';
 
 export default function CartPage() {
   const navigate = useNavigate();
@@ -124,7 +123,7 @@ export default function CartPage() {
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
       const storeId = localStorage.getItem('storeId') || 'default-store';
       
-      const response = await axios.post(`${apiUrl}/reviews/create`, {
+      await axios.post(`${apiUrl}/reviews/create`, {
         ...reviewForm,
         store: storeId,
         rating: parseInt(reviewForm.rating)
@@ -159,7 +158,20 @@ export default function CartPage() {
 
   const normalizeImageUrl = (path) => {
     if (!path) return '/logo.avif';
-    return path.startsWith('http') ? path : `${BACKEND_URL}/${path}`;
+    return getImageUrl(path) || '/logo.avif';
+  };
+
+  const resolveCartItemImage = (item) => {
+    const imagePath = item.productDetails?.image
+      || item.image
+      || item.product?.images?.[0]
+      || item.product?.image
+      || '';
+
+    return {
+      path: imagePath,
+      src: getImageUrl(imagePath) || '/logo.avif'
+    };
   };
 
   return (
@@ -204,65 +216,75 @@ export default function CartPage() {
             ) : (
               <>
                 <div className="cart-items">
-                  {cart.map((item) => (
-                    <div key={item._id} className="cart-item">
-                      <div className="item-image">
-                        <img
-                          src={
-                            item.productDetails?.image
-                              ? (item.productDetails.image.startsWith('http') ? item.productDetails.image : `${BACKEND_URL}/${item.productDetails.image}`)
-                              : item.image
-                                ? (item.image.startsWith('http') ? item.image : `${BACKEND_URL}/${item.image}`)
-                                : item.product?.images?.[0]
-                                  ? (item.product.images[0].startsWith('http') ? item.product.images[0] : `${BACKEND_URL}/${item.product.images[0]}`)
-                                  : '/logo.avif'
-                          }
-                          alt={item.productDetails?.name || item.name || item.product?.name || 'Product image'}
-                          onError={(event) => {
-                            event.currentTarget.src = '/logo.avif';
-                          }}
-                        />
-                      </div>
-                      <div className="item-details">
-                        <p className="item-brand">{item.brand || item.brandId || item.product?.brand || 'BRAND'}</p>
-                        <p className="item-name">{item.productDetails?.name || item.name || item.product?.name || item.product?.title || 'Product'}</p>
-                        <div className="item-pricing">
-                          <span className="current-price">${parseFloat(item.price).toFixed(2)}</span>
+                  {cart.map((item) => {
+                    const { path: imagePath, src: imageSrc } = resolveCartItemImage(item);
+
+                    return (
+                      <div key={item._id} className="cart-item">
+                        <div className="item-image">
+                          <img
+                            src={imageSrc}
+                            alt={item.productDetails?.name || item.name || item.product?.name || 'Product image'}
+                            onError={(event) => {
+                              const img = event.currentTarget;
+                              if (img.dataset.fallbackTried === 'true') {
+                                img.onerror = null;
+                                img.src = '/logo.avif';
+                                return;
+                              }
+
+                              const fallbackSrc = getAlternateImageUrl(img.src, imagePath);
+                              if (fallbackSrc && fallbackSrc !== img.src) {
+                                img.dataset.fallbackTried = 'true';
+                                img.src = fallbackSrc;
+                              } else {
+                                img.onerror = null;
+                                img.src = '/logo.avif';
+                              }
+                            }}
+                          />
                         </div>
-                      </div>
-                      <div className="item-quantity">
+                        <div className="item-details">
+                          <p className="item-brand">{item.brand || item.brandId || item.product?.brand || 'BRAND'}</p>
+                          <p className="item-name">{item.productDetails?.name || item.name || item.product?.name || item.product?.title || 'Product'}</p>
+                          <div className="item-pricing">
+                            <span className="current-price">${parseFloat(item.price).toFixed(2)}</span>
+                          </div>
+                        </div>
+                        <div className="item-quantity">
+                          <button 
+                            onClick={() => handleQuantityChange(item._id, item.quantity - 1)}
+                            className="qty-btn"
+                          >
+                            −
+                          </button>
+                          <input 
+                            type="number" 
+                            value={item.quantity}
+                            onChange={(e) => handleQuantityChange(item._id, parseInt(e.target.value))}
+                            min="1"
+                            className="qty-input"
+                          />
+                          <button 
+                            onClick={() => handleQuantityChange(item._id, item.quantity + 1)}
+                            className="qty-btn"
+                          >
+                            +
+                          </button>
+                        </div>
+                        <div className="item-total">
+                          ${(parseFloat(item.price) * item.quantity).toFixed(2)}
+                        </div>
                         <button 
-                          onClick={() => handleQuantityChange(item._id, item.quantity - 1)}
-                          className="qty-btn"
+                          onClick={() => handleRemoveItem(item._id)}
+                          className="delete-btn"
+                          title="Remove from cart"
                         >
-                          −
-                        </button>
-                        <input 
-                          type="number" 
-                          value={item.quantity}
-                          onChange={(e) => handleQuantityChange(item._id, parseInt(e.target.value))}
-                          min="1"
-                          className="qty-input"
-                        />
-                        <button 
-                          onClick={() => handleQuantityChange(item._id, item.quantity + 1)}
-                          className="qty-btn"
-                        >
-                          +
+                          🗑️
                         </button>
                       </div>
-                      <div className="item-total">
-                        ${(parseFloat(item.price) * item.quantity).toFixed(2)}
-                      </div>
-                      <button 
-                        onClick={() => handleRemoveItem(item._id)}
-                        className="delete-btn"
-                        title="Remove from cart"
-                      >
-                        🗑️
-                      </button>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
                 <div className="shipping-section">
