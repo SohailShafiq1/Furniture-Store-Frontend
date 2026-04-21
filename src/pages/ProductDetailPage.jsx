@@ -500,6 +500,26 @@ export default function ProductDetailPage() {
 
             <p className="pd-disclaimer">Actual item may be lighter/darker than pictured.</p>
 
+            <div className="pd-cta-group pd-cta-mobile">
+              <div className="pd-apply-wrapper">
+                <button 
+                  className="pd-apply-btn"
+                  onClick={() => window.open('https://subscribe.podium.com/Diamond-Modern-Furniture', '_blank')}
+                >
+                  Apply Now
+                </button>
+                <p className="pd-no-credit">No Credit Needed.</p>
+              </div>
+
+              <button 
+                className="pd-add-cart-btn" 
+                onClick={handleAddToCart}
+                disabled={addingToCart}
+              >
+                {addingToCart ? 'ADDING...' : 'ADD TO CART'}
+              </button>
+            </div>
+
             {/* Description & Specifications Section */}
             <div className="pd-description-section">
               <h2 className="pd-section-title">Description</h2>
@@ -813,25 +833,27 @@ export default function ProductDetailPage() {
               <p className="pd-discount-text">Extra 5% off with code <span className="pd-code">55OFF</span></p>
             </div>
 
-            {/* Apply Now Section */}
-            <div className="pd-apply-wrapper">
-              <button 
-                className="pd-apply-btn"
-                onClick={() => window.open('https://subscribe.podium.com/Diamond-Modern-Furniture', '_blank')}
-              >
-                Apply Now
-              </button>
-              <p className="pd-no-credit">No Credit Needed.</p>
-            </div>
+            <div className="pd-cta-group pd-cta-desktop">
+              {/* Apply Now Section */}
+              <div className="pd-apply-wrapper">
+                <button 
+                  className="pd-apply-btn"
+                  onClick={() => window.open('https://subscribe.podium.com/Diamond-Modern-Furniture', '_blank')}
+                >
+                  Apply Now
+                </button>
+                <p className="pd-no-credit">No Credit Needed.</p>
+              </div>
 
-            {/* Add to Cart Button */}
-            <button 
-              className="pd-add-cart-btn" 
-              onClick={handleAddToCart}
-              disabled={addingToCart}
-            >
-              {addingToCart ? 'ADDING...' : 'ADD TO CART'}
-            </button>
+              {/* Add to Cart Button */}
+              <button 
+                className="pd-add-cart-btn" 
+                onClick={handleAddToCart}
+                disabled={addingToCart}
+              >
+                {addingToCart ? 'ADDING...' : 'ADD TO CART'}
+              </button>
+            </div>
 
             {/* Shop Pay */}
             <p className="pd-shop-pay">
