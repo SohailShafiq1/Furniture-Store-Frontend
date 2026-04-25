@@ -8,7 +8,13 @@ import './InstagramPostsManager.css';
 
 const createEmptyMediaAction = () => ({
   buttonName: '',
-  redirectUrl: ''
+  dealOffer: '',
+  redirectUrl: '',
+  targetType: '',
+  categoryId: '',
+  subCategoryName: '',
+  subSubCategoryName: '',
+  collectionId: ''
 });
 
 const getMediaUrl = (raw) => {
@@ -23,8 +29,9 @@ const InstagramPostsManager = () => {
   const { token } = useAdminAuth();
 
   const [posts, setPosts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [collections, setCollections] = useState([]);
   const [title, setTitle] = useState('');
-  const [dealOffer, setDealOffer] = useState('');
   const [showOnHomePage, setShowOnHomePage] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [promoEnabled, setPromoEnabled] = useState(false);
@@ -40,6 +47,8 @@ const InstagramPostsManager = () => {
   const [error, setError] = useState('');
 
   const postsEndpoint = useMemo(() => `${API_BASE_URL}/home-content/instagram-posts`, []);
+  const categoriesEndpoint = useMemo(() => `${API_BASE_URL}/categories`, []);
+  const collectionsEndpoint = useMemo(() => `${API_BASE_URL}/collections`, []);
   const authConfig = useMemo(() => ({ headers: { Authorization: `Bearer ${token}` } }), [token]);
 
   const handleImageError = (originalPath) => (event) => {
@@ -61,7 +70,6 @@ const InstagramPostsManager = () => {
     });
 
     setTitle('');
-    setDealOffer('');
     setShowOnHomePage(false);
     setIsVisible(true);
     setPromoEnabled(false);
@@ -80,11 +88,42 @@ const InstagramPostsManager = () => {
     setPosts(Array.isArray(res.data) ? res.data : []);
   };
 
+  const fetchCategories = async () => {
+    const res = await axios.get(`${categoriesEndpoint}/all`);
+    setCategories(Array.isArray(res.data) ? res.data : []);
+  };
+
+  const fetchCollections = async () => {
+    const res = await axios.get(`${collectionsEndpoint}/all`);
+    setCollections(Array.isArray(res.data) ? res.data : []);
+  };
+
+  const getCategoryById = (id) => categories.find((category) => category._id === id);
+
+  const getSubCategoryByAction = (action) => {
+    const category = getCategoryById(action?.categoryId);
+    return category?.subCategories?.find((sub) => sub.name === action?.subCategoryName) || null;
+  };
+
+  const getSubCategoriesForCategory = (categoryId) => {
+    const category = getCategoryById(categoryId);
+    return category?.subCategories || [];
+  };
+
+  const getSubSubCategoriesForAction = (action) => {
+    return getSubCategoryByAction(action)?.subSubCategories || [];
+  };
+
+  const hasSubSubsForAction = (action) => {
+    const sub = getSubCategoryByAction(action);
+    return (sub?.subSubCategories?.length || 0) > 0;
+  };
+
   useEffect(() => {
     (async () => {
       try {
         setError('');
-        await fetchPosts();
+        await Promise.all([fetchPosts(), fetchCategories(), fetchCollections()]);
       } catch (err) {
         setError(err.response?.data?.message || 'Failed to load instagram posts');
       }
@@ -127,8 +166,48 @@ const InstagramPostsManager = () => {
         return `${label}: button name is required`;
       }
 
-      if (!/^https?:\/\//i.test(action.redirectUrl || '')) {
+      if (!action.dealOffer?.trim()) {
+        return `${label}: deal offer is required`;
+      }
+
+      const hasUrl = !!action.redirectUrl?.trim();
+      const hasTarget = !!action.targetType;
+
+      if (!hasUrl && !hasTarget) {
+        return `${label}: add a redirect URL or select an internal target`;
+      }
+
+      if (hasUrl && !/^https?:\/\//i.test(action.redirectUrl || '')) {
         return `${label}: valid redirect URL is required`;
+      }
+
+      if (action.targetType === 'collection' && !action.collectionId) {
+        return `${label}: select a collection`;
+      }
+
+      if (action.targetType === 'category') {
+        if (!action.categoryId) {
+          return `${label}: select a category`;
+        }
+
+        if (action.subSubCategoryName && !action.subCategoryName) {
+          return `${label}: select a sub-category first`;
+        }
+
+        if (action.subCategoryName) {
+          const subCategory = getSubCategoryByAction(action);
+          if (!subCategory) {
+            return `${label}: select a valid sub-category`;
+          }
+          if (action.subSubCategoryName) {
+            const hasSubSub = subCategory.subSubCategories?.some(
+              (ss) => ss.name === action.subSubCategoryName
+            );
+            if (!hasSubSub) {
+              return `${label}: select a valid sub-sub-category`;
+            }
+          }
+        }
       }
     }
     return '';
@@ -139,8 +218,8 @@ const InstagramPostsManager = () => {
     setError('');
     setMessage('');
 
-    if (!title.trim() || !dealOffer.trim()) {
-      setError('Title and deal offer are required');
+    if (!title.trim()) {
+      setError('Title is required');
       return;
     }
 
@@ -163,8 +242,10 @@ const InstagramPostsManager = () => {
 
     try {
       const formData = new FormData();
+      const fallbackDealOffer =
+        activeActions.find((action) => action.dealOffer?.trim())?.dealOffer?.trim() || '';
       formData.append('title', title);
-      formData.append('dealOffer', dealOffer);
+      formData.append('dealOffer', fallbackDealOffer);
       formData.append('showOnHomePage', String(showOnHomePage));
       formData.append('isVisible', String(isVisible));
       formData.append('promoEnabled', String(promoEnabled));
@@ -203,7 +284,6 @@ const InstagramPostsManager = () => {
 
     setEditingId(post._id);
     setTitle(post.title || '');
-    setDealOffer(post.dealOffer || '');
     setShowOnHomePage(!!post.showOnHomePage);
     setIsVisible(post.isVisible !== false);
     setPromoEnabled(!!post.promoStrip?.enabled);
@@ -218,10 +298,17 @@ const InstagramPostsManager = () => {
 
     setMediaPreviews([]);
 
+    const fallbackDealOffer = post.dealOffer || '';
     setExistingMedia(
       (post.media || []).map((item) => ({
         buttonName: item.buttonName || '',
+        dealOffer: item.dealOffer || fallbackDealOffer,
         redirectUrl: item.redirectUrl || '',
+        targetType: item.target?.targetType || '',
+        categoryId: item.target?.categoryId ? String(item.target.categoryId) : '',
+        subCategoryName: item.target?.subCategoryName || '',
+        subSubCategoryName: item.target?.subSubCategoryName || '',
+        collectionId: item.target?.collectionId ? String(item.target.collectionId) : '',
         file: item.file,
         mediaType: item.mediaType || (isVideoPath(item.file) ? 'video' : 'image')
       }))
@@ -273,15 +360,6 @@ const InstagramPostsManager = () => {
         <form onSubmit={handleCreateOrUpdate} className="admin-form">
           <label className="form-label">Title</label>
           <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Post title" required />
-
-          <label className="form-label">Deal Offer</label>
-          <textarea
-            value={dealOffer}
-            onChange={(e) => setDealOffer(e.target.value)}
-            placeholder="e.g. Save $1,300.00"
-            rows={4}
-            required
-          />
 
           <label className="form-label checkbox-label">
             <input
@@ -358,6 +436,15 @@ const InstagramPostsManager = () => {
                       style={{ marginTop: 6 }}
                     />
                     <input
+                      value={item.dealOffer}
+                      onChange={(e) =>
+                        setExistingMedia((prev) =>
+                          prev.map((entry, i) => (i === index ? { ...entry, dealOffer: e.target.value } : entry))
+                        )
+                      }
+                      placeholder="Deal offer"
+                    />
+                    <input
                       value={item.redirectUrl}
                       onChange={(e) =>
                         setExistingMedia((prev) =>
@@ -366,6 +453,121 @@ const InstagramPostsManager = () => {
                       }
                       placeholder="https://redirect-url.com"
                     />
+                    <select
+                      value={item.targetType || ''}
+                      onChange={(e) =>
+                        setExistingMedia((prev) =>
+                          prev.map((entry, i) =>
+                            i === index
+                              ? {
+                                  ...entry,
+                                  targetType: e.target.value,
+                                  categoryId: e.target.value !== 'category' ? '' : entry.categoryId,
+                                  collectionId: e.target.value !== 'collection' ? '' : entry.collectionId,
+                                  subCategoryName: e.target.value === 'category' ? entry.subCategoryName : '',
+                                  subSubCategoryName: e.target.value === 'category' ? entry.subSubCategoryName : ''
+                                }
+                              : entry
+                          )
+                        )
+                      }
+                    >
+                      <option value="">No internal target</option>
+                      <option value="collection">Collection</option>
+                      <option value="category">Category / Sub-category</option>
+                      <option value="financing">Financing</option>
+                    </select>
+                    {item.targetType === 'collection' && (
+                      <select
+                        value={item.collectionId || ''}
+                        onChange={(e) =>
+                          setExistingMedia((prev) =>
+                            prev.map((entry, i) =>
+                              i === index ? { ...entry, collectionId: e.target.value } : entry
+                            )
+                          )
+                        }
+                      >
+                        <option value="">Select collection</option>
+                        {collections.map((collection) => (
+                          <option key={collection._id} value={collection._id}>
+                            {collection.name}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                    {item.targetType === 'category' && (
+                      <>
+                        <select
+                          value={item.categoryId || ''}
+                          onChange={(e) =>
+                            setExistingMedia((prev) =>
+                              prev.map((entry, i) =>
+                                i === index
+                                  ? {
+                                      ...entry,
+                                      categoryId: e.target.value,
+                                      subCategoryName: '',
+                                      subSubCategoryName: ''
+                                    }
+                                  : entry
+                              )
+                            )
+                          }
+                        >
+                          <option value="">Select category</option>
+                          {categories.map((category) => (
+                            <option key={category._id} value={category._id}>
+                              {category.name}
+                            </option>
+                          ))}
+                        </select>
+                        {item.categoryId && (
+                          <select
+                            value={item.subCategoryName || ''}
+                            onChange={(e) =>
+                              setExistingMedia((prev) =>
+                                prev.map((entry, i) =>
+                                  i === index
+                                    ? {
+                                        ...entry,
+                                        subCategoryName: e.target.value,
+                                        subSubCategoryName: ''
+                                      }
+                                    : entry
+                                )
+                              )
+                            }
+                          >
+                            <option value="">Select sub-category</option>
+                            {getSubCategoriesForCategory(item.categoryId).map((sub) => (
+                              <option key={sub.name} value={sub.name}>
+                                {sub.name}
+                              </option>
+                            ))}
+                          </select>
+                        )}
+                        {item.categoryId && item.subCategoryName && getSubSubCategoriesForAction(item).length > 0 && (
+                          <select
+                            value={item.subSubCategoryName || ''}
+                            onChange={(e) =>
+                              setExistingMedia((prev) =>
+                                prev.map((entry, i) =>
+                                  i === index ? { ...entry, subSubCategoryName: e.target.value } : entry
+                                )
+                              )
+                            }
+                          >
+                            <option value="">Select sub-sub-category</option>
+                            {getSubSubCategoriesForAction(item).map((subSub) => (
+                              <option key={subSub.name} value={subSub.name}>
+                                {subSub.name}
+                              </option>
+                            ))}
+                          </select>
+                        )}
+                      </>
+                    )}
                   </div>
                 ))}
               </>
@@ -388,6 +590,15 @@ const InstagramPostsManager = () => {
                   placeholder="Button name"
                 />
                 <input
+                  value={mediaActions[index]?.dealOffer || ''}
+                  onChange={(e) =>
+                    setMediaActions((prev) =>
+                      prev.map((entry, i) => (i === index ? { ...entry, dealOffer: e.target.value } : entry))
+                    )
+                  }
+                  placeholder="Deal offer"
+                />
+                <input
                   value={mediaActions[index]?.redirectUrl || ''}
                   onChange={(e) =>
                     setMediaActions((prev) =>
@@ -396,6 +607,117 @@ const InstagramPostsManager = () => {
                   }
                   placeholder="https://redirect-url.com"
                 />
+                <select
+                  value={mediaActions[index]?.targetType || ''}
+                  onChange={(e) =>
+                    setMediaActions((prev) =>
+                      prev.map((entry, i) =>
+                        i === index
+                          ? {
+                              ...entry,
+                              targetType: e.target.value,
+                              categoryId: e.target.value !== 'category' ? '' : entry.categoryId,
+                              collectionId: e.target.value !== 'collection' ? '' : entry.collectionId,
+                              subCategoryName: e.target.value === 'category' ? entry.subCategoryName : '',
+                              subSubCategoryName: e.target.value === 'category' ? entry.subSubCategoryName : ''
+                            }
+                          : entry
+                      )
+                    )
+                  }
+                >
+                  <option value="">No internal target</option>
+                  <option value="collection">Collection</option>
+                  <option value="category">Category / Sub-category</option>
+                  <option value="financing">Financing</option>
+                </select>
+                {mediaActions[index]?.targetType === 'collection' && (
+                  <select
+                    value={mediaActions[index]?.collectionId || ''}
+                    onChange={(e) =>
+                      setMediaActions((prev) =>
+                        prev.map((entry, i) =>
+                          i === index ? { ...entry, collectionId: e.target.value } : entry
+                        )
+                      )
+                    }
+                  >
+                    <option value="">Select collection</option>
+                    {collections.map((collection) => (
+                      <option key={collection._id} value={collection._id}>
+                        {collection.name}
+                      </option>
+                    ))}
+                  </select>
+                )}
+                {mediaActions[index]?.targetType === 'category' && (
+                  <>
+                    <select
+                      value={mediaActions[index]?.categoryId || ''}
+                      onChange={(e) =>
+                        setMediaActions((prev) =>
+                          prev.map((entry, i) =>
+                            i === index
+                              ? {
+                                  ...entry,
+                                  categoryId: e.target.value,
+                                  subCategoryName: '',
+                                  subSubCategoryName: ''
+                                }
+                              : entry
+                          )
+                        )
+                      }
+                    >
+                      <option value="">Select category</option>
+                      {categories.map((category) => (
+                        <option key={category._id} value={category._id}>
+                          {category.name}
+                        </option>
+                      ))}
+                    </select>
+                    {mediaActions[index]?.categoryId && (
+                      <select
+                        value={mediaActions[index]?.subCategoryName || ''}
+                        onChange={(e) =>
+                          setMediaActions((prev) =>
+                            prev.map((entry, i) =>
+                              i === index
+                                ? { ...entry, subCategoryName: e.target.value, subSubCategoryName: '' }
+                                : entry
+                            )
+                          )
+                        }
+                      >
+                        <option value="">Select sub-category</option>
+                        {getSubCategoriesForCategory(mediaActions[index]?.categoryId).map((sub) => (
+                          <option key={sub.name} value={sub.name}>
+                            {sub.name}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                    {mediaActions[index]?.categoryId && mediaActions[index]?.subCategoryName && getSubSubCategoriesForAction(mediaActions[index]).length > 0 && (
+                      <select
+                        value={mediaActions[index]?.subSubCategoryName || ''}
+                        onChange={(e) =>
+                          setMediaActions((prev) =>
+                            prev.map((entry, i) =>
+                              i === index ? { ...entry, subSubCategoryName: e.target.value } : entry
+                            )
+                          )
+                        }
+                      >
+                        <option value="">Select sub-sub-category</option>
+                        {getSubSubCategoriesForAction(mediaActions[index]).map((subSub) => (
+                          <option key={subSub.name} value={subSub.name}>
+                            {subSub.name}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </>
+                )}
               </div>
             ))}
           </div>

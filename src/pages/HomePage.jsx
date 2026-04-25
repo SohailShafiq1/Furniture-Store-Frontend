@@ -16,17 +16,125 @@ import InspirationSection from '../components/Inspiration/InspirationSection';
 import TopBrands from '../components/TopBrands/TopBrands';
 import NewsUpdates from '../components/NewsUpdates/NewsUpdates';
 import Footer from '../components/Footer/Footer';
+import StayInTouch from '../components/Footer/StayInTouch';
 
 
 // checking is sohail 
 const buildDealRedirectPath = (deal, imageItem) => {
-  const catId = deal?.redirectTarget?.categoryId;
-  const subName = deal?.redirectTarget?.subCategoryName;
-  const subSub = imageItem?.subSubCategoryName || deal?.redirectTarget?.subSubCategoryName;
+  const itemTarget = imageItem?.target || null;
+  const isValidCollectionTarget =
+    itemTarget?.targetType === 'collection' && !!itemTarget?.collectionName;
+  const isValidCategoryTarget =
+    itemTarget?.targetType === 'category' && !!itemTarget?.categoryId && !!itemTarget?.subCategoryName;
+  const redirectSource =
+    isValidCollectionTarget || isValidCategoryTarget ? itemTarget : deal.redirectTarget || {};
+  const redirectType = redirectSource.targetType || 'category';
+
+  if (redirectType === 'collection') {
+    const collectionName = redirectSource.collectionName;
+    if (!collectionName) return '/deals/collection';
+    return `/deals/collection?name=${encodeURIComponent(collectionName)}`;
+  }
+
+  if (redirectType === 'financing') {
+    return '/financing';
+  }
+
+  const catId = redirectSource.categoryId;
+  const subName = redirectSource.subCategoryName;
+  const subSub =
+    redirectSource.subSubCategoryName || imageItem?.subSubCategoryName || deal.redirectTarget?.subSubCategoryName;
 
   const basePath = `/category/${catId}/sub/${encodeURIComponent(subName || '')}`;
   if (!subSub) return basePath;
   return `${basePath}?subSub=${encodeURIComponent(subSub)}`;
+};
+
+const buildInstagramButtonAction = (navigate, mediaItem) => {
+  const target = mediaItem?.target || null;
+
+  if (target?.targetType === 'collection' && target.collectionName) {
+    return () => navigate(`/deals/collection?name=${encodeURIComponent(target.collectionName)}`);
+  }
+
+  if (target?.targetType === 'category' && target.categoryId && target.subCategoryName) {
+    const basePath = `/category/${target.categoryId}/sub/${encodeURIComponent(target.subCategoryName)}`;
+    return () => {
+      if (target.subSubCategoryName) {
+        navigate(`${basePath}?subSub=${encodeURIComponent(target.subSubCategoryName)}`);
+      } else {
+        navigate(basePath);
+      }
+    };
+  }
+
+  if (target?.targetType === 'financing') {
+    return () => navigate('/financing');
+  }
+
+  if (mediaItem?.redirectUrl && /^https?:\/\//i.test(mediaItem.redirectUrl)) {
+    return () => {
+      window.location.href = mediaItem.redirectUrl;
+    };
+  }
+
+  return null;
+};
+
+const buildInstagramImageAction = (navigate, mediaItem) => {
+  if (mediaItem?.redirectUrl && /^https?:\/\//i.test(mediaItem.redirectUrl)) {
+    return () => {
+      window.location.href = mediaItem.redirectUrl;
+    };
+  }
+
+  return buildInstagramButtonAction(navigate, mediaItem);
+};
+
+const buildHomeContentBannerAction = (navigate, banner, homeContent) => {
+  const target = banner.target || null;
+
+  if (target?.targetType === 'collection') {
+    const collectionName = target.collectionName;
+    if (!collectionName) {
+      return () => navigate('/deals/collection');
+    }
+    return () => navigate(`/deals/collection?name=${encodeURIComponent(collectionName)}`);
+  }
+
+  if (target?.targetType === 'category') {
+    if (!target.categoryId) {
+      return null;
+    }
+
+    if (!target.subCategoryName) {
+      return () => navigate(`/category/${target.categoryId}`);
+    }
+
+    const basePath = `/category/${target.categoryId}/sub/${encodeURIComponent(target.subCategoryName)}`;
+    return () => {
+      if (target.subSubCategoryName) {
+        navigate(`${basePath}?subSub=${encodeURIComponent(target.subSubCategoryName)}`);
+      } else {
+        navigate(basePath);
+      }
+    };
+  }
+
+  if (target?.targetType === 'financing') {
+    return () => navigate('/financing');
+  }
+
+  if (banner.buttonSubcategory && homeContent.selectedCategory) {
+    return () => {
+      navigate(`/category/${homeContent.selectedCategory._id}`, {
+        state: { subcategoryFilter: banner.buttonSubcategory }
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+  }
+
+  return null;
 };
 
 // Dynamic PromoBanners Component that accepts custom data
@@ -104,15 +212,17 @@ const DynamicPromoBanners = ({ homeContent }) => {
             gap: '32px',
             flex: 1
           }}>
-            {visibleBanners.map((banner, idx) => (
-            <div key={idx} data-aos="fade-up" data-aos-delay={idx * 100} style={{
-              display: 'flex',
-              flexDirection: 'column',
-              overflow: 'hidden',
-              borderRadius: '8px',
-              transition: 'all 0.3s ease',
-              height: '100%'
-            }}>
+            {visibleBanners.map((banner, idx) => {
+              const bannerAction = buildHomeContentBannerAction(navigate, banner, homeContent);
+              return (
+                <div key={idx} data-aos="fade-up" data-aos-delay={idx * 100} style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  overflow: 'hidden',
+                  borderRadius: '8px',
+                  transition: 'all 0.3s ease',
+                  height: '100%'
+                }}>
               {/* Banner Image */}
               <div style={{
                 position: 'relative',
@@ -177,14 +287,7 @@ const DynamicPromoBanners = ({ homeContent }) => {
                 {banner.buttonName && (
                   <button
                     type="button"
-                    onClick={() => {
-                      if (banner.buttonSubcategory && homeContent.selectedCategory) {
-                        navigate(`/category/${homeContent.selectedCategory._id}`, {
-                          state: { subcategoryFilter: banner.buttonSubcategory }
-                        });
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                      }
-                    }}
+                    onClick={() => bannerAction && bannerAction()}
                     style={{
                       padding: '12px 32px',
                       backgroundColor: 'var(--color-accent)',
@@ -193,7 +296,7 @@ const DynamicPromoBanners = ({ homeContent }) => {
                       borderRadius: '4px',
                       fontSize: '15px',
                       fontWeight: '700',
-                      cursor: banner.buttonSubcategory ? 'pointer' : 'default',
+                      cursor: bannerAction ? 'pointer' : 'default',
                       transition: 'all 0.3s ease',
                       marginTop: '8px'
                     }}
@@ -215,36 +318,35 @@ const DynamicPromoBanners = ({ homeContent }) => {
                 )}
               </div>
             </div>
-          ))}
+            );
+          })}
+          </div>
+          {!isMobile && homeContent.promotionPhotos.length > visibleCount && (
+            <button type="button"
+              onClick={() => setStartIndex((prev) => Math.min(maxStart, prev + 1))}
+              disabled={startIndex >= maxStart}
+              aria-label="Next promo banner"
+              style={{
+                width: '44px',
+                height: '44px',
+                borderRadius: '50%',
+                border: '2px solid #222',
+                background: '#fff',
+                fontSize: '30px',
+                lineHeight: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: 0,
+                cursor: 'pointer',
+                flexShrink: 0,
+                opacity: startIndex >= maxStart ? 0.35 : 1
+              }}
+            >
+              &rsaquo;
+            </button>
+          )}
         </div>
-
-        {!isMobile && homeContent.promotionPhotos.length > visibleCount && (
-          <button
-            type="button"
-            onClick={() => setStartIndex((prev) => Math.min(maxStart, prev + 1))}
-            disabled={startIndex >= maxStart}
-            aria-label="Next promo banner"
-            style={{
-              width: '44px',
-              height: '44px',
-              borderRadius: '50%',
-              border: '2px solid #222',
-              background: '#fff',
-              fontSize: '30px',
-              lineHeight: 1,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: 0,
-              cursor: 'pointer',
-              flexShrink: 0,
-              opacity: startIndex >= maxStart ? 0.35 : 1
-            }}
-          >
-            &rsaquo;
-          </button>
-        )}
-      </div>
       </div>
     </div>
   );
@@ -253,17 +355,25 @@ const DynamicPromoBanners = ({ homeContent }) => {
 // Dynamic Subcategory Component - Same as CategoryPage layout
 const DynamicSubcategoryComponent = ({ subcategoryName, selectedProducts, categoryId }) => {
   const navigate = useNavigate();
-  const [gridColumns, setGridColumns] = useState('repeat(4, 1fr)');
+  const [startIndex, setStartIndex] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(4);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const updateGridColumns = () => {
-      setGridColumns(window.innerWidth <= 768 ? '1fr' : 'repeat(4, 1fr)');
+    const updateVisibleCount = () => {
+      const mobile = window.innerWidth <= 768;
+      setVisibleCount(mobile ? 1 : 4);
+      setIsMobile(mobile);
     };
 
-    updateGridColumns();
-    window.addEventListener('resize', updateGridColumns);
-    return () => window.removeEventListener('resize', updateGridColumns);
+    updateVisibleCount();
+    window.addEventListener('resize', updateVisibleCount);
+    return () => window.removeEventListener('resize', updateVisibleCount);
   }, []);
+
+  useEffect(() => {
+    setStartIndex(0);
+  }, [selectedProducts]);
 
   const StarIcon = ({ filled }) => (
     <svg width="14" height="14" viewBox="0 0 24 24" fill={filled ? "#FFB800" : "none"} stroke={filled ? "#FFB800" : "#D1D1D1"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -275,6 +385,12 @@ const DynamicSubcategoryComponent = ({ subcategoryName, selectedProducts, catego
     return null;
   }
 
+  const maxStart = Math.max(0, selectedProducts.length - visibleCount);
+  const visibleProducts = useMemo(
+    () => selectedProducts.slice(startIndex, startIndex + visibleCount),
+    [selectedProducts, startIndex, visibleCount]
+  );
+
   return (
     <section style={{ width: '100%', padding: '60px 40px', backgroundColor: 'var(--color-background)' }}>
       <div style={{ maxWidth: '1480px', margin: '0 auto' }}>
@@ -282,12 +398,41 @@ const DynamicSubcategoryComponent = ({ subcategoryName, selectedProducts, catego
           {subcategoryName}
         </h2>
 
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: gridColumns,
-          gap: '24px'
-        }}>
-          {selectedProducts.map((product) => (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          {!isMobile && selectedProducts.length > visibleCount && (
+            <button
+              type="button"
+              onClick={() => setStartIndex((prev) => Math.max(0, prev - visibleCount))}
+              disabled={startIndex === 0}
+              aria-label="Previous products"
+              style={{
+                width: '44px',
+                height: '44px',
+                borderRadius: '50%',
+                border: '2px solid #222',
+                background: '#fff',
+                fontSize: '24px',
+                lineHeight: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: 0,
+                cursor: 'pointer',
+                flexShrink: 0,
+                opacity: startIndex === 0 ? 0.35 : 1
+              }}
+            >
+              &lsaquo;
+            </button>
+          )}
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : `repeat(${visibleCount}, minmax(0, 1fr))`,
+            gap: '24px',
+            flex: 1
+          }}>
+            {visibleProducts.map((product) => (
             <div
               key={product._id}
               onClick={() => navigate(`/product/${product.category}/${product._id}`)}
@@ -450,6 +595,34 @@ const DynamicSubcategoryComponent = ({ subcategoryName, selectedProducts, catego
           ))}
         </div>
 
+        {!isMobile && selectedProducts.length > visibleCount && (
+          <button
+            type="button"
+            onClick={() => setStartIndex((prev) => Math.min(maxStart, prev + visibleCount))}
+            disabled={startIndex >= maxStart}
+            aria-label="Next products"
+            style={{
+              width: '44px',
+              height: '44px',
+              borderRadius: '50%',
+              border: '2px solid #222',
+              background: '#fff',
+              fontSize: '24px',
+              lineHeight: 1,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 0,
+              cursor: 'pointer',
+              flexShrink: 0,
+              opacity: startIndex >= maxStart ? 0.35 : 1
+            }}
+          >
+            &rsaquo;
+          </button>
+        )}
+      </div>
+
         {/* View All Button */}
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '40px' }}>
           <button
@@ -596,15 +769,21 @@ export default function HomePage() {
           const source = rawFile
             ? (rawFile.startsWith('http') ? rawFile : `${BACKEND_URL}/${rawFile}`)
             : '';
+          const buttonOnClick = buildInstagramButtonAction(navigate, mediaItem);
+          const imageOnClick = buildInstagramImageAction(navigate, mediaItem);
 
           return {
             id: `${homeInstagramPost?._id || 'instagram'}-${idx}`,
             image: source,
-            mediaType: mediaItem?.mediaType || (String(rawFile).toLowerCase().match(/\.(mp4|webm|mov)$/) ? 'video' : 'image'),
+            mediaType:
+              mediaItem?.mediaType ||
+              (String(rawFile).toLowerCase().match(/\.(mp4|webm|mov)$/) ? 'video' : 'image'),
             title: homeInstagramPost?.title,
-            priceLabel: homeInstagramPost?.dealOffer,
+            priceLabel: mediaItem?.dealOffer || homeInstagramPost?.dealOffer,
             buttonText: mediaItem?.buttonName || 'Shop now',
-            onClick: buildInstagramClick(mediaItem?.redirectUrl)
+            onClick: buttonOnClick,
+            buttonOnClick,
+            imageOnClick
           };
         })
         .filter((item) => item.image)
@@ -614,14 +793,15 @@ export default function HomePage() {
       const image = rawImage
         ? (rawImage.startsWith('http') ? rawImage : `${BACKEND_URL}/${rawImage}`)
         : '';
-      const buttonText = typeof img === 'string' ? 'Shop now' : img?.buttonName || 'Shop now';
+      const buttonText = typeof img === 'string' ? 'Shop now' : img?.buttonName || homeDeal?.buttonName || 'Shop now';
+      const priceLabel = typeof img === 'string' ? homeDeal?.dealOffer : img?.dealOffer || homeDeal?.dealOffer;
 
       return {
         id: `${homeDeal?._id || 'deal'}-${idx}`,
         image,
         mediaType: 'image',
         title: homeDeal?.title,
-        priceLabel: homeDeal?.dealOffer,
+        priceLabel,
         buttonText,
         onClick: () => {
           if (homeDeal?.redirectTarget?.categoryId && homeDeal?.redirectTarget?.subCategoryName) {
@@ -676,6 +856,7 @@ export default function HomePage() {
       <InspirationSection />
       <TopBrands />
       <NewsUpdates />
+      <StayInTouch/>
       <Footer />
     </div>
   );

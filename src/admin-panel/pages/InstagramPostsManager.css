@@ -30,6 +30,25 @@
   background: #f8fafc;
 }
 
+.instagram-posts-manager .instagram-media-card input,
+.instagram-posts-manager .instagram-media-card select {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+}
+
+.instagram-posts-manager .instagram-media-card select {
+  appearance: none;
+  background: #fff;
+}
+
+.instagram-posts-manager .instagram-media-card input:not(:first-child),
+.instagram-posts-manager .instagram-media-card select {
+  margin-top: 8px;
+}
+
 .instagram-posts-manager .helper {
   margin-bottom: 6px;
 }

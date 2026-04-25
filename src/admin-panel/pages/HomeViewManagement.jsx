@@ -11,9 +11,32 @@ const HomeViewManagement = () => {
     promoStripTitle: '',
     promoStripSubtitle: '',
     promoStripCode: '',
+    promotionEnabled: true,
     promotionPhotos: [
-      { image: null, heading: '', subHeading: '', buttonName: '', buttonSubcategory: '' },
-      { image: null, heading: '', subHeading: '', buttonName: '', buttonSubcategory: '' },
+      {
+        image: null,
+        heading: '',
+        subHeading: '',
+        buttonName: '',
+        buttonSubcategory: '',
+        targetType: '',
+        categoryId: '',
+        subCategoryName: '',
+        subSubCategoryName: '',
+        collectionId: ''
+      },
+      {
+        image: null,
+        heading: '',
+        subHeading: '',
+        buttonName: '',
+        buttonSubcategory: '',
+        targetType: '',
+        categoryId: '',
+        subCategoryName: '',
+        subSubCategoryName: '',
+        collectionId: ''
+      }
     ],
     selectedCategory: '',
     selectedSubCategory: '',
@@ -23,6 +46,7 @@ const HomeViewManagement = () => {
   });
 
   const [categories, setCategories] = useState([]);
+  const [collections, setCollections] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
   const [subSubCategories, setSubSubCategories] = useState([]);
   const [products, setProducts] = useState([]);
@@ -63,6 +87,18 @@ const HomeViewManagement = () => {
       }
     };
     fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    const fetchCollections = async () => {
+      try {
+        const res = await axios.get(`${apiEndpoint}/collections/admin/all`, config);
+        setCollections(Array.isArray(res.data) ? res.data : []);
+      } catch (err) {
+        setCollections([]);
+      }
+    };
+    fetchCollections();
   }, []);
 
   // Fetch all saved content
@@ -138,6 +174,61 @@ const HomeViewManagement = () => {
     fetchProducts();
   }, [homeContent.selectedCategory, homeContent.selectedSubCategory, homeContent.selectedSubSubCategory]);
 
+  const getSubCategoriesForPhoto = (photo) => {
+    const category = categories.find(cat => cat._id === photo.categoryId);
+    return category?.subCategories || [];
+  };
+
+  const getSubSubCategoriesForPhoto = (photo) => {
+    const subCat = getSubCategoriesForPhoto(photo).find((sub) => sub.name === photo.subCategoryName);
+    return subCat?.subSubCategories || [];
+  };
+
+  const handlePromotionTargetChange = (index, field, value) => {
+    setHomeContent(prev => {
+      const newPhotos = [...prev.promotionPhotos];
+      const photo = { ...newPhotos[index] };
+
+      if (field === 'targetType') {
+        photo.targetType = value;
+        if (value !== 'category') {
+          photo.categoryId = '';
+          photo.subCategoryName = '';
+          photo.subSubCategoryName = '';
+        }
+        if (value !== 'collection') {
+          photo.collectionId = '';
+        }
+      }
+
+      if (field === 'categoryId') {
+        photo.categoryId = value;
+        photo.subCategoryName = '';
+        photo.subSubCategoryName = '';
+      }
+
+      if (field === 'subCategoryName') {
+        photo.subCategoryName = value;
+        photo.subSubCategoryName = '';
+      }
+
+      if (field === 'subSubCategoryName') {
+        photo.subSubCategoryName = value;
+      }
+
+      if (field === 'collectionId') {
+        photo.collectionId = value;
+      }
+
+      if (!['targetType', 'categoryId', 'subCategoryName', 'subSubCategoryName', 'collectionId'].includes(field)) {
+        photo[field] = value;
+      }
+
+      newPhotos[index] = photo;
+      return { ...prev, promotionPhotos: newPhotos };
+    });
+  };
+
   // Handle promotion photo image upload
   const handlePromotionImageChange = (index, file) => {
     if (file) {
@@ -176,14 +267,10 @@ const HomeViewManagement = () => {
         selectedProducts: prev.selectedProducts.filter(id => id !== productId)
       }));
     } else {
-      if (homeContent.selectedProducts.length < 4) {
-        setHomeContent(prev => ({
-          ...prev,
-          selectedProducts: [...prev.selectedProducts, productId]
-        }));
-      } else {
-        setError('You can select maximum 4 products');
-      }
+      setHomeContent(prev => ({
+        ...prev,
+        selectedProducts: [...prev.selectedProducts, productId]
+      }));
     }
   };
 
@@ -191,20 +278,22 @@ const HomeViewManagement = () => {
   const handleSaveContent = async (e) => {
     e.preventDefault();
     
-    // For new content, require both images. For editing, use existing if not changed
-    const photo1HasValue = homeContent.promotionPhotos[0].image instanceof File || 
-                          (typeof homeContent.promotionPhotos[0].image === 'string' && homeContent.promotionPhotos[0].image.length > 0);
-    const photo2HasValue = homeContent.promotionPhotos[1].image instanceof File || 
-                          (typeof homeContent.promotionPhotos[1].image === 'string' && homeContent.promotionPhotos[1].image.length > 0);
+    if (homeContent.promotionEnabled) {
+      // For new content, require both images. For editing, use existing if not changed
+      const photo1HasValue = homeContent.promotionPhotos[0].image instanceof File || 
+                            (typeof homeContent.promotionPhotos[0].image === 'string' && homeContent.promotionPhotos[0].image.length > 0);
+      const photo2HasValue = homeContent.promotionPhotos[1].image instanceof File || 
+                            (typeof homeContent.promotionPhotos[1].image === 'string' && homeContent.promotionPhotos[1].image.length > 0);
 
-    if (!photo1HasValue || !photo2HasValue) {
-      setError('Please upload both promotion photos');
-      return;
-    }
+      if (!photo1HasValue || !photo2HasValue) {
+        setError('Please upload both promotion photos');
+        return;
+      }
 
-    if (!homeContent.promotionPhotos[0].heading || !homeContent.promotionPhotos[1].heading) {
-      setError('Please enter headings for both promotion photos');
-      return;
+      if (!homeContent.promotionPhotos[0].heading || !homeContent.promotionPhotos[1].heading) {
+        setError('Please enter headings for both promotion photos');
+        return;
+      }
     }
 
     if (!homeContent.selectedSubCategory) {
@@ -221,26 +310,39 @@ const HomeViewManagement = () => {
       setLoading(true);
       const formData = new FormData();
 
-      // Add promotion photos (only if they are File objects, not existing paths)
-      if (homeContent.promotionPhotos[0].image instanceof File) {
-        formData.append('promotionPhoto1', homeContent.promotionPhotos[0].image);
-      }
-      formData.append('promotionHeading1', homeContent.promotionPhotos[0].heading);
-      formData.append('promotionSubHeading1', homeContent.promotionPhotos[0].subHeading);
-      formData.append('promotionButtonName1', homeContent.promotionPhotos[0].buttonName);
-      formData.append('promotionButtonSubcategory1', homeContent.promotionPhotos[0].buttonSubcategory);
+      if (homeContent.promotionEnabled) {
+        // Add promotion photos (only if they are File objects, not existing paths)
+        if (homeContent.promotionPhotos[0].image instanceof File) {
+          formData.append('promotionPhoto1', homeContent.promotionPhotos[0].image);
+        }
+        formData.append('promotionHeading1', homeContent.promotionPhotos[0].heading);
+        formData.append('promotionSubHeading1', homeContent.promotionPhotos[0].subHeading);
+        formData.append('promotionButtonName1', homeContent.promotionPhotos[0].buttonName);
+        formData.append('promotionButtonSubcategory1', homeContent.promotionPhotos[0].buttonSubcategory);
+        formData.append('promotionTargetType1', homeContent.promotionPhotos[0].targetType || '');
+        formData.append('promotionTargetCategoryId1', homeContent.promotionPhotos[0].categoryId || '');
+        formData.append('promotionTargetSubCategoryName1', homeContent.promotionPhotos[0].subCategoryName || '');
+        formData.append('promotionTargetSubSubCategoryName1', homeContent.promotionPhotos[0].subSubCategoryName || '');
+        formData.append('promotionTargetCollectionId1', homeContent.promotionPhotos[0].collectionId || '');
 
-      if (homeContent.promotionPhotos[1].image instanceof File) {
-        formData.append('promotionPhoto2', homeContent.promotionPhotos[1].image);
+        if (homeContent.promotionPhotos[1].image instanceof File) {
+          formData.append('promotionPhoto2', homeContent.promotionPhotos[1].image);
+        }
+        formData.append('promotionHeading2', homeContent.promotionPhotos[1].heading);
+        formData.append('promotionSubHeading2', homeContent.promotionPhotos[1].subHeading);
+        formData.append('promotionButtonName2', homeContent.promotionPhotos[1].buttonName);
+        formData.append('promotionButtonSubcategory2', homeContent.promotionPhotos[1].buttonSubcategory);
+        formData.append('promotionTargetType2', homeContent.promotionPhotos[1].targetType || '');
+        formData.append('promotionTargetCategoryId2', homeContent.promotionPhotos[1].categoryId || '');
+        formData.append('promotionTargetSubCategoryName2', homeContent.promotionPhotos[1].subCategoryName || '');
+        formData.append('promotionTargetSubSubCategoryName2', homeContent.promotionPhotos[1].subSubCategoryName || '');
+        formData.append('promotionTargetCollectionId2', homeContent.promotionPhotos[1].collectionId || '');
       }
-      formData.append('promotionHeading2', homeContent.promotionPhotos[1].heading);
-      formData.append('promotionSubHeading2', homeContent.promotionPhotos[1].subHeading);
-      formData.append('promotionButtonName2', homeContent.promotionPhotos[1].buttonName);
-      formData.append('promotionButtonSubcategory2', homeContent.promotionPhotos[1].buttonSubcategory);
 
       formData.append('promoStripTitle', homeContent.promoStripTitle || '');
       formData.append('promoStripSubtitle', homeContent.promoStripSubtitle || '');
       formData.append('promoStripCode', homeContent.promoStripCode || '');
+      formData.append('promotionEnabled', String(homeContent.promotionEnabled));
 
       // Add category, sub-category, and products
       formData.append('selectedCategory', homeContent.selectedCategory);
@@ -295,9 +397,32 @@ const HomeViewManagement = () => {
       promoStripTitle: '',
       promoStripSubtitle: '',
       promoStripCode: '',
+      promotionEnabled: true,
       promotionPhotos: [
-        { image: null, heading: '', subHeading: '' },
-        { image: null, heading: '', subHeading: '' },
+        {
+          image: null,
+          heading: '',
+          subHeading: '',
+          buttonName: '',
+          buttonSubcategory: '',
+          targetType: '',
+          categoryId: '',
+          subCategoryName: '',
+          subSubCategoryName: '',
+          collectionId: ''
+        },
+        {
+          image: null,
+          heading: '',
+          subHeading: '',
+          buttonName: '',
+          buttonSubcategory: '',
+          targetType: '',
+          categoryId: '',
+          subCategoryName: '',
+          subSubCategoryName: '',
+          collectionId: ''
+        }
       ],
       selectedCategory: '',
       selectedSubCategory: '',
@@ -317,7 +442,19 @@ const HomeViewManagement = () => {
       promoStripTitle: content.promoStripTitle || '',
       promoStripSubtitle: content.promoStripSubtitle || '',
       promoStripCode: content.promoStripCode || '',
-      promotionPhotos: content.promotionPhotos,
+      promotionEnabled: content.promotionEnabled !== false,
+      promotionPhotos: content.promotionPhotos.map((photo) => ({
+        image: photo.image || null,
+        heading: photo.heading || '',
+        subHeading: photo.subHeading || '',
+        buttonName: photo.buttonName || '',
+        buttonSubcategory: photo.buttonSubcategory || '',
+        targetType: photo.target?.targetType || (photo.buttonSubcategory ? 'category' : ''),
+        categoryId: photo.target?.categoryId ? String(photo.target.categoryId) : (photo.buttonSubcategory && content.selectedCategory?._id ? String(content.selectedCategory._id) : ''),
+        subCategoryName: photo.target?.subCategoryName || photo.buttonSubcategory || '',
+        subSubCategoryName: photo.target?.subSubCategoryName || '',
+        collectionId: photo.target?.collectionId ? String(photo.target.collectionId) : ''
+      })),
       selectedCategory: content.selectedCategory?._id || '',
       selectedSubCategory: content.selectedSubCategoryName || '',
       selectedSubSubCategory: content.selectedSubSubCategoryName || '',
@@ -453,15 +590,42 @@ const HomeViewManagement = () => {
 
         {/* Promotion Photos Section */}
         <section className="promotion-section">
-          <h2>Promotion Photos (Banner Items)</h2>
+          <h2>Promotion Banner</h2>
           <p className="section-subtitle">
-            Add 2 promotion items with photo, heading, sub-heading, button name, and target sub-category
-            {editingId && <span> (Photos are optional - existing ones will be kept)</span>}
+            Toggle whether this home content should display promotional banners.
           </p>
+          <div className="form-group checkbox-group">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={homeContent.promotionEnabled}
+                onChange={(e) => setHomeContent(prev => ({
+                  ...prev,
+                  promotionEnabled: e.target.checked
+                }))}
+              />
+              Show promotional banners
+            </label>
+          </div>
 
-          <div className="promotion-items">
-            {homeContent.promotionPhotos.map((photo, index) => (
-              <div key={index} className="promotion-item">
+          {homeContent.promotionEnabled ? (
+            <>
+              <h3>Promotion Photos (Banner Items)</h3>
+              <p className="section-subtitle">
+                Add 2 promotion items with photo, heading, sub-heading, button name, and target sub-category
+                {editingId && <span> (Photos are optional - existing ones will be kept)</span>}
+              </p>
+            </>
+          ) : (
+            <p className="section-subtitle" style={{ marginTop: '0' }}>
+              Promotional banners will be skipped for this home content.
+            </p>
+          )}
+
+          {homeContent.promotionEnabled && (
+            <div className="promotion-items">
+              {homeContent.promotionPhotos.map((photo, index) => (
+                <div key={index} className="promotion-item">
                 <h3>Promotion Item {index + 1}</h3>
 
                 <div className="file-input-group">
@@ -511,22 +675,91 @@ const HomeViewManagement = () => {
                 </div>
 
                 <div className="form-group">
-                  <label>Button Redirects to Sub-Category</label>
+                  <label>Button Target</label>
                   <select
-                    value={photo.buttonSubcategory}
-                    onChange={(e) => handlePromotionTextChange(index, 'buttonSubcategory', e.target.value)}
+                    value={photo.targetType}
+                    onChange={(e) => handlePromotionTargetChange(index, 'targetType', e.target.value)}
                   >
-                    <option value="">Select a sub-category (optional)</option>
-                    {subCategories.map(subCat => (
-                      <option key={subCat._id} value={subCat.name}>
-                        {subCat.name}
-                      </option>
-                    ))}
+                    <option value="">No internal target</option>
+                    <option value="category">Category / Sub-category</option>
+                    <option value="collection">Collection</option>
+                    <option value="financing">Financing</option>
                   </select>
                 </div>
+
+                {photo.targetType === 'category' && (
+                  <>
+                    <div className="form-group">
+                      <label>Target Category</label>
+                      <select
+                        value={photo.categoryId}
+                        onChange={(e) => handlePromotionTargetChange(index, 'categoryId', e.target.value)}
+                      >
+                        <option value="">Select a category</option>
+                        {categories.map(cat => (
+                          <option key={cat._id} value={cat._id}>
+                            {cat.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {photo.categoryId && (
+                      <div className="form-group">
+                        <label>Target Sub-Category</label>
+                        <select
+                          value={photo.subCategoryName}
+                          onChange={(e) => handlePromotionTargetChange(index, 'subCategoryName', e.target.value)}
+                        >
+                          <option value="">Select a sub-category</option>
+                          {getSubCategoriesForPhoto(photo).map(subCat => (
+                            <option key={subCat._id} value={subCat.name}>
+                              {subCat.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+
+                    {photo.categoryId && photo.subCategoryName && getSubSubCategoriesForPhoto(photo).length > 0 && (
+                      <div className="form-group">
+                        <label>Target Sub-Sub-Category</label>
+                        <select
+                          value={photo.subSubCategoryName}
+                          onChange={(e) => handlePromotionTargetChange(index, 'subSubCategoryName', e.target.value)}
+                        >
+                          <option value="">Select a sub-sub-category</option>
+                          {getSubSubCategoriesForPhoto(photo).map(subSub => (
+                            <option key={subSub._id} value={subSub.name}>
+                              {subSub.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+                  </>
+                )}
+
+                {photo.targetType === 'collection' && (
+                  <div className="form-group">
+                    <label>Target Collection</label>
+                    <select
+                      value={photo.collectionId}
+                      onChange={(e) => handlePromotionTargetChange(index, 'collectionId', e.target.value)}
+                    >
+                      <option value="">Select a collection</option>
+                      {collections.map(collection => (
+                        <option key={collection._id} value={collection._id}>
+                          {collection.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
               </div>
             ))}
           </div>
+        )}
         </section>
 
         {/* Sub-Category Selection */}
@@ -601,9 +834,9 @@ const HomeViewManagement = () => {
         {/* Product Selection */}
         {homeContent.selectedSubCategory && (
           <section className="products-section">
-            <h2>Select Products (Maximum 4)</h2>
+            <h2>Select Products</h2>
             <p className="section-subtitle">
-              Selected: {homeContent.selectedProducts.length} / 4 products
+              Selected: {homeContent.selectedProducts.length} products
             </p>
 
             {loading ? (
@@ -617,10 +850,7 @@ const HomeViewManagement = () => {
                         type="checkbox"
                         checked={homeContent.selectedProducts.includes(product._id)}
                         onChange={() => handleProductToggle(product._id)}
-                        disabled={
-                          !homeContent.selectedProducts.includes(product._id) &&
-                          homeContent.selectedProducts.length >= 4
-                        }
+                        disabled={false}
                       />
                       <div className="product-info">
                         {product.image && (

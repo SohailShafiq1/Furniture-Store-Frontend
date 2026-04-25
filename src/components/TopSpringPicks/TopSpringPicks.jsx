@@ -51,18 +51,20 @@ export default function TopSpringPicks({ items = [], title = 'Top Spring Picks' 
             {visibleItems.map((pick) => (
             <div key={pick.id} className="spring-pick-card">
               <div
-                className={`pick-image-wrapper ${pick.onClick ? 'pick-clickable' : ''}`}
+                className={`pick-image-wrapper ${pick.imageOnClick || pick.onClick ? 'pick-clickable' : ''}`}
                 onClick={() => {
-                  if (pick.onClick) {
-                    pick.onClick();
+                  const imageClick = pick.imageOnClick || pick.onClick;
+                  if (imageClick) {
+                    imageClick();
                   }
                 }}
-                role={pick.onClick ? 'button' : undefined}
-                tabIndex={pick.onClick ? 0 : -1}
+                role={pick.imageOnClick || pick.onClick ? 'button' : undefined}
+                tabIndex={pick.imageOnClick || pick.onClick ? 0 : -1}
                 onKeyDown={(event) => {
-                  if (pick.onClick && (event.key === 'Enter' || event.key === ' ')) {
+                  const imageClick = pick.imageOnClick || pick.onClick;
+                  if (imageClick && (event.key === 'Enter' || event.key === ' ')) {
                     event.preventDefault();
-                    pick.onClick();
+                    imageClick();
                   }
                 }}
               >
@@ -88,11 +90,12 @@ export default function TopSpringPicks({ items = [], title = 'Top Spring Picks' 
                 <button
                   className="pick-button"
                   onClick={() => {
-                    if (pick.onClick) {
-                      pick.onClick();
+                    const buttonClick = pick.buttonOnClick || pick.onClick;
+                    if (buttonClick) {
+                      buttonClick();
                     }
                   }}
-                  disabled={!pick.onClick}
+                  disabled={!(pick.buttonOnClick || pick.onClick)}
                 >
                   {pick.buttonText || 'Shop now'}
                 </button>

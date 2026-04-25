@@ -27,6 +27,7 @@ import CategoryManagement from './admin-panel/pages/CategoryManagement';
 import ProductManagement from './admin-panel/pages/ProductManagement';
 import CategoryDetailPage from './admin-panel/pages/CategoryDetailPage';
 import SubCategoryDetailPage from './admin-panel/pages/SubCategoryDetailPage';
+import CategoryProductsPage from './admin-panel/pages/CategoryProductsPage';
 import HomeViewManagement from './admin-panel/pages/HomeViewManagement';
 import OrderManagement from './admin-panel/pages/OrderManagement';
 import StoreManagement from './admin-panel/pages/StoreManagement';
@@ -156,6 +157,14 @@ function App() {
           element={
             <ProtectedRoute>
               <CategoryDetailPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/category/:categoryId/products" 
+          element={
+            <ProtectedRoute>
+              <CategoryProductsPage />
             </ProtectedRoute>
           } 
         />

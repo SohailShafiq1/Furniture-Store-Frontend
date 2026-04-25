@@ -7,6 +7,7 @@ import AuthModal from '../common/AuthModal';
 import { useUserAuth } from '../../context/UserAuthContext';
 import { useCart } from '../../context/CartContext';
 import { useCategoryData } from '../../hooks/useCategoryData';
+import { FiBox, FiTruck, FiCreditCard } from 'react-icons/fi';
 import { BACKEND_URL } from '../../config/api';
 import { getAlternateImageUrl, getImageUrl } from '../../utils/imageUrl';
 import './Header.css';
@@ -258,29 +259,56 @@ export default function Header() {
       {activeNavItem?.subcategories?.length ? (
         <div className="mega-menu" role="region" aria-label={`${activeNavItem.label} subcategories`}>
           <div className="mega-menu-grid">
-            {activeNavItem.subcategories.map((sub) => {
+            <div className="mega-menu-left">
+              <div className="mega-menu-left-title">{activeNavItem.label}</div>
+              <div className="mega-menu-left-list">
+                {activeNavItem.subcategories.map((sub) => {
                   const imageUrl = getImageUrl(sub.image);
-              return (
-                <Link key={sub.label} to={sub.href} className="mega-menu-item">
-                    <img
-                      src={imageUrl}
-                      alt={sub.label}
-                      className="mega-menu-image"
-                      loading="lazy"
-                      onError={(e) => {
-                        const currentSrc = e.currentTarget.src;
-                        const alternateUrl = getAlternateImageUrl(currentSrc, sub.image);
-                        if (alternateUrl && alternateUrl !== currentSrc) {
-                          e.currentTarget.src = alternateUrl;
-                        } else {
-                          e.currentTarget.onerror = null;
-                        }
-                      }}
-                    />
-                  <span className="mega-menu-label">{sub.label}</span>
-                </Link>
-              );
-            })}
+                  return (
+                    <Link key={sub.label} to={sub.href} className="mega-menu-left-item">
+                      <div className="mega-menu-left-icon">
+                        {sub.image ? (
+                          <img
+                            src={imageUrl}
+                            alt={sub.label}
+                            loading="lazy"
+                            onError={(e) => {
+                              const currentSrc = e.currentTarget.src;
+                              const alternateUrl = getAlternateImageUrl(currentSrc, sub.image);
+                              if (alternateUrl && alternateUrl !== currentSrc) {
+                                e.currentTarget.src = alternateUrl;
+                              } else {
+                                e.currentTarget.onerror = null;
+                              }
+                            }}
+                          />
+                        ) : (
+                          <FiBox />
+                        )}
+                      </div>
+                      <span className="mega-menu-left-label">{sub.label}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+
+            <aside className="mega-menu-right">
+              <Link to="/delivery-policy" className="mega-promo-box promo-shipping">
+                <div>
+                  <div className="promo-box-heading">FAST SHIPPING, NATIONWIDE.</div>
+                  <div className="promo-box-copy">Right to your location.</div>
+                </div>
+                <div className="promo-box-icon"><FiTruck /></div>
+              </Link>
+              <Link to="/financing" className="mega-promo-box promo-financing">
+                <div>
+                  <div className="promo-box-heading">BUY NOW, PAY OVER TIME.</div>
+                  <div className="promo-box-copy">Flexible payments, your way.</div>
+                </div>
+                <div className="promo-box-icon"><FiCreditCard /></div>
+              </Link>
+            </aside>
           </div>
         </div>
       ) : null}

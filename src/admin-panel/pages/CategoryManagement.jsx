@@ -116,6 +116,47 @@ const CategoryManagement = () => {
         }
     };
 
+    const updateCategoryInState = (categoryId, updater) => {
+        setCategories((prev) => prev.map((cat) => (cat._id === categoryId ? updater(cat) : cat)));
+    };
+
+    const handleToggleShopByCategory = (categoryId) => {
+        updateCategoryInState(categoryId, (cat) => {
+            const isShown = cat.showInShopByCategory !== false;
+            return { ...cat, showInShopByCategory: !isShown };
+        });
+    };
+
+    const handleShopByNameChange = (categoryId, value) => {
+        updateCategoryInState(categoryId, (cat) => ({ ...cat, shopByCategoryName: value }));
+    };
+
+    const handleSaveShopByCategory = async (categoryId, e) => {
+        if (e) e.stopPropagation();
+        const cat = categories.find((item) => item._id === categoryId);
+        if (!cat) return;
+
+        try {
+            const isShown = cat.showInShopByCategory !== false;
+            const displayName = (cat.shopByCategoryName || '').trim();
+
+            await axios.put(`${apiEndpoint}/${categoryId}`, {
+                showInShopByCategory: isShown,
+                shopByCategoryName: displayName,
+            }, config);
+
+            updateCategoryInState(categoryId, (current) => ({
+                ...current,
+                showInShopByCategory: isShown,
+                shopByCategoryName: displayName,
+            }));
+
+            setMessage('Shop by Category settings updated');
+        } catch (err) {
+            setError('Failed to update Shop by Category settings');
+        }
+    };
+
     return (
         <div className="category-management">
             <h1>Catalog Management</h1>
@@ -222,6 +263,32 @@ const CategoryManagement = () => {
                                 <div className="node-actions" onClick={(e) => e.stopPropagation()}>
                                     <button className="action-btn delete-btn" onClick={(e) => handleDeleteMain(cat._id, e)}>Delete</button>
                                 </div>
+                            </div>
+                            <div
+                                className="category-shopby-settings"
+                                onClick={(e) => e.stopPropagation()}
+                                onMouseDown={(e) => e.stopPropagation()}
+                            >
+                                <label className="shopby-toggle">
+                                    <input
+                                        type="checkbox"
+                                        checked={cat.showInShopByCategory !== false}
+                                        onChange={() => handleToggleShopByCategory(cat._id)}
+                                    />
+                                    Show in Shop by Category
+                                </label>
+                                <input
+                                    className="shopby-input"
+                                    value={cat.shopByCategoryName || ''}
+                                    onChange={(e) => handleShopByNameChange(cat._id, e.target.value)}
+                                    placeholder="Shop by Category label (optional)"
+                                />
+                                <button
+                                    className="action-btn edit-btn"
+                                    onClick={(e) => handleSaveShopByCategory(cat._id, e)}
+                                >
+                                    Save
+                                </button>
                             </div>
                         </div>
                     ))}

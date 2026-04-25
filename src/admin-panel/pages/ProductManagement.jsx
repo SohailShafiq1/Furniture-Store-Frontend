@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAdminAuth } from '../context/AdminAuthContext';
 import { API_BASE_URL } from '../../config/api';
@@ -15,8 +16,11 @@ const ProductManagement = () => {
     
     // Search and Filter State
     const [searchTerm, setSearchTerm] = useState('');
+    const [filterCategoryId, setFilterCategoryId] = useState('');
     const [filterSubCat, setFilterSubCat] = useState('');
+    const [filterSubSub, setFilterSubSub] = useState('');
     const [priceSort, setPriceSort] = useState(''); // 'low', 'high', ''
+    const [editProductId, setEditProductId] = useState('');
 
     // Use separate states for editing to avoid trigger resets
     const [isEditing, setIsEditing] = useState(false);
@@ -97,6 +101,11 @@ const ProductManagement = () => {
     // Track existing images separately from new images
     const [existingImages, setExistingImages] = useState([]);
 
+    const autoEditRef = useRef(false);
+
+    const location = useLocation();
+    const navigate = useNavigate();
+
     const apiBase = API_BASE_URL;
     const config = { headers: { Authorization: `Bearer ${token}` } };
     const multipartConfig = { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' } };
@@ -115,6 +124,34 @@ const ProductManagement = () => {
     useEffect(() => {
         fetchInitialData();
     }, []);
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const categoryId = params.get('categoryId') || '';
+        const subCategoryName = params.get('subCategoryName') || '';
+        const subSubCategoryName = params.get('subSubCategoryName') || '';
+        const nextEditProductId = params.get('editProductId') || '';
+
+        setFilterCategoryId(categoryId);
+        setFilterSubCat(subCategoryName);
+        setFilterSubSub(subSubCategoryName);
+        setEditProductId(nextEditProductId);
+    }, [location.search]);
+
+    useEffect(() => {
+        autoEditRef.current = false;
+    }, [editProductId]);
+
+    useEffect(() => {
+        if (!editProductId || autoEditRef.current) return;
+        if (!products.length || !categories.length) return;
+
+        const match = products.find((prod) => prod._id === editProductId);
+        if (!match) return;
+
+        handleEditClick(match);
+        autoEditRef.current = true;
+    }, [editProductId, products, categories]);
 
     const fetchInitialData = async () => {
         try {
@@ -367,11 +404,29 @@ const ProductManagement = () => {
     };
 
     // Filter Logic
+    const activeCategory = categories.find((cat) => cat._id === filterCategoryId);
+    const viewParts = [];
+    if (activeCategory?.name) viewParts.push(activeCategory.name);
+    if (filterSubCat) viewParts.push(filterSubCat);
+    if (filterSubSub) viewParts.push(filterSubSub);
+    const viewLabel = viewParts.join(' / ');
+    const hasViewFilter = viewParts.length > 0;
+
+    const clearViewFilters = () => {
+        setFilterCategoryId('');
+        setFilterSubCat('');
+        setFilterSubSub('');
+        navigate('/admin/products', { replace: true });
+    };
+
     const filteredProducts = products.filter(prod => {
         const matchesSearch = prod.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                             prod.sku.toLowerCase().includes(searchTerm.toLowerCase());
+        const productCategoryId = prod.category?._id || prod.category;
+        const matchesCategory = filterCategoryId === '' || productCategoryId === filterCategoryId;
         const matchesSubCat = filterSubCat === '' || prod.subCategoryName === filterSubCat;
-        return matchesSearch && matchesSubCat;
+        const matchesSubSub = filterSubSub === '' || prod.subSubCategoryName === filterSubSub;
+        return matchesSearch && matchesCategory && matchesSubCat && matchesSubSub;
     }).sort((a, b) => {
         if (priceSort === 'low') return a.price - b.price;
         if (priceSort === 'high') return b.price - a.price;
@@ -1349,6 +1404,30 @@ const ProductManagement = () => {
                             </select>
                         </div>
                     </div>
+                    {hasViewFilter && (
+                        <div style={{
+                            marginTop: '14px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            background: '#f8fafc',
+                            border: '1px solid #e2e8f0',
+                            padding: '10px 14px',
+                            borderRadius: '12px'
+                        }}>
+                            <span style={{ color: '#0f172a', fontWeight: '600' }}>
+                                Viewing: {viewLabel}
+                            </span>
+                            <button
+                                type="button"
+                                className="btn-secondary"
+                                onClick={clearViewFilters}
+                                style={{ padding: '6px 12px', fontSize: '0.85rem' }}
+                            >
+                                Clear view filter
+                            </button>
+                        </div>
+                    )}
                 </div>
 
                 <div className="inventory-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(450px, 1fr))', gap: '20px' }}>

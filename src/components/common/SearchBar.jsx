@@ -52,7 +52,7 @@ export default function SearchBar({ autoFocus = false }) {
   }, [query, products]);
 
   useEffect(() => {
-    const texts = ['Search For Products', 'Find your dream furniture'];
+    const texts = ['Search for products', 'Find your dream furniture'];
     let currentTextIndex = 0;
     let currentCharIndex = 0;
     let isDeleting = false;

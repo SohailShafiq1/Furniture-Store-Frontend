@@ -9,7 +9,11 @@ export default function FinancingPromo() {
       <div className="financing-promo-inner">
         <span className="financing-promo-tag">BUY NOW, PAY OVER TIME.</span>
         <h2 className="financing-promo-title">
-          We offer a range of flexible financing options tailored to your specific needs.
+          We offer a range of flexible
+          <br />
+          financing options tailored to your
+          <br />
+          specific needs.
         </h2>
         <button
           className="financing-promo-button"
