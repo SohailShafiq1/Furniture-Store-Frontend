@@ -371,11 +371,13 @@
   top: 100%;
   left: 0;
   right: 0;
+  width: 100%;
   background: #fff;
   border-top: 1px solid #e8e8e8;
+  border-bottom: 1px solid #e8e8e8;
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.09);
   z-index: 3250;
-  padding: 24px 30px 18px;
+  padding: 24px 36px 18px;
 }
 
 .mega-menu-grid {
@@ -383,6 +385,8 @@
   grid-template-columns: minmax(360px, 1fr) 320px;
   gap: 24px;
   align-items: start;
+  max-width: 1320px;
+  margin: 0 auto;
 }
 
 .mega-menu-left-title {
@@ -399,25 +403,31 @@
 }
 
 .mega-menu-left-item {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 14px 16px;
-  border-radius: 16px;
+  /* border-radius: 16px; */
   background: #fff;
   text-decoration: none;
   color: #1a1a1a;
   transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+  box-shadow: 0 4px 6px -4px rgba(0, 0, 0, 0.25);
 }
 
 .mega-menu-left-item:hover {
-  background: #fff;
+  /* background: #fff; */
   transform: translateY(-1px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 6px 12px -6px rgba(0, 0, 0, 0.28);
 }
 
 .mega-menu-left-item:hover .mega-menu-left-label {
   font-size: 20px;
+}
+
+.mega-menu-left-label {
+  display: inline-block;
 }
 
 .mega-menu-left-icon {
@@ -448,6 +458,8 @@
   font-size: 14px;
   font-weight: 700;
   line-height: 1.25;
+  display: inline-block;
+  transition: font-size 0.2s ease, border-color 0.2s ease;
 }
 
 .mega-menu-right {
