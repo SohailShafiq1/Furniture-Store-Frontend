@@ -236,7 +236,7 @@ export default function DealsPage() {
                                 />
                               </div>
                               <div className={infoClass}>
-                                <p className={offerClass}>{deal.dealOffer}</p>
+                                <p className={offerClass}>{img.dealOffer || deal.dealOffer}</p>
                                 <button
                                   className={buttonClass}
                                   onClick={() => handleShopDeal(() => navigate(buildDealRedirectPath(deal, img)))}
@@ -291,7 +291,7 @@ export default function DealsPage() {
                               />
                             </div>
                             <div className={infoClass}>
-                              <p className={offerClass}>{deal.dealOffer}</p>
+                              <p className={offerClass}>{img.dealOffer || deal.dealOffer}</p>
                               <button
                                 className={buttonClass}
                                 onClick={() => handleShopDeal(() => navigate(buildDealRedirectPath(deal, img)))}
@@ -377,7 +377,7 @@ export default function DealsPage() {
                             />
                           </div>
                           <div className={infoClass}>
-                            <p className={offerClass}>{deal.dealOffer}</p>
+                            <p className={offerClass}>{img.dealOffer || deal.dealOffer}</p>
                             <button
                               className={buttonClass}
                               onClick={() => handleShopDeal(() => navigate(buildDealRedirectPath(deal, img)))}
@@ -452,7 +452,7 @@ export default function DealsPage() {
                         />
                       </div>
                       <div className="pick-info">
-                        <p className="pick-price">{featuredDeal.dealOffer}</p>
+                        <p className="pick-price">{img.dealOffer || featuredDeal.dealOffer}</p>
                         <button
                           className="pick-btn"
                           onClick={() => handleShopDeal(() => navigate(buildDealRedirectPath(featuredDeal, img)))}

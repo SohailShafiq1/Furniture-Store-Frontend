@@ -57,6 +57,7 @@ const DealsManagement = () => {
 
   const createEmptyImageAction = () => ({
     buttonName: '',
+    dealOffer: '',
     targetType: 'category',
     categoryId: '',
     subCategoryName: '',
@@ -150,6 +151,22 @@ const DealsManagement = () => {
     e.target.value = '';
   };
 
+  const removeExistingImage = (index) => {
+    if (editExistingImages.length <= 2) {
+      setError('A deal must keep at least 2 images');
+      return;
+    }
+    setError('');
+    setEditExistingImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const removeNewImage = (index) => {
+    setError('');
+    setImages((prev) => prev.filter((_, i) => i !== index));
+    setImageActions((prev) => prev.filter((_, i) => i !== index));
+    setImagePreviews((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const buildDealRedirectPath = (deal) => {
     const redirectType = deal.redirectTarget?.targetType || 'category';
     if (redirectType === 'collection') {
@@ -183,6 +200,14 @@ const DealsManagement = () => {
       setError('Please add button name for every image');
       return;
     }
+
+    if (activeActions.some((a) => !a.dealOffer?.trim())) {
+      setError('Please add deal offer for every image');
+      return;
+    }
+
+    const fallbackDealOffer =
+      activeActions.find((a) => a.dealOffer?.trim())?.dealOffer?.trim() || '';
 
     for (let i = 0; i < activeActions.length; i += 1) {
       const action = activeActions[i] || {};
@@ -218,7 +243,7 @@ const DealsManagement = () => {
     try {
       const formData = new FormData();
       formData.append('title', title);
-      formData.append('dealOffer', dealOffer);
+      formData.append('dealOffer', fallbackDealOffer);
       formData.append('showOnHomePage', String(showOnHomePage));
       formData.append('isFeaturedDeal', String(isFeaturedDeal));
       formData.append('promoEnabled', String(promoEnabled));
@@ -232,6 +257,7 @@ const DealsManagement = () => {
             ? imageActions
             : editExistingImages.map((img) => ({
                 buttonName: img.buttonName || '',
+                dealOffer: img.dealOffer || '',
                 targetType: img.targetType || 'category',
                 categoryId: img.targetType === 'category' ? img.categoryId || '' : '',
                 subCategoryName: img.targetType === 'category' ? img.subCategoryName || '' : '',
@@ -288,6 +314,7 @@ const DealsManagement = () => {
         return {
           image: img,
           buttonName: deal.buttonName || '',
+          dealOffer: deal.dealOffer || '',
           targetType: fallbackTarget.targetType,
           categoryId: fallbackTarget.categoryId,
           subCategoryName: fallbackTarget.subCategoryName,
@@ -301,6 +328,7 @@ const DealsManagement = () => {
       return {
         ...img,
         buttonName: img.buttonName || '',
+        dealOffer: img.dealOffer || deal.dealOffer || '',
         targetType: imgTargetType,
         categoryId:
           imgTargetType === 'category'
@@ -422,8 +450,8 @@ const DealsManagement = () => {
           <label className="form-label">Title</label>
           <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Deal title" required />
 
-          <label className="form-label">Deal Offer</label>
-          <textarea value={dealOffer} onChange={(e) => setDealOffer(e.target.value)} placeholder="e.g. Up to 40% off select items" rows={4} required />
+          <label className="form-label">Deal offers are entered per image below</label>
+          <p className="helper">Each image has its own deal offer text. The form will still submit a fallback top-level offer for legacy compatibility.</p>
 
           <label className="form-label checkbox-label">
             <input
@@ -470,7 +498,7 @@ const DealsManagement = () => {
             </>
           )}
 
-          <p className="helper">Set button name and target route separately for each image below.</p>
+          <p className="helper">Set button name, deal offer, and target route separately for each image below.</p>
 
           <label className="form-label">Images (2-10)</label>
           <input type="file" accept="image/*" multiple onChange={handleImagesChange} />
@@ -484,7 +512,27 @@ const DealsManagement = () => {
             {editingId && editExistingImages.length > 0 && images.length === 0 && (
               <>
                 {editExistingImages.map((img, idx) => (
-                  <div key={`existing-${idx}`}>
+                  <div key={`existing-${idx}`} style={{ position: 'relative' }}>
+                    <button
+                      type="button"
+                      onClick={() => removeExistingImage(idx)}
+                      title="Remove image"
+                      style={{
+                        position: 'absolute',
+                        top: 8,
+                        right: 8,
+                        zIndex: 2,
+                        width: 24,
+                        height: 24,
+                        borderRadius: '50%',
+                        border: 'none',
+                        background: 'rgba(0,0,0,0.6)',
+                        color: '#fff',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      ×
+                    </button>
                     <img src={toImageUrl(img.image)} alt="" onError={handleImageError(img.image)} />
                     <input
                       value={img.buttonName || ''}
@@ -494,6 +542,16 @@ const DealsManagement = () => {
                         )
                       }
                       placeholder="Button name"
+                      style={{ marginTop: 6 }}
+                    />
+                    <input
+                      value={img.dealOffer || ''}
+                      onChange={(e) =>
+                        setEditExistingImages((prev) =>
+                          prev.map((x, i) => (i === idx ? { ...x, dealOffer: e.target.value } : x))
+                        )
+                      }
+                      placeholder="Deal offer"
                       style={{ marginTop: 6 }}
                     />
                     <select
@@ -607,7 +665,27 @@ const DealsManagement = () => {
               </>
             )}
             {imagePreviews.map((src, idx) => (
-              <div key={`new-${idx}`}>
+              <div key={`new-${idx}`} style={{ position: 'relative' }}>
+                <button
+                  type="button"
+                  onClick={() => removeNewImage(idx)}
+                  title="Remove image"
+                  style={{
+                    position: 'absolute',
+                    top: 8,
+                    right: 8,
+                    zIndex: 2,
+                    width: 24,
+                    height: 24,
+                    borderRadius: '50%',
+                    border: 'none',
+                    background: 'rgba(0,0,0,0.6)',
+                    color: '#fff',
+                    cursor: 'pointer',
+                  }}
+                >
+                  ×
+                </button>
                 <img src={src} alt="" />
                 <input
                   value={imageActions[idx]?.buttonName || ''}
@@ -615,6 +693,14 @@ const DealsManagement = () => {
                     setImageActions((prev) => prev.map((a, i) => (i === idx ? { ...a, buttonName: e.target.value } : a)))
                   }
                   placeholder="Button name"
+                  style={{ marginTop: 6 }}
+                />
+                <input
+                  value={imageActions[idx]?.dealOffer || ''}
+                  onChange={(e) =>
+                    setImageActions((prev) => prev.map((a, i) => (i === idx ? { ...a, dealOffer: e.target.value } : a)))
+                  }
+                  placeholder="Deal offer"
                   style={{ marginTop: 6 }}
                 />
                 <select
@@ -752,7 +838,7 @@ const DealsManagement = () => {
                 <tr>
                   <th>Preview</th>
                   <th>Title</th>
-                  <th>Offer</th>
+                  <th>Offers</th>
                   <th>Buttons</th>
                   <th>Target</th>
                   <th>Status</th>
@@ -775,7 +861,16 @@ const DealsManagement = () => {
                       )}
                     </td>
                     <td>{deal.title}</td>
-                    <td>{deal.dealOffer}</td>
+                    <td>
+                      {(deal.images || [])
+                        .map((img) =>
+                          typeof img === 'string'
+                            ? deal.dealOffer
+                            : img.dealOffer || deal.dealOffer
+                        )
+                        .filter(Boolean)
+                        .join(', ')}
+                    </td>
                     <td>{(deal.images || []).map((img) => (typeof img === 'string' ? deal.buttonName || 'Button' : img.buttonName)).join(', ')}</td>
                     <td>
                       <div className="target-cell">
