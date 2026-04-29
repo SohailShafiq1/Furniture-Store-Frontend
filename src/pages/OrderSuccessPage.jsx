@@ -65,11 +65,11 @@ const OrderSuccessPage = () => {
             <div className="error-message">{error}</div>
           ) : order ? (
             <>
-              {/* <div className="order-details-box">
-                <p><strong>Order ID:</strong> {order._id}</p>
+              <div className="order-details-box">
+                <p><strong>Order ID:</strong> {order.orderId || order._id}</p>
                 <p><strong>Order Date:</strong> {new Date(order.createdAt).toLocaleDateString()}</p>
                 <p>We've sent you a confirmation email with all the details of your order.</p>
-              </div> */}
+              </div>
 
               <div className="items-section">
                 <h3>Order Items</h3>

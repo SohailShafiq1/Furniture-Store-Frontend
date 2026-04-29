@@ -22,6 +22,10 @@
   overflow: hidden;
 }
 
+.shop-by-category.no-arrows .category-track-wrapper {
+  overflow: visible;
+}
+
 .category-track {
   display: flex;
   gap: 22px;
@@ -29,6 +33,23 @@
   scroll-behavior: smooth;
   padding-bottom: 10px;
   margin: 0 -11px;
+}
+
+.shop-by-category.no-arrows .category-track {
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  overflow-x: visible;
+  margin: 0;
+  gap: 22px;
+}
+
+.shop-by-category.no-arrows .category-item {
+  flex: 0 1 calc(25% - 22px);
+  min-width: 190px;
+}
+
+.shop-by-category.no-arrows .category-heading {
+  margin-bottom: 30px;
 }
 
 .category-track::-webkit-scrollbar {

@@ -160,6 +160,15 @@
   line-height: 1.06;
 }
 
+.collection-fullwidth-banner {
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  width: 100vw;
+}
+
 .collection-deal-box {
   margin-top: 58px;
   /* background: #f3f3f3; */

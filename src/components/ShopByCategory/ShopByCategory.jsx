@@ -5,9 +5,11 @@ import { useCategoryData } from '../../hooks/useCategoryData';
 import { getAlternateImageUrl, getImageUrl } from '../../utils/imageUrl';
 import './ShopByCategory.css';
 
-export default function ShopByCategory() {
+export default function ShopByCategory({ showArrows = true, allCategories = false }) {
   const { categories, loading } = useCategoryData();
-  const visibleCategories = categories.filter((cat) => cat.showInShopByCategory !== false);
+  const visibleCategories = allCategories
+    ? categories
+    : categories.filter((cat) => cat.showInShopByCategory !== false);
   const trackRef = useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
@@ -20,11 +22,12 @@ export default function ShopByCategory() {
   };
 
   useEffect(() => {
+    if (!showArrows) return;
     updateScrollState();
     const handleResize = () => updateScrollState();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [visibleCategories.length]);
+  }, [visibleCategories.length, showArrows]);
 
   const scrollByOffset = (offset) => {
     const track = trackRef.current;
@@ -42,24 +45,26 @@ export default function ShopByCategory() {
   }
 
   return (
-    <section className="shop-by-category">
+    <section className={`shop-by-category ${showArrows ? '' : 'no-arrows'}`}>
       <h2 className="category-heading" data-aos="fade-up">Shop by Category</h2>
       <div className="category-carousel">
-        <button
-          type="button"
-          className={`carousel-arrow carousel-arrow-left ${canScrollLeft ? '' : 'disabled'}`}
-          onClick={() => scrollByOffset(-420)}
-          disabled={!canScrollLeft}
-          aria-label="Scroll categories left"
-        >
-          <FiChevronLeft />
-        </button>
+        {showArrows && (
+          <button
+            type="button"
+            className={`carousel-arrow carousel-arrow-left ${canScrollLeft ? '' : 'disabled'}`}
+            onClick={() => scrollByOffset(-420)}
+            disabled={!canScrollLeft}
+            aria-label="Scroll categories left"
+          >
+            <FiChevronLeft />
+          </button>
+        )}
 
-        <div className="category-track-wrapper">
+        <div className={`category-track-wrapper ${showArrows ? '' : 'no-arrows'}`}>
           <div
             className="category-track"
             ref={trackRef}
-            onScroll={updateScrollState}
+            onScroll={showArrows ? updateScrollState : undefined}
           >
             {visibleCategories.map((cat, idx) => {
               const displayName = (cat.shopByCategoryName || '').trim() || cat.name;
@@ -97,15 +102,17 @@ export default function ShopByCategory() {
           </div>
         </div>
 
-        <button
-          type="button"
-          className={`carousel-arrow carousel-arrow-right ${canScrollRight ? '' : 'disabled'}`}
-          onClick={() => scrollByOffset(420)}
-          disabled={!canScrollRight}
-          aria-label="Scroll categories right"
-        >
-          <FiChevronRight />
-        </button>
+        {showArrows && (
+          <button
+            type="button"
+            className={`carousel-arrow carousel-arrow-right ${canScrollRight ? '' : 'disabled'}`}
+            onClick={() => scrollByOffset(420)}
+            disabled={!canScrollRight}
+            aria-label="Scroll categories right"
+          >
+            <FiChevronRight />
+          </button>
+        )}
       </div>
     </section>
   );

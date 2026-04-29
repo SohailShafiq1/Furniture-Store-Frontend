@@ -5,6 +5,7 @@ import Footer from '../components/Footer/Footer';
 import { API_BASE_URL } from '../config/api';
 import { getAlternateImageUrl, getImageUrl } from '../utils/imageUrl';
 import './DealsCollectionPage.css';
+import SlidingBanner from '../components/SlidingBanner/SlidingBanner';
 
 const buildTargetPath = (target = {}) => {
   const type = target?.targetType;
@@ -151,8 +152,13 @@ export default function DealsCollectionPage() {
                     </article>
                   ))}
                 </div>
+                
               </section>
 
+              <div className="collection-fullwidth-banner">
+                <SlidingBanner />
+              </div>
+                 
               {collection.dealBox && (
                 <section className="collection-deal-box">
                   <div className="deal-box-media">

@@ -492,7 +492,7 @@ export default function DealsPage() {
         )}
 
         <div className="deals-category-wrapper">
-          <ShopByCategory />
+          <ShopByCategory showArrows={false} allCategories />
         </div>
 
         <div className="deals-financing-section">
