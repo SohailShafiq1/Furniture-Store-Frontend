@@ -15,6 +15,11 @@ const FinancingManagement = () => {
   const [detailsPoints, setDetailsPoints] = useState(['']);
   const [conditions, setConditions] = useState([{ title: '', description: '', points: [''] }]);
   const [logo, setLogo] = useState(null);
+  const [bannerEnabled, setBannerEnabled] = useState(false);
+  const [bannerTitle, setBannerTitle] = useState('');
+  const [bannerDescription, setBannerDescription] = useState('');
+  const [bannerColor, setBannerColor] = useState('#1E88E5');
+  const [customBannerColor, setCustomBannerColor] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [editingId, setEditingId] = useState(null);
@@ -25,10 +30,41 @@ const FinancingManagement = () => {
     details: '',
     conditions: [{ title: '', description: '', points: [''] }],
     logo: null,
+    bannerEnabled: false,
+    bannerTitle: '',
+    bannerDescription: '',
+    bannerColor: '#1E88E5',
   });
   const [editDetailsPoints, setEditDetailsPoints] = useState(['']);
   const [editLogoPreview, setEditLogoPreview] = useState('');
   const [logoPreview, setLogoPreview] = useState(null);
+  const bannerColors = ['#1E88E5', '#43A047', '#F4511E', '#6A1B9A', '#FFC107'];
+
+  const handleBannerToggle = () => {
+    if (editingId) {
+      setEditData({ ...editData, bannerEnabled: !editData.bannerEnabled });
+      return;
+    }
+    setBannerEnabled((prev) => !prev);
+  };
+
+  const handleBannerColorSelect = (color) => {
+    if (editingId) {
+      setEditData({ ...editData, bannerColor: color });
+      return;
+    }
+    setBannerColor(color);
+    setCustomBannerColor('');
+  };
+
+  const handleBannerColorChange = (value) => {
+    if (editingId) {
+      setEditData({ ...editData, bannerColor: value });
+      return;
+    }
+    setBannerColor(value);
+    setCustomBannerColor(value);
+  };
   const { token } = useAdminAuth();
   const navigate = useNavigate();
 
@@ -162,6 +198,11 @@ const FinancingManagement = () => {
       return;
     }
 
+    if (bannerEnabled && (!bannerTitle.trim() || !bannerDescription.trim())) {
+      setError('Banner title and description are required when banner is enabled');
+      return;
+    }
+
     if (!token) {
       setError('Not authenticated. Please log in.');
       return;
@@ -176,6 +217,10 @@ const FinancingManagement = () => {
       formData.append('conditions', JSON.stringify(
         conditions.filter(c => c.title.trim() || c.description.trim())
       ));
+      formData.append('bannerEnabled', bannerEnabled);
+      formData.append('bannerTitle', bannerTitle);
+      formData.append('bannerDescription', bannerDescription);
+      formData.append('bannerColor', bannerColor);
       if (logo) formData.append('logo', logo);
 
       await axios.post(`${apiEndpoint}/create`, formData, multipartConfig);
@@ -188,6 +233,11 @@ const FinancingManagement = () => {
       setConditions([{ title: '', description: '', points: [''] }]);
       setLogo(null);
       setLogoPreview(null);
+      setBannerEnabled(false);
+      setBannerTitle('');
+      setBannerDescription('');
+      setBannerColor('#1E88E5');
+      setCustomBannerColor('');
       setError('');
       fetchCompanies();
     } catch (err) {
@@ -208,6 +258,10 @@ const FinancingManagement = () => {
         ? company.conditions 
         : [{ title: '', description: '', points: [''] }],
       logo: null,
+      bannerEnabled: company.banner?.enabled || false,
+      bannerTitle: company.banner?.title || '',
+      bannerDescription: company.banner?.description || '',
+      bannerColor: company.banner?.backgroundColor || '#1E88E5',
     });
     setEditDetailsPoints(parseDetailsPoints(company.details || ''));
     setEditLogoPreview(company.logo ? getImageUrl(company.logo) : '');
@@ -267,6 +321,11 @@ const FinancingManagement = () => {
       return;
     }
 
+    if (editData.bannerEnabled && (!editData.bannerTitle.trim() || !editData.bannerDescription.trim())) {
+      setError('Banner title and description are required when banner is enabled');
+      return;
+    }
+
     if (!token) {
       setError('Not authenticated. Please log in.');
       return;
@@ -281,12 +340,27 @@ const FinancingManagement = () => {
       formData.append('conditions', JSON.stringify(
         editData.conditions.filter(c => c.title.trim() || c.description.trim())
       ));
+      formData.append('bannerEnabled', editData.bannerEnabled);
+      formData.append('bannerTitle', editData.bannerTitle);
+      formData.append('bannerDescription', editData.bannerDescription);
+      formData.append('bannerColor', editData.bannerColor);
       if (editData.logo) formData.append('logo', editData.logo);
 
       await axios.put(`${apiEndpoint}/${editingId}`, formData, multipartConfig);
       setMessage('Company updated successfully!');
       setEditingId(null);
-      setEditData({ companyName: '', applyLink: '', title: '', details: '', conditions: [{ title: '', description: '', points: [''] }], logo: null });
+      setEditData({
+        companyName: '',
+        applyLink: '',
+        title: '',
+        details: '',
+        conditions: [{ title: '', description: '', points: [''] }],
+        logo: null,
+        bannerEnabled: false,
+        bannerTitle: '',
+        bannerDescription: '',
+        bannerColor: '#1E88E5',
+      });
       setEditDetailsPoints(['']);
       setEditLogoPreview('');
       setError('');
@@ -314,9 +388,25 @@ const FinancingManagement = () => {
 
   const handleCancel = () => {
     setEditingId(null);
-    setEditData({ companyName: '', applyLink: '', title: '', details: '', conditions: [''], logo: null });
+    setEditData({
+      companyName: '',
+      applyLink: '',
+      title: '',
+      details: '',
+      conditions: [{ title: '', description: '', points: [''] }],
+      logo: null,
+      bannerEnabled: false,
+      bannerTitle: '',
+      bannerDescription: '',
+      bannerColor: '#1E88E5',
+    });
     setEditDetailsPoints(['']);
     setEditLogoPreview('');
+    setBannerEnabled(false);
+    setBannerTitle('');
+    setBannerDescription('');
+    setBannerColor('#1E88E5');
+    setCustomBannerColor('');
   };
 
   return (
@@ -364,6 +454,64 @@ const FinancingManagement = () => {
               required
             />
           </div>
+
+          <div className="form-group banner-toggle-group">
+            <label>
+              <input
+                type="checkbox"
+                checked={editingId ? editData.bannerEnabled : bannerEnabled}
+                onChange={handleBannerToggle}
+              />
+              {' '}Add a banner for this financing company
+            </label>
+          </div>
+
+          {(editingId ? editData.bannerEnabled : bannerEnabled) && (
+            <div className="banner-settings">
+              <div className="form-group">
+                <label htmlFor="bannerTitle">Banner Title</label>
+                <input
+                  id="bannerTitle"
+                  type="text"
+                  placeholder="Enter banner heading"
+                  value={editingId ? editData.bannerTitle : bannerTitle}
+                  onChange={(e) => editingId ? setEditData({ ...editData, bannerTitle: e.target.value }) : setBannerTitle(e.target.value)}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="bannerDescription">Banner Description</label>
+                <textarea
+                  id="bannerDescription"
+                  placeholder="Enter banner description"
+                  value={editingId ? editData.bannerDescription : bannerDescription}
+                  onChange={(e) => editingId ? setEditData({ ...editData, bannerDescription: e.target.value }) : setBannerDescription(e.target.value)}
+                  rows={3}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Banner Background Color</label>
+                <div className="color-options">
+                  {(bannerColors || []).map((color) => (
+                    <button
+                      type="button"
+                      key={color}
+                      className={`color-chip ${((editingId ? editData.bannerColor : bannerColor) === color) ? 'selected' : ''}`}
+                      style={{ backgroundColor: color }}
+                      onClick={() => handleBannerColorSelect(color)}
+                    />
+                  ))}
+                </div>
+                <input
+                  type="text"
+                  placeholder="#ff6600 or any valid hex color"
+                  value={editingId ? editData.bannerColor : bannerColor}
+                  onChange={(e) => handleBannerColorChange(e.target.value)}
+                />
+              </div>
+            </div>
+          )}
 
           <div className="form-group">
             <label>Details Points (shown under In-Store & Online)</label>
@@ -537,6 +685,7 @@ const FinancingManagement = () => {
                   <th>Apply Link</th>
                   <th>Details</th>
                   <th>Conditions</th>
+                  <th>Banner</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -591,6 +740,22 @@ const FinancingManagement = () => {
                             ))
                           : <span>No conditions</span>}
                       </div>
+                    </td>
+                    <td>
+                      {company.banner?.enabled ? (
+                        <div className="banner-summary">
+                          <strong>{company.banner.title || 'Banner enabled'}</strong>
+                          <p>{company.banner.description || ''}</p>
+                          {company.banner.backgroundColor && (
+                            <span
+                              className="banner-color-chip"
+                              style={{ backgroundColor: company.banner.backgroundColor }}
+                            />
+                          )}
+                        </div>
+                      ) : (
+                        'No'
+                      )}
                     </td>
                     <td className="actions">
                       <button

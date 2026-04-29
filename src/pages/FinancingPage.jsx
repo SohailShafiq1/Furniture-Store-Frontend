@@ -155,11 +155,21 @@ const FinancingPage = () => {
 
             return (
               <article key={company._id} className="company-block">
-                <div className="snap-finance-section">
-                  <div className="snap-header">
-                    <h2>{company.companyName}</h2>
-                    {company.details && <p>{company.details}</p>}
-                  </div>
+              {company.banner?.enabled && (company.banner.title || company.banner.description) && (
+                <div
+                  className="company-banner"
+                  style={{ backgroundColor: company.banner.backgroundColor || '#f4d7a1' }}
+                >
+                  {company.banner.title && <h2>{company.banner.title}</h2>}
+                  {company.banner.description && <p>{company.banner.description}</p>}
+                </div>
+              )}
+
+              <div className="snap-finance-section">
+                <div className="snap-header">
+                  <h2>{company.companyName}</h2>
+                  {company.details && <p>{company.details}</p>}
+                </div>
 
                   <div className="snap-details">
                     <div className="snap-left">

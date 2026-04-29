@@ -78,6 +78,64 @@
   transition: border-color 0.3s;
 }
 
+.banner-toggle-group label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-weight: 600;
+  color: #333;
+}
+
+.banner-settings {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem 0 0 0;
+  border-top: 1px solid #eee;
+}
+
+.color-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 0.75rem;
+}
+
+.color-chip {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.color-chip.selected {
+  transform: scale(1.05);
+  border-color: #333;
+}
+
+.banner-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.banner-summary p {
+  margin: 0;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.banner-color-chip {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+  margin-top: 4px;
+}
+
 .form-group input[type="text"]:focus,
 .form-group input[type="url"]:focus,
 .form-group textarea:focus,
