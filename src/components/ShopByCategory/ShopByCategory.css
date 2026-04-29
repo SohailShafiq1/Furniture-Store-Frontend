@@ -16,10 +16,13 @@
 .category-carousel {
   position: relative;
   width: 100%;
+  display: flex;
+  align-items: center;
 }
 
 .category-track-wrapper {
   overflow: hidden;
+  width: 100%;
 }
 
 .shop-by-category.no-arrows .category-track-wrapper {
@@ -70,7 +73,7 @@
 
 .carousel-arrow {
   position: absolute;
-  top: 50%;
+  /* top: 50%; */
   transform: translateY(-50%);
   width: 44px;
   height: 44px;
