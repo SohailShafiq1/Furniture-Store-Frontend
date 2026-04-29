@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
@@ -160,7 +161,11 @@ const StoreLocationsPage = () => {
 
           {/* Contact Options */}
           <div className="contact-options">
-            <div className="contact-option">
+            <a
+              href="mailto:customerservice@dimondmodernfurniture.com"
+              className="contact-option contact-card-link"
+              aria-label="Email us"
+            >
               <div className="contact-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <rect x="2" y="4" width="20" height="16" rx="2"></rect>
@@ -168,10 +173,14 @@ const StoreLocationsPage = () => {
                 </svg>
               </div>
               <h3>E-Mail Us</h3>
-              <p>customerservice@lunafurn.com</p>
-            </div>
+              <p>customerservice@dimondmodernfurniture.com</p>
+            </a>
 
-            <div className="contact-option">
+            <a
+              href="tel:+18329003800"
+              className="contact-option contact-card-link"
+              aria-label="Call us"
+            >
               <div className="contact-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
@@ -179,9 +188,9 @@ const StoreLocationsPage = () => {
               </div>
               <h3>Call Us</h3>
               <p>(832) 900-3800</p>
-            </div>
+            </a>
 
-            <div className="contact-option">
+            <Link to="/faqs" className="contact-option contact-card-link" aria-label="FAQs">
               <div className="contact-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="12" cy="12" r="10"></circle>
@@ -190,14 +199,17 @@ const StoreLocationsPage = () => {
               </div>
               <h3>FAQs</h3>
               <p>Get quick answers</p>
-            </div>
+            </Link>
           </div>
 
           {/* Service Team Message */}
           <div className="service-team-message">
-            <h2>Our customer service team is available to help you.</h2>
-            <p>Monday to Saturday: 9 AM - 6 PM</p>
-            <p>Sunday: 12 PM - 6 PM</p>
+            <h2>
+              Our customer service team is<br />
+              available to help you.
+            </h2>
+            <p className="service-schedule">Monday to Saturday: 9 AM - 6 PM</p>
+            <p className="service-schedule">Sunday: 12 PM - 6 PM</p>
           </div>
         </div>
       </section>

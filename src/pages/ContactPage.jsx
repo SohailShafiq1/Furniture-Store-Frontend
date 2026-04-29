@@ -74,36 +74,44 @@ export default function ContactPage() {
           <div className="help-inner">
             <h2>We're Here to Help.</h2>
             <div className="contact-cards">
-              <div className="contact-card">
-                <div className="contact-card-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="4" y="6" width="16" height="12" rx="3" />
-                    <path d="M4 8l8 6 8-6" />
-                  </svg>
-                </div>
-                <h3>E-Mail Us</h3>
-                <p>customerservice@dimondmodernfurniture.com</p>
+              <a
+              href="mailto:customerservice@dimondmodernfurniture.com"
+              className="contact-card contact-card-link"
+              aria-label="Email us"
+            >
+              <div className="contact-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="4" y="6" width="16" height="12" rx="3" />
+                  <path d="M4 8l8 6 8-6" />
+                </svg>
               </div>
-              <div className="contact-card">
-                <div className="contact-card-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.86 19.86 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.91 19.91 0 0 1 2.08 4.18 2 2 0 0 1 4 2h3a2 2 0 0 1 2 1.72c.12.81.33 1.6.62 2.35a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.73-1.73a2 2 0 0 1 2.11-.45c.75.29 1.54.5 2.35.62A2 2 0 0 1 22 16.92z" />
-                  </svg>
-                </div>
-                <h3>Call Us</h3>
-                <p>(832) 900-3800</p>
+              <h3>E-Mail Us</h3>
+              <p>customerservice@dimondmodernfurniture.com</p>
+            </a>
+            <a
+              href="tel:+18329003800"
+              className="contact-card contact-card-link"
+              aria-label="Call us"
+            >
+              <div className="contact-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.86 19.86 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.91 19.91 0 0 1 2.08 4.18 2 2 0 0 1 4 2h3a2 2 0 0 1 2 1.72c.12.81.33 1.6.62 2.35a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.73-1.73a2 2 0 0 1 2.11-.45c.75.29 1.54.5 2.35.62A2 2 0 0 1 22 16.92z" />
+                </svg>
               </div>
-              <div className="contact-card">
-                <div className="contact-card-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="9" />
-                    <path d="M12 8a2 2 0 0 1 2 2c0 2-2 2-2 4" />
-                    <circle cx="12" cy="17" r="1" />
-                  </svg>
-                </div>
-                <h3>FAQs</h3>
-                <p>Get quick answers to common questions.</p>
+              <h3>Call Us</h3>
+              <p>(832) 900-3800</p>
+            </a>
+            <Link to="/faqs" className="contact-card contact-card-link" aria-label="FAQs">
+              <div className="contact-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M12 8a2 2 0 0 1 2 2c0 2-2 2-2 4" />
+                  <circle cx="12" cy="17" r="1" />
+                </svg>
               </div>
+              <h3>FAQs</h3>
+              <p>Get quick answers to common questions.</p>
+            </Link>
             </div>
           </div>
         </section>
