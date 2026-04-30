@@ -286,7 +286,9 @@ export default function Header() {
                           <FiBox />
                         )}
                       </div>
-                      <span className="mega-menu-left-label">{sub.label}</span>
+                      <div className="mega-menu-left-text">
+                        <span className="mega-menu-left-label">{sub.label}</span>
+                      </div>
                     </Link>
                   );
                 })}

@@ -361,6 +361,7 @@
   border: none;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
   font-size: 2rem;
   font-weight: 500;
@@ -369,7 +370,7 @@
   transition: color 0.2s ease;
   text-align: left;
   position: relative;
-  line-height: 1.25;
+  line-height: 2.25;
 }
 
 .condition-toggle:focus,
@@ -395,10 +396,16 @@
 
 .toggle-arrow {
   margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
   font-size: 1.5rem;
   line-height: 1;
   transition: transform 0.3s ease;
   flex-shrink: 0;
+  align-self: center;
   color: #111;
 }
 

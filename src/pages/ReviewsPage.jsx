@@ -30,6 +30,16 @@ export default function ReviewsPage() {
     totalReviews: 0,
     ratingDistribution: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
   });
+  const [badgeStats, setBadgeStats] = useState({
+    verifiedReviews: 0,
+    monthlyRecord: 0,
+    authenticityLabel: 'Silver',
+    authenticitySub: 'Authenticity',
+    trendingLabel: 'Top 1%',
+    trendingSub: 'Trending',
+    storeRankLabel: 'Top 5%',
+    storeRankSub: 'Stores'
+  });
 
   const [reviewForm, setReviewForm] = useState({
     userName: '',
@@ -84,6 +94,16 @@ export default function ReviewsPage() {
           totalReviews: 0,
           ratingDistribution: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
         });
+        setBadgeStats(storeRes.data?.badges || {
+          verifiedReviews: 0,
+          monthlyRecord: 0,
+          authenticityLabel: 'Silver',
+          authenticitySub: 'Authenticity',
+          trendingLabel: 'Top 1%',
+          trendingSub: 'Trending',
+          storeRankLabel: 'Top 5%',
+          storeRankSub: 'Stores'
+        });
       } catch (error) {
         console.error('Error loading reviews page data:', error);
       }
@@ -120,6 +140,7 @@ export default function ReviewsPage() {
       });
       setStoreReviews(Array.isArray(refreshed.data?.reviews) ? refreshed.data.reviews : []);
       setStoreStats(refreshed.data?.stats || storeStats);
+      setBadgeStats(refreshed.data?.badges || badgeStats);
     } catch (error) {
       setReviewError(error.response?.data?.message || 'Failed to submit review');
     } finally {
@@ -226,11 +247,26 @@ export default function ReviewsPage() {
             </div>
           </div>
           <div className="reviews-media-right">
-            <div className="badge">1752<br />Verified Reviews</div>
-            <div className="badge">104<br />Monthly Record</div>
-            <div className="badge">Silver<br />Authenticity</div>
-            <div className="badge">Top 1%<br />Trending</div>
-            <div className="badge">Top 5%<br />Stores</div>
+            <div className="badge">
+              {badgeStats.verifiedReviews}
+              <br />Verified Reviews
+            </div>
+            <div className="badge">
+              {badgeStats.monthlyRecord}
+              <br />Monthly Record
+            </div>
+            <div className="badge">
+              {badgeStats.authenticityLabel}
+              <br />{badgeStats.authenticitySub}
+            </div>
+            <div className="badge">
+              {badgeStats.trendingLabel}
+              <br />{badgeStats.trendingSub}
+            </div>
+            <div className="badge">
+              {badgeStats.storeRankLabel}
+              <br />{badgeStats.storeRankSub}
+            </div>
           </div>
         </section>
 

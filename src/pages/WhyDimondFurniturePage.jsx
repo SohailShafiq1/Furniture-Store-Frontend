@@ -14,7 +14,7 @@ export default function WhyDimondFurniturePage() {
       <Header />
       <main className="about-us-page">
         <section className="about-hero" aria-label="Why Dimond Furniture hero section">
-          <h1>Why Dimond Modern? </h1>
+          <h1>Why Dimond Modern Furniture? </h1>
         </section>
 
         <section className="about-intro" aria-label="Why Dimond Furniture intro">

@@ -193,9 +193,10 @@ export default function DealsPage() {
                   <div className={sectionClass}>
                     <h2 className={titleClass}>{deal.title}</h2>
                     {isThree && deal.images.length > 3 ? (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                      <div className="deal-carousel-row">
                         <button
                           type="button"
+                          className={`deal-arrow deal-arrow-left ${dealStart === 0 ? 'disabled' : ''}`}
                           onClick={() =>
                             setDealStartIndices((prev) => ({
                               ...prev,
@@ -203,24 +204,9 @@ export default function DealsPage() {
                             }))
                           }
                           disabled={dealStart === 0}
-                          style={{
-                            width: 44,
-                            height: 44,
-                            borderRadius: '50%',
-                            border: '2px solid #222',
-                            background: 'white',
-                            fontSize: 30,
-                            lineHeight: 1,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            padding: 0,
-                            cursor: dealStart === 0 ? 'not-allowed' : 'pointer',
-                            opacity: dealStart === 0 ? 0.35 : 1,
-                          }}
                           aria-label="Previous deal images"
                         >
-                          <span style={{ transform: 'translateY(-1px)' }}>&lsaquo;</span>
+                          <span>&lsaquo;</span>
                         </button>
                         <div className={gridClass} style={{ flex: 1 }}>
                           {visibleImages.map((img) => (
@@ -249,6 +235,7 @@ export default function DealsPage() {
                         </div>
                         <button
                           type="button"
+                          className={`deal-arrow deal-arrow-right ${dealStart >= maxDealStart ? 'disabled' : ''}`}
                           onClick={() =>
                             setDealStartIndices((prev) => ({
                               ...prev,
@@ -256,24 +243,9 @@ export default function DealsPage() {
                             }))
                           }
                           disabled={dealStart >= maxDealStart}
-                          style={{
-                            width: 44,
-                            height: 44,
-                            borderRadius: '50%',
-                            border: '2px solid #222',
-                            background: 'white',
-                            fontSize: 30,
-                            lineHeight: 1,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            padding: 0,
-                            cursor: dealStart >= maxDealStart ? 'not-allowed' : 'pointer',
-                            opacity: dealStart >= maxDealStart ? 0.35 : 1,
-                          }}
                           aria-label="Next deal images"
                         >
-                          <span style={{ transform: 'translateY(-1px)' }}>&rsaquo;</span>
+                          <span>&rsaquo;</span>
                         </button>
                       </div>
                     ) : (
@@ -411,29 +383,15 @@ export default function DealsPage() {
         {featuredDeal && (
           <div className="fresh-picks-section" style={{ maxWidth: 1500, margin: '40px auto 0', padding: '0 40px' }}>
             <h2 className="fresh-picks-title">{featuredDeal.title}</h2>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+            <div className="deals-featured-row">
               <button
                 type="button"
+                className={`featured-arrow featured-arrow-left ${featuredStartIndex === 0 ? 'disabled' : ''}`}
                 onClick={() => setFeaturedStartIndex((prev) => Math.max(0, prev - 1))}
                 disabled={featuredStartIndex === 0}
-                style={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: '50%',
-                  border: '2px solid #222',
-                  background: 'white',
-                  fontSize: 30,
-                  lineHeight: 1,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: 0,
-                  cursor: featuredStartIndex === 0 ? 'not-allowed' : 'pointer',
-                  opacity: featuredStartIndex === 0 ? 0.35 : 1,
-                }}
                 aria-label="Previous featured images"
               >
-                <span style={{ transform: 'translateY(-1px)' }}>&lsaquo;</span>
+                <span>&lsaquo;</span>
               </button>
 
               <div className="fresh-picks-grid" style={{ flex: 1 }}>
@@ -466,26 +424,12 @@ export default function DealsPage() {
 
               <button
                 type="button"
+                className={`featured-arrow featured-arrow-right ${featuredStartIndex >= featuredMaxStart ? 'disabled' : ''}`}
                 onClick={() => setFeaturedStartIndex((prev) => Math.min(featuredMaxStart, prev + 1))}
                 disabled={featuredStartIndex >= featuredMaxStart}
-                style={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: '50%',
-                  border: '2px solid #222',
-                  background: 'white',
-                  fontSize: 30,
-                  lineHeight: 1,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: 0,
-                  cursor: featuredStartIndex >= featuredMaxStart ? 'not-allowed' : 'pointer',
-                  opacity: featuredStartIndex >= featuredMaxStart ? 0.35 : 1,
-                }}
                 aria-label="Next featured images"
               >
-                <span style={{ transform: 'translateY(-1px)' }}>&rsaquo;</span>
+                <span>&rsaquo;</span>
               </button>
             </div>
           </div>

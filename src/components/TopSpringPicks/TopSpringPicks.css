@@ -21,16 +21,20 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 24px;
-  flex: 1;
+  width: 100%;
 }
 
 .spring-picks-carousel-row {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 14px;
+  padding: 0 60px;
 }
 
 .spring-picks-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
   width: 44px;
   height: 44px;
   border-radius: 50%;
@@ -43,6 +47,22 @@
   justify-content: center;
   padding: 0;
   cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.spring-picks-carousel-row:hover .spring-picks-arrow {
+  opacity: 1;
+  visibility: visible;
+}
+
+.spring-picks-arrow:first-of-type {
+  left: 0;
+}
+
+.spring-picks-arrow:last-of-type {
+  right: 0;
 }
 
 .spring-picks-arrow:disabled {
@@ -146,6 +166,7 @@
 
   .spring-picks-carousel-row {
     gap: 8px;
+    padding: 0 48px;
   }
 
   .spring-picks-arrow {
