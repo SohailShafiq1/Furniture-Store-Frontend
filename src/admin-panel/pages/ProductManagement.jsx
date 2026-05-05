@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useAdminAuth } from '../context/AdminAuthContext';
 import { API_BASE_URL } from '../../config/api';
 import { getImageUrl, getAlternateImageUrl } from '../../utils/imageUrl';
+import ProductPickerModal from '../components/ProductPickerModal/ProductPickerModal';
 import '../admin-panel.css'; 
 
 const ProductManagement = () => {
@@ -34,6 +35,7 @@ const ProductManagement = () => {
         price: '',
         discount: '0',
         description: '',
+        videoUrl: '',
         categoryId: '',
         subCategoryName: '',
         subSubCategoryName: '',
@@ -97,6 +99,10 @@ const ProductManagement = () => {
     
     // Product Variations
     const [variations, setVariations] = useState([]);
+    
+    // Ready Made Sets
+    const [readyMadeProducts, setReadyMadeProducts] = useState([]);
+    const [showProductPickerModal, setShowProductPickerModal] = useState(false);
     
     // Track existing images separately from new images
     const [existingImages, setExistingImages] = useState([]);
@@ -262,9 +268,13 @@ const ProductManagement = () => {
         setIsEditing(true);
         setCurrentProductId(prod._id);
         
+        // Get the actual category ID (handle both object and string formats)
+        const categoryId = typeof prod.category === 'object' ? prod.category?._id : prod.category;
+        const categoryIdStr = String(categoryId || '');
+        
         // Populate categories/subs first so the dropdowns have options to match against
-        if (prod.category?._id) {
-            const selected = categories.find(c => c._id === prod.category._id);
+        if (categoryIdStr) {
+            const selected = categories.find(c => String(c._id) === categoryIdStr);
             const subs = selected ? selected.subCategories : [];
             setSubCategories(subs);
             
@@ -281,7 +291,8 @@ const ProductManagement = () => {
             price: prod.price || '',
             discount: prod.discount || '0',
             description: prod.description || '',
-            categoryId: prod.category?._id || '',
+            videoUrl: prod.videoUrl || '',
+            categoryId: categoryIdStr,
             subCategoryName: prod.subCategoryName || '',
             subSubCategoryName: prod.subSubCategoryName || '',
             collectionName: prod.collectionName || '',
@@ -391,6 +402,23 @@ const ProductManagement = () => {
             customDims = [];
         }
         setCustomDimensions(customDims);
+
+        // Handle readyMadeProducts safely
+        let readyMade = [];
+        try {
+            readyMade = typeof prod.readyMadeProducts === 'string'
+                ? JSON.parse(prod.readyMadeProducts)
+                : (prod.readyMadeProducts || []);
+            // Ensure it's an array of IDs
+            if (Array.isArray(readyMade)) {
+                readyMade = readyMade.map(item => typeof item === 'object' ? item._id : item);
+            } else {
+                readyMade = [];
+            }
+        } catch (e) {
+            readyMade = [];
+        }
+        setReadyMadeProducts(readyMade);
         
         // Load existing images
         const existingImgs = prod.images && prod.images.length > 0 
@@ -471,10 +499,12 @@ const ProductManagement = () => {
             fd.append('dimensions', JSON.stringify(dimensions));
             fd.append('customDimensions', JSON.stringify(customDimensions));
             fd.append('variations', variationsJSON);
+            fd.append('readyMadeProducts', JSON.stringify(readyMadeProducts));
             
             console.log('Submitting customColors:', customColors);
             console.log('Submitting selectedColors:', selectedColors);
             console.log('Submitting customDimensions:', customDimensions);
+            console.log('Submitting readyMadeProducts:', readyMadeProducts);
             
             console.log('Submitting with variations:', variations, 'JSON:', variationsJSON);
 
@@ -535,6 +565,7 @@ const ProductManagement = () => {
         setNewDimensionValue('');
         setStockType('Universal');
         setStockDistribution({ total: '0' });
+        setReadyMadeProducts([]);
     };
 
     const handleDelete = async (id) => {
@@ -683,6 +714,20 @@ const ProductManagement = () => {
                                onChange={e => setFormData({...formData, description: e.target.value})} 
                                required 
                             />
+                        </div>
+
+                        <div className="form-group">
+                            <label>Guidance Video (Optional)</label>
+                            <textarea 
+                               className="form-control"
+                               rows="2"
+                               placeholder="Paste YouTube link (e.g., https://www.youtube.com/watch?v=...) or video file URL"
+                               value={formData.videoUrl} 
+                               onChange={e => setFormData({...formData, videoUrl: e.target.value})} 
+                            />
+                            <small style={{color: '#666', marginTop: '8px', display: 'block'}}>
+                              Enter a YouTube video link or upload a video file URL. This will be displayed on the product detail page.
+                            </small>
                         </div>
 
                         {/* Professional Store Stock Attribution System */}
@@ -1353,6 +1398,87 @@ const ProductManagement = () => {
                             </div>
                         </div>
 
+                        {/* Ready Made Sets Section */}
+                        <div className="admin-card" style={{ marginTop: '2rem' }}>
+                            <div className="admin-card-title">
+                                <span>Ready Made Sets</span>
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                                <button 
+                                    type="button" 
+                                    className="btn-secondary"
+                                    onClick={() => setShowProductPickerModal(true)}
+                                    style={{ padding: '12px 20px', fontSize: '1rem', backgroundColor: '#4f46e5', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
+                                >
+                                    + Add Ready Made Sets
+                                </button>
+                                
+                                {readyMadeProducts.length > 0 ? (
+                                    <div style={{ 
+                                        display: 'grid', 
+                                        gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', 
+                                        gap: '10px',
+                                        marginTop: '10px'
+                                    }}>
+                                        {readyMadeProducts.map(productId => {
+                                            const product = products.find(p => p._id === productId);
+                                            return product ? (
+                                                <div key={productId} style={{
+                                                    position: 'relative',
+                                                    border: '1px solid #ddd',
+                                                    borderRadius: '6px',
+                                                    overflow: 'hidden',
+                                                    backgroundColor: '#f9fafb'
+                                                }}>
+                                                    <img 
+                                                        src={product.images?.[0] || product.image} 
+                                                        alt={product.name}
+                                                        style={{ width: '100%', height: '80px', objectFit: 'cover' }}
+                                                        onError={(e) => { e.target.src = '/placeholder.png'; }}
+                                                    />
+                                                    <div style={{ padding: '8px', fontSize: '12px', color: '#333' }}>
+                                                        <p style={{ margin: '0 0 4px 0', fontWeight: '500', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                                            {product.name}
+                                                        </p>
+                                                        <p style={{ margin: 0, fontSize: '11px', color: '#666' }}>
+                                                            ${product.price}
+                                                        </p>
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setReadyMadeProducts(readyMadeProducts.filter(id => id !== productId))}
+                                                        style={{
+                                                            position: 'absolute',
+                                                            top: '4px',
+                                                            right: '4px',
+                                                            background: '#ef4444',
+                                                            color: 'white',
+                                                            border: 'none',
+                                                            borderRadius: '50%',
+                                                            width: '20px',
+                                                            height: '20px',
+                                                            padding: 0,
+                                                            cursor: 'pointer',
+                                                            fontSize: '12px',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center'
+                                                        }}
+                                                    >
+                                                        ✕
+                                                    </button>
+                                                </div>
+                                            ) : null;
+                                        })}
+                                    </div>
+                                ) : (
+                                    <p style={{ color: '#999', fontSize: '14px', margin: '10px 0 0 0' }}>
+                                        No ready made sets added yet. Click the button above to add products.
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+
                         <button type="submit" className="btn-publish" style={{
                             background: isEditing ? '#4f46e5' : '#0f172a'
                         }}>
@@ -1474,6 +1600,15 @@ const ProductManagement = () => {
                     ))}
                 </div>
             </div>
+
+            {/* Product Picker Modal */}
+            <ProductPickerModal 
+                isOpen={showProductPickerModal}
+                onClose={() => setShowProductPickerModal(false)}
+                onSelectProducts={(selectedIds) => setReadyMadeProducts(selectedIds)}
+                selectedProductIds={readyMadeProducts}
+                categories={categories}
+            />
         </div>
     );
 };

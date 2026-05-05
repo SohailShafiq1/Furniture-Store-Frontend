@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
@@ -49,6 +50,7 @@ export default function ReviewsPage() {
     comment: ''
   });
 
+  const navigate = useNavigate();
   const storeId = useMemo(() => localStorage.getItem('storeId') || 'default-store', []);
 
   const summaryStats = activeTab === 'product' ? productStats : storeStats;
@@ -65,6 +67,20 @@ export default function ReviewsPage() {
       .filter(Boolean);
     return [...fromProductImages, ...fromStoreImages].slice(0, 7);
   }, [productReviews, storeReviews]);
+
+  const getCategoryId = (value) => {
+    if (!value) return '';
+    if (typeof value === 'string') return value;
+    if (typeof value === 'object' && value !== null) {
+      return value._id ? String(value._id) : String(value);
+    }
+    return String(value);
+  };
+
+  const verifiedReviewCount = useMemo(
+    () => (storeStats?.totalReviews || 0) + (productStats?.totalReviews || 0),
+    [storeStats?.totalReviews, productStats?.totalReviews]
+  );
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -248,7 +264,7 @@ export default function ReviewsPage() {
           </div>
           <div className="reviews-media-right">
             <div className="badge">
-              {badgeStats.verifiedReviews}
+              {verifiedReviewCount}
               <br />Verified Reviews
             </div>
             <div className="badge">
@@ -300,25 +316,36 @@ export default function ReviewsPage() {
             const reviewUser = review?.userName || 'Anonymous';
             const reviewText = review?.comment || '';
             const stars = Math.max(1, Math.min(5, parseInt(review?.rating || 0, 10)));
+            const productUrl = review?.product?._id
+              ? review.product.category
+                ? `/product/${getCategoryId(review.product.category)}/${review.product._id}`
+                : `/product/${review.product._id}`
+              : '#';
 
             return (
-            <article
-              key={`${review?._id || reviewTitle}-${index}`}
-              className={`review-card ${index === 1 ? 'featured' : ''}`}
-            >
-              <a href="#" className="review-product-link">
-                {review?.product?.title ? `about ${review.product.title}` : reviewTitle}
-              </a>
-              <div className="review-stars">{starText(stars)}</div>
-              <div className="review-user">
-                <span className="review-user-icon">◉</span>
-                <span>{reviewUser}</span>
-                {review?.isVerifiedPurchase && <span className="verified">Verified</span>}
-              </div>
-              <img src={normalizeImageUrl(reviewImage)} alt={reviewTitle} loading="lazy" />
-              <h4>{reviewTitle}</h4>
-              <p>{reviewText}</p>
-            </article>
+              <article
+                key={`${review?._id || reviewTitle}-${index}`}
+                className={`review-card ${index === 1 ? 'featured' : ''}`}
+                onClick={() => {
+                  if (review?.product?._id) {
+                    navigate(productUrl);
+                  }
+                }}
+                style={{ cursor: review?.product?._id ? 'pointer' : 'default' }}
+              >
+                <a href={productUrl} className="review-product-link">
+                  {review?.product?.title ? `about ${review.product.title}` : reviewTitle}
+                </a>
+                <div className="review-stars">{starText(stars)}</div>
+                <div className="review-user">
+                  <span className="review-user-icon">◉</span>
+                  <span>{reviewUser}</span>
+                  {review?.isVerifiedPurchase && <span className="verified">Verified</span>}
+                </div>
+                <img src={normalizeImageUrl(reviewImage)} alt={reviewTitle} loading="lazy" />
+                <h4>{reviewTitle}</h4>
+                <p>{reviewText}</p>
+              </article>
             );
           })}
         </section>

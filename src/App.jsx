@@ -5,6 +5,7 @@ import 'aos/dist/aos.css';
 import HomePage from './pages/HomePage';
 import CategoryPage from './pages/CategoryPage';
 import ProductDetailPage from './pages/ProductDetailPage';
+import BrandPage from './pages/BrandPage';
 import InspirationPage from './pages/InspirationPage';
 import InspirationDetailPage from './pages/InspirationDetailPage';
 import NewsPage from './pages/NewsPage';
@@ -93,7 +94,9 @@ function App() {
         <Route path="/shipping-protection-plan" element={<ShippingProtectionPlanPage />} />
         <Route path="/category/:categoryId" element={<CategoryPage />} />
         <Route path="/category/:categoryId/sub/:subcategoryName" element={<CategoryPage />} />
+        <Route path="/product/:productId" element={<ProductDetailPage />} />
         <Route path="/product/:categoryId/:productId" element={<ProductDetailPage />} />
+        <Route path="/brand/:brandId" element={<BrandPage />} />
         <Route path="/inspiration" element={<InspirationPage />} />
         <Route path="/inspiration/:inspirationId" element={<InspirationDetailPage />} />
         <Route path="/news" element={<NewsPage />} />

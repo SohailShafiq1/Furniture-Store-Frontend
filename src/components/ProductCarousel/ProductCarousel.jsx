@@ -5,7 +5,7 @@ import './ProductCarousel.css';
 export default function ProductCarousel({ title, products, showViewAll = true, onProductClick }) {
   const navigate = useNavigate();
   const [startIndex, setStartIndex] = useState(0);
-  const [visibleCount, setVisibleCount] = useState(3);
+  const [visibleCount, setVisibleCount] = useState(4);
 
   useEffect(() => {
     setStartIndex(0);
@@ -13,7 +13,20 @@ export default function ProductCarousel({ title, products, showViewAll = true, o
 
   useEffect(() => {
     const updateVisibleCount = () => {
-      setVisibleCount(window.innerWidth <= 768 ? 1 : 3);
+      const width = window.innerWidth;
+      if (width <= 768) {
+        setVisibleCount(1);
+      } else if (width <= 1024) {
+        setVisibleCount(2);
+      } else if (width <= 1280) {
+        setVisibleCount(3);
+      } else if (width <= 1500) {
+        setVisibleCount(4);
+      } else if (width <= 1800) {
+        setVisibleCount(5);
+      } else {
+        setVisibleCount(6);
+      }
     };
 
     updateVisibleCount();
@@ -80,7 +93,7 @@ export default function ProductCarousel({ title, products, showViewAll = true, o
               </button>
             )}
 
-            <div className="products-grid">
+            <div className="products-grid" style={{ gridTemplateColumns: `repeat(${visibleCount}, minmax(0, 1fr))` }}>
               {visibleProducts.map((product, idx) => (
               <div
                 key={product.id}

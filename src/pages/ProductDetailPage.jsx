@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
+import { MdLocalShipping } from 'react-icons/md';
+import { IoPricetagSharp } from 'react-icons/io5';
 import { useUserAuth } from '../context/UserAuthContext';
 import { useCart } from '../context/CartContext';
 import { useProductsByCategory } from '../hooks/useProductsByCategory';
@@ -64,6 +66,39 @@ export default function ProductDetailPage() {
   const [allProducts, setAllProducts] = useState([]);
   const [collections, setCollections] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const deliveryOptions = [
+    {
+      id: 'outdoor-drop-off',
+      image: '/d1.png',
+      heading: 'Outdoor Drop-Off',
+      description: 'Your items will be delivered at the exterior entrance of your residence or building on the ground floor. Appointment required; does not include assembly, demonstration, or cleanup.'
+    },
+    {
+      id: 'indoor-drop-off',
+      image: '/d2.png',
+      heading: 'Indoor Drop-Off',
+      description: 'Your items will be delivered inside the front door of your home. Appointment required; does not include assembly, demonstration, or cleanup.'
+    },
+    {
+      id: 'room-of-choice',
+      image: '/d3.png',
+      heading: 'Room of Choice',
+      description: 'Nationwide in-room delivery available across the contiguous U.S. Appointment required. Service does not include assembly, demonstration, or cleanup.'
+    },
+    {
+      id: 'white-glove',
+      image: '/d4.png',
+      heading: 'White Glove',
+      description: 'Experience our premium White Glove service - available nationwide across the U.S. Includes delivery to your room of choice, assembly, demonstration, and cleanup. Appointment needed.'
+    },
+    {
+      id: 'pick-up',
+      image: '/d5.png',
+      heading: 'Pick Up',
+      description: 'Choose to pick up your order directly from our warehouses free of charge and enjoy the convenience of collecting your furniture at your schedule. Unable to pick it up? We offer delivery services in your area for a fee.'
+    }
+  ];
 
   const getCategoryId = (value) => {
     if (!value) return '';
@@ -144,7 +179,7 @@ export default function ProductDetailPage() {
   const toCarouselProduct = (p, options = {}) => ({
     id: p._id,
     name: p.name,
-    brand: p.brandId || 'Luna',
+    brand: p.brandId || 'Dimond Modern Furniture',
     currentPrice: `$${p.price}`,
     originalPrice: p.discount > 0 ? `$${(p.price / (1 - p.discount / 100)).toFixed(2)}` : '',
     image: buildImageUrl(p.images?.[0] || p.image),
@@ -372,6 +407,20 @@ export default function ProductDetailPage() {
     return matched.slice(0, 5).map((p) => toCarouselProduct(p));
   })();
 
+  // Ready Made Sets - Filter products from readyMadeProducts array
+  const readyMadeProducts = (() => {
+    if (!product?.readyMadeProducts || product.readyMadeProducts.length === 0) {
+      return [];
+    }
+    
+    const readyMadeIds = product.readyMadeProducts.map(id => String(id));
+    const matched = allProducts.filter(p => 
+      p && readyMadeIds.includes(String(p._id))
+    );
+    
+    return matched.map((p) => toCarouselProduct(p, { saleBadge: 'Ready Made Set', includeStock: true }));
+  })();
+
   const handlePrevImage = () => {
     setMainImageIndex((prev) => (prev - 1 + galleryImages.length) % galleryImages.length);
   };
@@ -390,6 +439,27 @@ export default function ProductDetailPage() {
   };
 
   const currentPrice = getCurrentPrice();
+
+  // Media/video banner logic
+  const videoSource = product?.videoUrl || product?.videoFile || product?.video || product?.video_link || '';
+  const getYouTubeEmbed = (url) => {
+    if (!url) return '';
+    try {
+      const u = new URL(url);
+      if (u.hostname.includes('youtu.be')) {
+        return `https://www.youtube.com/embed/${u.pathname.slice(1)}`;
+      }
+      if (u.hostname.includes('youtube.com')) {
+        return `https://www.youtube.com/embed/${u.searchParams.get('v')}`;
+      }
+    } catch (e) {
+      return '';
+    }
+    return '';
+  };
+  const videoEmbedUrl = (videoSource && (String(videoSource).includes('youtube') || String(videoSource).includes('youtu.be'))) ? getYouTubeEmbed(videoSource) : '';
+  const hasVideo = !!videoSource;
+
 
   const handleAddToCart = async () => {
     const variationName = selectedVariation !== null && product.variations 
@@ -522,11 +592,11 @@ export default function ProductDetailPage() {
 
             {/* Description & Specifications Section */}
             <div className="pd-description-section">
-              <h2 className="pd-section-title">Description</h2>
+              {/* <h2 className="pd-section-title">Description</h2> */}
               
               {/* Product Overview Accordion */}
               <AccordionItem 
-                title="OVERVIEW" 
+                title="Description" 
                 isOpen={openAccordion === 'Overview'} 
                 onClick={() => setOpenAccordion(openAccordion === 'Overview' ? '' : 'Overview')}
               >
@@ -681,27 +751,16 @@ export default function ProductDetailPage() {
                 isOpen={openAccordion === 'Delivery'} 
                 onClick={() => setOpenAccordion(openAccordion === 'Delivery' ? '' : 'Delivery')}
               >
-                <div className="pd-faq-content">
-                  <div className="pd-faq-item">
-                    <p className="pd-faq-question">How long will it take to receive my order?</p>
-                    <p className="pd-faq-answer">Delivery times vary based on the item and your location. Most orders are processed and shipped within 1-2 weeks.</p>
-                  </div>
-                  <div className="pd-faq-item">
-                    <p className="pd-faq-question">Which delivery method should I select?</p>
-                    <p className="pd-faq-answer">We offer various delivery methods from standard curbside to white-glove assembly. Choose the one that best fits your needs during checkout.</p>
-                  </div>
-                  <div className="pd-faq-item">
-                    <p className="pd-faq-question">I want to know the exact time of when the delivery will occur!</p>
-                    <p className="pd-faq-answer">Once your order is ready for delivery, our team will contact you to schedule a specific window. You'll receive updates as the date approaches.</p>
-                  </div>
-                  <div className="pd-faq-item">
-                    <p className="pd-faq-question">How can I help to ensure a smooth delivery process?</p>
-                    <p className="pd-faq-answer">Ensure the delivery path is clear, measure doorways/hallways in advance, and have someone over 18 available to sign for the delivery.</p>
-                  </div>
-                  <div className="pd-faq-item">
-                    <p className="pd-faq-question">I was not home when the delivery team showed up. What can I do?</p>
-                    <p className="pd-faq-answer">Please contact our customer service team immediately to reschedule. Re-delivery fees may apply.</p>
-                  </div>
+                <div className="pd-delivery-cards">
+                  {deliveryOptions.map((option) => (
+                    <div key={option.id} className="pd-delivery-card">
+                      <img src={option.image} alt={option.heading} className="pd-delivery-card-image" loading="lazy" />
+                      <div className="pd-delivery-card-body">
+                        <h3>{option.heading}</h3>
+                        <p>{option.description}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </AccordionItem>
 
@@ -730,35 +789,87 @@ export default function ProductDetailPage() {
                 <div className="pd-faq-content">
                   <div className="pd-faq-item">
                     <p className="pd-faq-question">What is my order number?</p>
-                    <p className="pd-faq-answer">Your order number can be found in your confirmation email or by logging into your account.</p>
+                  </div>
+                  <div className="pd-faq-item">
+                    <p className="pd-faq-question">What are the accepted payment methods?</p>
+                  </div>
+                  <div className="pd-faq-item">
+                    <p className="pd-faq-question">Do you offer Financing?</p>
                   </div>
                   <div className="pd-faq-item">
                     <p className="pd-faq-question">How do I know if the item is available/ in stock?</p>
-                    <p className="pd-faq-answer">Stock status is updated in real-time on each product page. If an item is out of stock, it will be labeled accordingly.</p>
                   </div>
                   <div className="pd-faq-item">
                     <p className="pd-faq-question">Can I see the furniture in person?</p>
-                    <p className="pd-faq-answer">Furniture Store is primarily an online retailer, but we have select showroom locations. Please check our store locator for details.</p>
                   </div>
                   <div className="pd-faq-item">
                     <p className="pd-faq-question">Will you take my old furniture?</p>
-                    <p className="pd-faq-answer">We generally do not offer furniture removal services. We recommend contacting local charities or waste management for disposal.</p>
+                  </div>
+                  <div className="pd-faq-item">
+                    <p className="pd-faq-question">Where do I leave my old furniture?</p>
                   </div>
                   <div className="pd-faq-item">
                     <p className="pd-faq-question">Will the item look the same as in the picture?</p>
-                    <p className="pd-faq-answer">While we strive for color accuracy, actual items may vary slightly due to lighting and monitor settings. Fabric samples may be available upon request.</p>
+                  </div>
+                  <div className="pd-faq-item">
+                    <p className="pd-faq-question">How long will it take to receive my order?</p>
+                  </div>
+                  <div className="pd-faq-item">
+                    <p className="pd-faq-question">Which delivery method should I select?</p>
+                  </div>
+                  <div className="pd-faq-item">
+                    <p className="pd-faq-question">I want to know the exact time of when the delivery will occur!</p>
+                  </div>
+                  <div className="pd-faq-item">
+                    <p className="pd-faq-question">How can I help to ensure a smooth delivery process?</p>
+                  </div>
+                  <div className="pd-faq-item">
+                    <p className="pd-faq-question">I was not home when the delivery team showed up. What can I do?</p>
+                  </div>
+                  <div className="pd-faq-item">
+                    <p className="pd-faq-question">Can I upgrade my delivery method?</p>
+                  </div>
+                  <div className="pd-faq-item">
+                    <p className="pd-faq-question">I do not like the item delivered or the item did not fit in my home. What can I do?</p>
                   </div>
                   <div className="pd-faq-item">
                     <p className="pd-faq-question">I have received a defective/damaged item. What can I do?</p>
-                    <p className="pd-faq-answer">Please report any damage within 24 hours of delivery. Take photos and contact our support team immediately.</p>
+                  </div>
+                  <div className="pd-faq-item">
+                    <p className="pd-faq-question">I have received a missing item. What can I do?</p>
+                  </div>
+                  <div className="pd-faq-item">
+                    <p className="pd-faq-question">Can I pick up my furniture?</p>
+                  </div>
+                  <div className="pd-faq-item">
+                    <p className="pd-faq-question">Why is Luna Furniture requesting additional information to fulfill my order?</p>
                   </div>
                   <div className="pd-faq-item">
                     <p className="pd-faq-question">Can I cancel my order?</p>
-                    <p className="pd-faq-answer">Orders can be canceled within 24 hours of placement without penalty. After that, cancellation fees may apply if the item has already shipped.</p>
+                  </div>
+                  <div className="pd-faq-item">
+                    <p className="pd-faq-question">How long does it take to receive my refund?</p>
+                  </div>
+                  <div className="pd-faq-item">
+                    <p className="pd-faq-question">I want to know more about your policies!</p>
                   </div>
                   <div className="pd-faq-item">
                     <p className="pd-faq-question">What should I do if I receive the wrong item?</p>
-                    <p className="pd-faq-answer">Please report the error within 24 hours. Do not assemble or use the item, and keep all original packaging.</p>
+                  </div>
+                  <div className="pd-faq-item">
+                    <p className="pd-faq-question">How can I report a wrong item?</p>
+                  </div>
+                  <div className="pd-faq-item">
+                    <p className="pd-faq-question">What happens if I don't report the wrong item within 24 hours?</p>
+                  </div>
+                  <div className="pd-faq-item">
+                    <p className="pd-faq-question">What should I do with the wrong item?</p>
+                  </div>
+                  <div className="pd-faq-item">
+                    <p className="pd-faq-question">Can I still get a refund if I dispose of the wrong item?</p>
+                  </div>
+                  <div className="pd-faq-item">
+                    <p className="pd-faq-question">Can I exchange the wrong item for the correct one?</p>
                   </div>
                 </div>
               </AccordionItem>
@@ -767,13 +878,18 @@ export default function ProductDetailPage() {
 
           {/* Right: Product Details */}
           <div className="pd-details-section">
+            <div className="pd-status-badges">
+              <span className="pd-status-pill pd-status-pill-stock">In Stock</span>
+              <span className="pd-status-pill pd-status-pill-anniversary"><IoPricetagSharp className="pd-pill-icon" /> Anniversary Sale</span>
+            </div>
+
             {/* Title */}
             <h1 className="pd-title">{product.name}</h1>
 
             {/* Brand & Collection */}
             <div className="pd-meta">
-              <span className="pd-collection">{product.collectionName || 'Luna Collection'}</span>
-              <span className="pd-by">by {product.brandId || 'Luna'}</span>
+              {/* <span className="pd-collection">{product.collectionName || 'Dimond Modern Collection'}</span> */}
+              <span className="pd-by">By {product.brandId ? <Link to={`/brand/${encodeURIComponent(product.brandId)}`}>{product.brandId}</Link> : 'Dimond Modern Furniture'}</span>
             </div>
 
             {/* SKU */}
@@ -789,7 +905,23 @@ export default function ProductDetailPage() {
               <span className="pd-review-count">({product.numReviews || 0} review{product.numReviews !== 1 ? 's' : ''})</span>
             </div>
 
-            {/* Variations Section */}
+          
+
+            {/* Price Section */}
+            <div className="pd-price-section">
+              <div className="pd-price-container">
+                <span className="pd-current-price">${currentPrice}</span>
+                {product.discount > 0 && (
+                  <span className="pd-original-price">${(currentPrice / (1 - product.discount / 100)).toFixed(2)}</span>
+                )}
+              </div>
+          <p className="pd-discount-text">
+            Add to cart to see your automatic savings
+          </p>
+              <p className="pd-discount-text">Extra 5% off with code <span className="pd-code">55OFF</span></p>
+            </div>
+
+  {/* Variations Section */}
             {product.variations && product.variations.length > 0 && (
               <div className="pd-variations-section">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
@@ -801,38 +933,28 @@ export default function ProductDetailPage() {
                       key={idx}
                       onClick={() => setSelectedVariation(selectedVariation === idx ? null : idx)}
                       style={{
-                        padding: '10px 16px',
+                        padding: '20px 40px',
                         border: selectedVariation === idx ? '2px solid #FF6B35' : '1px solid #D1D1D1',
                         borderRadius: '8px',
                         background: selectedVariation === idx ? '#fff' : '#fff',
                         boxShadow: selectedVariation === idx ? '0 0 0 1px #FF6B35' : 'none',
                         color: '#333',
-                        fontWeight: '500',
+                        fontWeight: 'bold',
                         cursor: 'pointer',
                         transition: 'all 0.2s',
-                        fontSize: '14px',
+                        fontSize: '20px',
                         minWidth: '120px',
-                        textAlign: 'left'
+                        textAlign: 'left',
+                         boxShadow: '0 6px 10px rgba(0, 0, 0, 0.1)',
                       }}
                     >
-                      {variation.name} <span style={{ marginLeft: '8px', fontWeight: '700' }}>${variation.price}</span>
+                      {variation.name}
+                       {/* <span style={{ marginLeft: '8px', fontWeight: '700' }}>${variation.price}</span> */}
                     </button>
                   ))}
                 </div>
               </div>
             )}
-
-            {/* Price Section */}
-            <div className="pd-price-section">
-              <div className="pd-price-container">
-                <span className="pd-current-price">${currentPrice}</span>
-                {product.discount > 0 && (
-                  <span className="pd-original-price">${(currentPrice / (1 - product.discount / 100)).toFixed(2)}</span>
-                )}
-              </div>
-              <p className="pd-discount-text">Extra 5% off with code <span className="pd-code">55OFF</span></p>
-            </div>
-
             <div className="pd-cta-group pd-cta-desktop">
               {/* Apply Now Section */}
               <div className="pd-apply-wrapper">
@@ -853,14 +975,28 @@ export default function ProductDetailPage() {
               >
                 {addingToCart ? 'ADDING...' : 'ADD TO CART'}
               </button>
+
+              {/* Financing Options */}
+              <div className="pd-financing-options">
+                {/* Klarna */}
+                <div className="pd-financing-card">
+                  <p className="pd-financing-text">
+                    From <span className="pd-financing-price">$49</span>/month, or 4 payments at 0% interest with <span className="pd-financing-provider">Klarna</span>
+                  </p>
+                  <a href="https://subscribe.podium.com/Diamond-Modern-Furniture" target="_blank" rel="noopener noreferrer" className="pd-financing-link">Check purchase power</a>
+                </div>
+
+                {/* Shop Pay */}
+                <div className="pd-financing-card">
+                  <p className="pd-financing-text">
+                    From <span className="pd-financing-price">${(currentPrice / 12).toFixed(2)}</span>/mo with <span className="pd-financing-provider">shop<span className="pd-shop-pay-badge">Pay</span></span>
+                  </p>
+                  <a href="https://subscribe.podium.com/Diamond-Modern-Furniture" target="_blank" rel="noopener noreferrer" className="pd-financing-link">View sample plans</a>
+                </div>
+              </div>
             </div>
 
-            {/* Shop Pay */}
-            <p className="pd-shop-pay">
-              From <span className="pd-shop-price">${(currentPrice / 12).toFixed(2)}</span>/mo with <span className="pd-shop-logo">Shop Pay</span>
-              <br />
-              <a href="#" className="pd-policy-link">Check your purchasing power</a>
-            </p>
+            {/* Old Shop Pay Section - Removed as it's now in financing options */}
 
             {/* Benefits */}
             <div className="pd-benefits">
@@ -905,22 +1041,18 @@ export default function ProductDetailPage() {
             <div className="pd-shipping-info">
               <p>Ships to <span className="pd-location">LV-1001</span></p>
               <div className="pd-ship-date">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"></path>
-                  <circle cx="12" cy="10" r="3"></circle>
-                </svg>
+                <MdLocalShipping className="pd-ship-icon" />
                 <div>
                   <p className="pd-ship-label">Estimated Ship Date</p>
-                  <p className="pd-ship-value">In a week</p>
+                  <p className="pd-ship-value">In 2 weeks</p>
                 </div>
               </div>
+              
+              {/* Policy Links */}
+              <p className="pd-policy-disclaimer">
+                *Check our <Link to="/delivery-policy" className="pd-policy-link-text">Delivery Policy</Link> . *Conditions apply.
+              </p>
             </div>
-
-            {/* Policy Links */}
-            <p className="pd-policy-disclaimer">
-              <a href="#" className="pd-policy-link-text">Check our Delivery Policy</a>
-              <span>. *Conditions apply.</span>
-            </p>
 
             {/* Share */}
             <div className="pd-share">
@@ -944,6 +1076,39 @@ export default function ProductDetailPage() {
             </div>
           </div>
         </div>
+
+        {/* Fast Nationwide Banner */}
+        <div className="pd-fast-banner">
+          <div className="pd-fast-banner-inner">
+            <h3>FAST NATIONWIDE WHITE GLOVE DELIVERY - AND MORE</h3>
+            <p>Free Express Shipping • Outdoor Drop-Off • Indoor Drop-Off • Room of Choice</p>
+          </div>
+        </div>
+
+        {/* Discover the Look Section with Video (if available) */}
+        {hasVideo && (
+          <div className="pd-discover-section">
+            <h2 className="pd-discover-title">Discover the Look</h2>
+            {videoEmbedUrl ? (
+              <div className="pd-video-wrapper">
+                <iframe
+                  src={videoEmbedUrl}
+                  title="Product video"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+            ) : (
+              <div className="pd-video-wrapper">
+                <video controls className="pd-video">
+                  <source src={videoSource} />
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Similar Products Section */}
         {(youMayAlsoLikeProducts.length > 0 || exploreCollectionProducts.length > 0) && (
@@ -974,6 +1139,7 @@ export default function ProductDetailPage() {
                 />
               </div>
             )}
+
           </div>
         )}
 
@@ -982,6 +1148,21 @@ export default function ProductDetailPage() {
 
         {/* Shop by Category Section */}
         <ShopByCategory />
+
+        {readyMadeProducts.length > 0 && (
+          <div className="pd-explore-collections-section">
+            <ProductCarousel 
+              title="Ready made sets" 
+              showViewAll={false}
+              products={readyMadeProducts}
+              onProductClick={(clickedProduct) => {
+                if (clickedProduct?.targetPath) {
+                  navigate(clickedProduct.targetPath);
+                }
+              }}
+            />
+          </div>
+        )}
       </div>
 
       <Footer />

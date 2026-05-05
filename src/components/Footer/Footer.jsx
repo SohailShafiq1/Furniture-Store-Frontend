@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaInstagram, FaYoutube, FaTiktok, FaPinterest, FaTwitter, FaGift, FaPencilAlt, FaRegHandshake } from 'react-icons/fa';
+import { FaInstagram, FaYoutube, FaTiktok, FaPinterest, FaTwitter, FaGift, FaPencilAlt, FaRegHandshake, FaDollarSign, FaTags, FaMapMarkerAlt, FaFacebook } from 'react-icons/fa';
 import './Footer.css';
 
 const benefitItems = [
@@ -51,25 +51,25 @@ const benefitItems = [
 
 const actionCards = [
   {
-    icon: <FaRegHandshake />,
-    title: 'TRADE PROGRAM',
-    description: 'Unlock exclusive pricing, premium perks & top-tier resources',
-    link: '/trade-program',
-    cta: 'APPLY NOW'
+    icon: <FaDollarSign />,
+    title: 'FINANCING',
+    description: 'Flexible payment plans to fit your lifestyle.',
+    link: '/financing',
+    cta: 'LEARN MORE'
   },
   {
-    icon: <FaPencilAlt />,
-    title: 'THE DESIGN BOX',
-    description: 'Upload a photo—get styled with TOV.',
-    link: '/design-box',
-    cta: 'STYLE NOW'
+    icon: <FaTags />,
+    title: 'THE DEALS BOX',
+    description: 'Shop seasonal savings and exclusive offers.',
+    link: '/deals',
+    cta: 'SHOP DEALS'
   },
   {
-    icon: <FaGift />,
-    title: 'REGISTRY',
-    description: 'Congratulations! Happily ever after begins here.',
-    link: '/registry',
-    cta: 'CREATE NOW'
+    icon: <FaMapMarkerAlt />,
+    title: 'STORE LOCATIONS',
+    description: 'Find your nearest showroom and visit us today.',
+    link: '/store-locations',
+    cta: 'VIEW LOCATIONS'
   }
 ];
 
@@ -209,7 +209,15 @@ export default function Footer() {
             <li><Link to="/faqs" className="footer-list-link">FAQs</Link></li>
           </ul>
         </div>
-        <div className="footer-col footer-col-newsletter">
+        <div className="footer-col footer-col-contact">
+          <h4>Contact Us</h4>
+          <Link to="/contact-us" className="footer-list-link">Contact Us</Link>
+          <ul>
+            <li><a href="tel:+18329003800" className="footer-list-link"> <span style={{ fontWeight: 'bold' }}> Call/Text:</span> (832) 900-3800</a></li>
+            <li><a href="mailto:customerservice@dimondmodernfurniture.com" className="footer-list-link"> <span style={{ fontWeight: 'bold' }}> Email:</span> customerservice@dimondmodernfurniture.com</a></li>
+          </ul>
+        </div>
+        <div className="footer-col footer-col-newsletter">  
           <h4>Drop your email to get first dibs on new arrivals, sales, and more.</h4>
           <form className="newsletter-form" onSubmit={(e) => e.preventDefault()}>
             <input type="email" placeholder="Your email" aria-label="Email address" />
@@ -221,6 +229,7 @@ export default function Footer() {
             <a href="#" aria-label="TikTok"><FaTiktok /></a>
             <a href="#" aria-label="Pinterest"><FaPinterest /></a>
             <a href="#" aria-label="Twitter"><FaTwitter /></a>
+            <a href="#" aria-label="Twitter"><FaFacebook /></a>
           </div>
         </div>
       </div>

@@ -1,0 +1,12 @@
+.brand-page.container{padding:24px 16px;max-width:1200px;margin:0 auto}
+.brand-header{margin-bottom:16px}
+.brand-header h1{font-size:28px;margin:0}
+.brand-sub{color:#666;margin-top:6px}
+.brand-products-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:16px}
+.brand-product-card{display:block;background:#fff;border:1px solid #eee;border-radius:6px;overflow:hidden;text-decoration:none;color:inherit}
+.brand-product-card .img-wrap{height:180px;display:flex;align-items:center;justify-content:center;background:#fafafa}
+.brand-product-card img{max-width:100%;max-height:100%;object-fit:contain}
+.card-body{padding:10px}
+.card-body .name{font-weight:600;margin-bottom:6px}
+.card-body .price{color:#1a8917;font-weight:700}
+.no-products,.loading,.error{text-align:center;padding:24px;color:#666}

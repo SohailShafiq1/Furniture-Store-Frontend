@@ -178,6 +178,13 @@
   padding: 0 40px 40px;
 }
 
+.footer-col-contact {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
 .footer-bottom {
   display:flex;
   justify-content:space-between;
@@ -284,7 +291,9 @@
 
 .social-row a {
   color: rgba(255, 255, 255, 0.85);
-  font-size: 1.2rem;
+  font-size: 2rem;
+  width: 48px;
+  height: 48px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
