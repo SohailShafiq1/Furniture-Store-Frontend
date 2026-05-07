@@ -973,15 +973,15 @@
 }
 
 .pd-fast-banner-inner {
-  max-width: 1540px;
+  max-width: 122240px;
   margin: 0 auto;
   padding: 0 40px;
   color: #333;
   display: flex;
-  flex-direction: row;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   justify-content: center;
-  gap: 16px;
+  gap: 12px;
 }
 
 .pd-fast-banner-inner h3 {
@@ -990,7 +990,8 @@
   font-weight: 900;
   color: #333;
   letter-spacing: 0.5px;
-  white-space: nowrap;
+  white-space: normal;
+  line-height: 1.1;
 }
 
 .pd-fast-banner-inner p {
@@ -998,7 +999,28 @@
   font-size: 13px;
   color: #666;
   font-weight: 500;
-  white-space: nowrap;
+  white-space: normal;
+}
+
+.pd-fast-banner-rank-box {
+  background: #fff;
+  padding: 24px 0 32px;
+  margin: 0 0 36px 0;
+}
+
+.pd-fast-banner-rank-inner {
+  max-width: 1540px;
+  margin: 0 auto;
+  padding: 0 40px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.pd-fast-banner-rank-image {
+  width: 100%;
+  max-width: 660px;
+  display: block;
+  margin-top: -3rem;
 }
 
 /* Discover the Look Section */

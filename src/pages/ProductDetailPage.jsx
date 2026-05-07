@@ -1077,6 +1077,15 @@ export default function ProductDetailPage() {
           </div>
         </div>
 
+        <div className="pd-fast-banner-rank-box">
+          <div className="pd-fast-banner-rank-inner">
+            <img
+              src="/ranked.png"
+              alt="Ranked top 100 among US furniture stores"
+              className="pd-fast-banner-rank-image"
+            />
+          </div>
+        </div>
         {/* Fast Nationwide Banner */}
         <div className="pd-fast-banner">
           <div className="pd-fast-banner-inner">
@@ -1084,6 +1093,7 @@ export default function ProductDetailPage() {
             <p>Free Express Shipping • Outdoor Drop-Off • Indoor Drop-Off • Room of Choice</p>
           </div>
         </div>
+
 
         {/* Discover the Look Section with Video (if available) */}
         {hasVideo && (
