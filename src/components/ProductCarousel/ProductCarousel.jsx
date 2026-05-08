@@ -2,7 +2,14 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ProductCarousel.css';
 
-export default function ProductCarousel({ title, products, showViewAll = true, onProductClick }) {
+export default function ProductCarousel({
+  title,
+  products,
+  showViewAll = true,
+  onProductClick,
+  maxDesktopVisible,
+  className = ''
+}) {
   const navigate = useNavigate();
   const [startIndex, setStartIndex] = useState(0);
   const [visibleCount, setVisibleCount] = useState(4);
@@ -14,26 +21,34 @@ export default function ProductCarousel({ title, products, showViewAll = true, o
   useEffect(() => {
     const updateVisibleCount = () => {
       const width = window.innerWidth;
+      let nextVisibleCount;
+
       if (width <= 768) {
-        setVisibleCount(1);
+        nextVisibleCount = 1;
       } else if (width <= 1024) {
-        setVisibleCount(2);
+        nextVisibleCount = 2;
       } else if (width <= 1280) {
-        setVisibleCount(3);
+        nextVisibleCount = 3;
       } else if (width <= 1500) {
-        setVisibleCount(4);
+        nextVisibleCount = 4;
       } else if (width <= 1800) {
-        setVisibleCount(5);
+        nextVisibleCount = 5;
       } else {
-        setVisibleCount(6);
+        nextVisibleCount = 6;
       }
+
+      if (typeof maxDesktopVisible === 'number' && width > 1024) {
+        nextVisibleCount = Math.min(nextVisibleCount, maxDesktopVisible);
+      }
+
+      setVisibleCount(nextVisibleCount);
     };
 
     updateVisibleCount();
     window.addEventListener('resize', updateVisibleCount);
 
     return () => window.removeEventListener('resize', updateVisibleCount);
-  }, []);
+  }, [maxDesktopVisible]);
 
   const maxStart = Math.max(0, products.length - visibleCount);
   const visibleProducts = useMemo(
@@ -73,7 +88,7 @@ export default function ProductCarousel({ title, products, showViewAll = true, o
   };
 
   return (
-    <section className="product-carousel" data-aos="fade-up">
+    <section className={`product-carousel ${className}`.trim()} data-aos="fade-up">
       <div className="product-carousel-container">
         <div className="product-carousel-header">
           <h2 className="product-carousel-title" data-aos="fade-right">{title}</h2>
@@ -122,6 +137,17 @@ export default function ProductCarousel({ title, products, showViewAll = true, o
                   />
                 </div>
                 <div className="product-info">
+                  {product.badge && (
+                    <div className="product-badges">
+                      <span className="badge spring-sale">
+                        <svg className="badge-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                          <path d="M20 10.6V6a2 2 0 0 0-2-2h-4.6a2 2 0 0 0-1.4.59L4.59 12a2 2 0 0 0 0 2.82l4.59 4.59a2 2 0 0 0 2.82 0L19.41 12a2 2 0 0 0 .59-1.4Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                          <circle cx="15" cy="9" r="1.5" fill="currentColor"/>
+                        </svg>
+                        {product.badge}
+                      </span>
+                    </div>
+                  )}
                   <p className="product-brand">{product.brand}</p>
                   <h3 className="product-name">{product.name}</h3>
                   <div className="product-rating">

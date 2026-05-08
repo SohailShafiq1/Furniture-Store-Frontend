@@ -12,6 +12,7 @@ import Footer from '../components/Footer/Footer';
 import Modal from '../components/Modal/Modal';
 import ReviewSection from '../components/ReviewSection/ReviewSection';
 import ProductCarousel from '../components/ProductCarousel/ProductCarousel';
+import InspirationSection from '../components/Inspiration/InspirationSection';
 import ShopByCategory from '../components/ShopByCategory/ShopByCategory';
 import './ProductDetailPage.css';
 
@@ -1123,17 +1124,19 @@ export default function ProductDetailPage() {
         {/* Similar Products Section */}
         {(youMayAlsoLikeProducts.length > 0 || exploreCollectionProducts.length > 0) && (
           <div className="pd-similar-section">
-            {youMayAlsoLikeProducts.length > 0 && (
+            {/* {youMayAlsoLikeProducts.length > 0 && (
               <ProductCarousel 
                 title="You may also like" 
                 products={youMayAlsoLikeProducts}
+                className="pd-reference-carousel"
+                maxDesktopVisible={4}
                 onProductClick={(clickedProduct) => {
                   if (clickedProduct?.targetPath) {
                     navigate(clickedProduct.targetPath);
                   }
                 }}
               />
-            )}
+            )} */}
 
             {exploreCollectionProducts.length > 0 && (
               <div className="pd-explore-collections-section">
@@ -1141,6 +1144,8 @@ export default function ProductDetailPage() {
                   title="Explore the collections" 
                   showViewAll={false}
                   products={exploreCollectionProducts}
+                  className="pd-reference-carousel"
+                  maxDesktopVisible={4}
                   onProductClick={(clickedProduct) => {
                     if (clickedProduct?.targetPath) {
                       navigate(clickedProduct.targetPath);
@@ -1150,21 +1155,19 @@ export default function ProductDetailPage() {
               </div>
             )}
 
+
           </div>
         )}
 
-        {/* Customer Reviews Section */}
-        <ReviewSection product={product} onReviewAdded={fetchProductData} />
 
-        {/* Shop by Category Section */}
-        <ShopByCategory />
-
-        {readyMadeProducts.length > 0 && (
+{readyMadeProducts.length > 0 && (
           <div className="pd-explore-collections-section">
             <ProductCarousel 
               title="Ready made sets" 
               showViewAll={false}
               products={readyMadeProducts}
+              className="pd-reference-carousel"
+              maxDesktopVisible={4}
               onProductClick={(clickedProduct) => {
                 if (clickedProduct?.targetPath) {
                   navigate(clickedProduct.targetPath);
@@ -1173,6 +1176,54 @@ export default function ProductDetailPage() {
             />
           </div>
         )}
+
+  {/* Similar Products Section */}
+        {(youMayAlsoLikeProducts.length > 0 || exploreCollectionProducts.length > 0) && (
+          <div className="pd-similar-section">
+            {youMayAlsoLikeProducts.length > 0 && (
+              <ProductCarousel 
+                title="You may also like" 
+                products={youMayAlsoLikeProducts}
+                className="pd-reference-carousel"
+                maxDesktopVisible={4}
+                onProductClick={(clickedProduct) => {
+                  if (clickedProduct?.targetPath) {
+                    navigate(clickedProduct.targetPath);
+                  }
+                }}
+              />
+            )}
+
+            {/* {exploreCollectionProducts.length > 0 && (
+              <div className="pd-explore-collections-section">
+                <ProductCarousel 
+                  title="Explore the collections" 
+                  showViewAll={false}
+                  products={exploreCollectionProducts}
+                  className="pd-reference-carousel"
+                  maxDesktopVisible={4}
+                  onProductClick={(clickedProduct) => {
+                    if (clickedProduct?.targetPath) {
+                      navigate(clickedProduct.targetPath);
+                    }
+                  }}
+                />
+              </div>
+            )} */}
+
+
+          </div>
+        )}
+
+        <InspirationSection />
+
+        {/* Customer Reviews Section */}
+        <ReviewSection product={product} onReviewAdded={fetchProductData} />
+
+        {/* Shop by Category Section */}
+        <ShopByCategory />
+
+        
       </div>
 
       <Footer />

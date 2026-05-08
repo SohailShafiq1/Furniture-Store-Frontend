@@ -196,7 +196,6 @@
   box-shadow: 0 4px 12px rgba(194, 18, 35, 0.25);
 }
 
-/* Icon inside status pill */
 .pd-pill-icon {
   font-size: 16px;
   width: 16px;
@@ -216,9 +215,9 @@
 
 .pd-meta {
   display: flex;
+  align-items: center;
   gap: 8px;
   font-size: 14px;
-  margin-bottom: -20px;
 }
 
 .pd-collection {
@@ -243,7 +242,6 @@
 .pd-sku {
   font-size: 13px;
   color: var(--luna-text-light);
-  margin-top: 2px;
 }
 
 /* Rating */
@@ -258,13 +256,8 @@
   gap: 3px;
 }
 
-.pd-stars svg {
-  width: 20px;
-  height: 20px;
-}
-
 .pd-review-count {
-  font-size: 18px;
+  font-size: 13px;
   color: var(--luna-text-light);
 }
 
@@ -299,21 +292,20 @@
 }
 
 .pd-current-price {
-  font-size: 45px;
+  font-size: 28px;
   font-weight: 700;
-  /* color: var(--color-primary); */
-    color: #C21223;
+  color: var(--color-primary);
 }
 
 .pd-original-price {
-  font-size: 25px;
+  font-size: 16px;
   color: var(--color-text-secondary);
   text-decoration: line-through;
 }
 
 .pd-discount-text {
   margin: 0;
-  font-size: 15px;
+  font-size: 13px;
   color: var(--color-text-secondary);
 }
 
@@ -361,7 +353,7 @@
   color: white;
   border: none;
   border-radius: 6px;
-  font-size: 22px;
+  font-size: 16px;
   font-weight: 700;
   text-transform: uppercase;
   cursor: pointer;
@@ -382,7 +374,7 @@
 }
 
 .pd-no-credit {
-  font-size: 35px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--luna-text);
   margin: 0;
@@ -398,7 +390,7 @@
   color: white;
   border: none;
   border-radius: 4px;
-  font-size: 22px;
+  font-size: 16px;
   font-weight: 700;
   text-transform: uppercase;
   cursor: pointer;
@@ -422,7 +414,7 @@
 
 .pd-financing-card {
   padding: 12px 14px;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   border: none;
   border-radius: 6px;
   box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
@@ -430,7 +422,7 @@
 }
 
 .pd-financing-card:hover {
-  background-color: #FAFAFA;
+  background-color: #fafafa;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
@@ -535,19 +527,12 @@
 .pd-shipping-info {
   display: flex;
   flex-direction: column;
-  gap: 0;
-  background-color: #FFFFFF;
-  padding: 32px 24px;
-  border-radius: 8px;
-  margin-top: 20px;
-  text-align: center;
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
-  border: 1px solid #F0F0F0;
+  gap: 16px;
 }
 
 .pd-shipping-info p {
   margin: 0;
-  font-size: 18px;
+  font-size: 14px;
   color: var(--color-primary);
 }
 
@@ -559,48 +544,37 @@
 
 .pd-ship-date {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 16px;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  gap: 12px;
 }
 
-.pd-ship-icon {
-  font-size: 48px;
-  color: var(--color-primary);
+.pd-ship-date svg {
   flex-shrink: 0;
+  color: var(--color-primary);
 }
 
 .pd-ship-label {
   margin: 0;
-  font-size: 14px;
+  font-size: 12px;
   color: var(--color-text-secondary);
-  font-weight: 500;
 }
 
 .pd-ship-value {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 700;
+  margin: 4px 0 0 0;
+  font-size: 14px;
+  font-weight: 600;
   color: var(--color-primary);
 }
 
 /* Policy Disclaimer */
 .pd-policy-disclaimer {
   margin: 0;
-  font-size: 14px;
-  color: var(--color-primary);
+  font-size: 12px;
+  color: var(--luna-text-light);
 }
 
 .pd-policy-link-text {
-  color: var(--color-accent);
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.pd-policy-link-text:hover {
+  color: var(--luna-text-light);
   text-decoration: underline;
 }
 
@@ -632,15 +606,14 @@
   padding: 24px 0;
   background: none;
   border: none;
-  font-size: 25px;
-  font-weight: bolder;
+  font-size: 16px;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1.2px;
   text-align: left;
   cursor: pointer;
   color: #1a1a1a;
   transition: all 0.3s ease;
-
 }
 
 .pd-accordion-header:hover {
@@ -753,58 +726,10 @@
     border-left: 3px solid var(--luna-orange);
 }
 
-.pd-delivery-cards {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  padding: 10px 0;
-}
-
-.pd-delivery-card {
-  background: #ffffff;
-  border: 1px solid #ececec;
-  border-radius: 18px;
-  overflow: hidden;
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.04);
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.pd-delivery-card-image {
-  width: 15rem;
-  height: 15rem;
-  object-fit: contain;
-  background: #fafafa;
-  margin: 0;
-  display: block;
-}
-
-.pd-delivery-card-body {
-  padding: 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.pd-delivery-card-body h3 {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 700;
-  color: #111111;
-}
-
-.pd-delivery-card-body p {
-  margin: 0;
-  font-size: 14px;
-  color: #555555;
-  line-height: 1.75;
-}
-
 .pd-similar-section {
     margin: 60px 0;
-    padding-top: 40px;
-    border-top: 1px solid #eee;
+  padding-top: 24px;
+  border-top: 0;
 }
 
 .pd-similar-section .product-carousel {
@@ -819,6 +744,172 @@
 
 .pd-explore-collections-section {
   margin-top: 24px;
+}
+
+.pd-similar-section,
+.pd-explore-collections-section {
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.pd-reference-carousel .product-carousel-container {
+  max-width: none;
+  width: 100%;
+}
+
+.pd-reference-carousel .products-grid {
+  gap: 24px;
+}
+
+.pd-reference-carousel .product-card {
+  background: transparent;
+  border: 0;
+  outline: 0;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.pd-reference-carousel .product-image-wrapper {
+  background: #ececec;
+  border: 0;
+  outline: 0;
+  box-shadow: none;
+  border-radius: 0;
+  aspect-ratio: 1.34;
+}
+
+.pd-reference-carousel .product-image {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100%;
+  max-height: 100%;
+  object-fit: cover !important;
+  object-position: center;
+  border: 0;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.pd-reference-carousel .product-info {
+  padding-top: 10px;
+  gap: 4px;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.pd-reference-carousel .product-badges {
+  width: 100%;
+  justify-content: flex-start;
+  margin-bottom: 10px;
+}
+
+.pd-reference-carousel .badge {
+  border: 0 !important;
+  outline: 0;
+  box-shadow: none;
+  padding: 13px 20px !important;
+  line-height: 1 !important;
+  min-height: unset !important;
+  height: auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  flex-direction: row !important;
+  border-radius: 999px !important;
+}
+
+.pd-reference-carousel .badge.spring-sale {
+  background-color: #5f6368;
+  color: #f5f5f5;
+  border-radius: 8px;
+  border: 0 !important;
+}
+
+.pd-reference-carousel .product-brand {
+  color: #8a8a8a;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.25;
+  width: 100%;
+  text-align: left;
+}
+
+.pd-reference-carousel .product-name {
+  color: #22272b;
+  font-size: 23px;
+  font-weight: bolder;
+  line-height: 1.28;
+  min-height: 44px;
+  text-align: left;
+}
+
+.pd-reference-carousel .product-rating {
+  width: 100%;
+  justify-content: flex-start;
+  gap: 8px;
+  margin: 2px 0 0;
+}
+
+.pd-reference-carousel .stars {
+  justify-content: flex-start;
+  gap: 1px;
+}
+
+.pd-reference-carousel .star,
+.pd-reference-carousel .star.filled,
+.pd-reference-carousel .star.half {
+  font-size: 18px;
+  color: #ff6a00;
+}
+
+.pd-reference-carousel .reviews-count {
+  font-size: 15px;
+  color: #3a3a3a;
+  line-height: 1;
+  text-align: left;
+}
+
+.pd-reference-carousel .product-pricing {
+  width: 100%;
+  justify-content: flex-start;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.pd-reference-carousel .current-price {
+  color: #ff6200;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.pd-reference-carousel .original-price {
+  color: #5f5f5f;
+  font-size: 17px;
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+}
+
+@media (max-width: 768px) {
+  .pd-similar-section,
+  .pd-explore-collections-section {
+    width: calc(100% + 40px);
+    margin-left: -20px;
+    margin-right: -20px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .pd-reference-carousel .products-grid {
+    gap: 16px;
+  }
+
+  .pd-reference-carousel .product-name {
+    min-height: 42px;
+  }
 }
 
 /* Share Section */
@@ -970,10 +1061,11 @@
   right: 50%;
   margin-left: -50vw;
   margin-right: -50vw;
+  display: flex;
 }
 
 .pd-fast-banner-inner {
-  max-width: 122240px;
+  max-width: 1540px;
   margin: 0 auto;
   padding: 0 40px;
   color: #333;
