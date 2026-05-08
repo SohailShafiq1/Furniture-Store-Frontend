@@ -893,6 +893,10 @@
   text-decoration-thickness: 1.5px;
 }
 
+.pd-recent-views-section {
+  margin-top: 24px;
+}
+
 @media (max-width: 768px) {
   .pd-similar-section,
   .pd-explore-collections-section {

@@ -62,10 +62,12 @@ export default function ProductDetailPage() {
   const { products: categoryProducts } = useProductsByCategory(categoryId);
   const { user } = useUserAuth();
   const { addToCart } = useCart();
+  const recentViewsStorageKey = `recentViews_${user?.id || user?._id || 'guest'}`;
   
   const [product, setProduct] = useState(null);
   const [allProducts, setAllProducts] = useState([]);
   const [collections, setCollections] = useState([]);
+  const [recentViewedProducts, setRecentViewedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const deliveryOptions = [
@@ -190,6 +192,62 @@ export default function ProductDetailPage() {
     stockStatus: options.includeStock ? 'In Stock' : undefined,
     targetPath: `/product/${getCategoryId(p.category)}/${p._id}`
   });
+
+  useEffect(() => {
+    if (!product) return;
+
+    const currentViewedProduct = {
+      id: product._id,
+      name: product.name,
+      brand: product.brandId || 'Dimond Modern Furniture',
+      currentPrice: `$${product.price}`,
+      originalPrice: product.discount > 0 ? `$${(product.price / (1 - product.discount / 100)).toFixed(2)}` : '',
+      image: buildImageUrl(product.images?.[0] || product.image),
+      rating: product.rating || 0,
+      reviews: product.numReviews || 0,
+      badge: product.discount > 0 ? 'Anniversary Sale' : '',
+      stockStatus: 'In Stock',
+      targetPath: `/product/${getCategoryId(product.category)}/${product._id}`
+    };
+
+    try {
+      const savedRecentViews = JSON.parse(localStorage.getItem(recentViewsStorageKey) || '[]');
+      const normalizedRecentViews = Array.isArray(savedRecentViews)
+        ? savedRecentViews.filter((item) => item && String(item.id) !== String(currentViewedProduct.id))
+        : [];
+      const nextRecentViews = [currentViewedProduct, ...normalizedRecentViews].slice(0, 8);
+
+      localStorage.setItem(recentViewsStorageKey, JSON.stringify(nextRecentViews));
+      setRecentViewedProducts(nextRecentViews);
+    } catch (err) {
+      setRecentViewedProducts([currentViewedProduct]);
+    }
+  }, [product, recentViewsStorageKey]);
+
+  useEffect(() => {
+    if (!allProducts.length || recentViewedProducts.length > 0) return;
+
+    try {
+      const savedRecentViews = JSON.parse(localStorage.getItem(recentViewsStorageKey) || '[]');
+      if (Array.isArray(savedRecentViews) && savedRecentViews.length > 0) {
+        setRecentViewedProducts(savedRecentViews.slice(0, 8));
+        return;
+      }
+    } catch (err) {
+      // Fall back to random products below.
+    }
+
+    const randomFallbackProducts = [...allProducts]
+      .filter((item) => String(item._id) !== String(productId))
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 8)
+      .map((item) => toCarouselProduct(item, {
+        saleBadge: item.discount > 0 ? 'Anniversary Sale' : '',
+        includeStock: true
+      }));
+
+    setRecentViewedProducts(randomFallbackProducts);
+  }, [allProducts, productId, recentViewedProducts.length, recentViewsStorageKey]);
   
   const fetchProductData = async () => {
     try {
@@ -1222,6 +1280,23 @@ export default function ProductDetailPage() {
 
         {/* Shop by Category Section */}
         <ShopByCategory />
+
+        {recentViewedProducts.length > 0 && (
+          <div className="pd-recent-views-section">
+            <ProductCarousel
+              title="Recently Viewed"
+              showViewAll={false}
+              products={recentViewedProducts}
+              className="pd-reference-carousel"
+              maxDesktopVisible={4}
+              onProductClick={(clickedProduct) => {
+                if (clickedProduct?.targetPath) {
+                  navigate(clickedProduct.targetPath);
+                }
+              }}
+            />
+          </div>
+        )}
 
         
       </div>
