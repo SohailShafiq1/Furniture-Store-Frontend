@@ -405,11 +405,12 @@
   position: relative;
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 10px 14px;
+  gap: 0;
+  padding: 0;
   height: 88px;
-  /* border-radius: 16px; */
+  border-radius: 16px;
   background: #fff;
+  overflow: hidden;
   text-decoration: none;
   color: #1a1a1a;
   transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
@@ -425,7 +426,10 @@
 .mega-menu-left-text {
   display: flex;
   align-items: center;
-  flex: 0 0 auto;
+  flex: 0 0 50%;
+  width: 50%;
+  height: 100%;
+  padding: 10px 14px;
   white-space: nowrap;
 }
 
@@ -440,16 +444,14 @@
 }
 
 .mega-menu-left-icon {
-  flex: 1 1 0;
-  min-width: 120px;
+  flex: 0 0 50%;
+  width: 50%;
   height: 100%;
-  border-radius: 16px;
   overflow: hidden;
   display: flex;
   align-items: stretch;
   justify-content: center;
   background: #fff;
-  border: 1px solid #ecebe7;
 }
 
 .mega-menu-left-icon img {
