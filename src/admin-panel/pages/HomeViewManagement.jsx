@@ -957,10 +957,12 @@ const HomeViewManagement = () => {
                         alt={`Promotion ${idx + 1}`}
                         onError={handleImageError(photo.image)}
                       />
-                      <div className="photo-info">
-                        <h4>{photo.heading}</h4>
-                        <p>{photo.subHeading}</p>
-                      </div>
+                      {(photo?.heading || photo?.subHeading) && (
+                        <div className="photo-info">
+                          <h4>{photo.heading}</h4>
+                          <p>{photo.subHeading}</p>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>

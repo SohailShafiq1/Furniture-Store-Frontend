@@ -91,7 +91,7 @@ export const CartProvider = ({ children }) => {
     }
   }, [token]);
 
-  const addToCart = useCallback(async (productId, variation, quantity, price, productDetails = null, selectedColor = null) => {
+  const addToCart = useCallback(async (productId, variation, quantity, price, productDetails = null, selectedColor = null, discount = 0) => {
     // Allow both logged-in and guest users
     if (!productId) {
       console.error('Invalid product');
@@ -131,7 +131,8 @@ export const CartProvider = ({ children }) => {
             quantity, 
             price, 
             storeId: targetStoreId, 
-            color: selectedColor
+            color: selectedColor,
+            discount
           }, {
             headers: { Authorization: `Bearer ${token}` }
           });
@@ -164,6 +165,7 @@ export const CartProvider = ({ children }) => {
             quantity,
             storeId: targetStoreId,
             price,
+            discount,
             ...(productDetails && { productDetails }) // Store product details for checkout display
           });
         }

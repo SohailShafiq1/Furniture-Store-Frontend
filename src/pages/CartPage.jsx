@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FaTrash } from 'react-icons/fa';
 import axios from 'axios';
 import { useCart } from '../context/CartContext';
 import { getAlternateImageUrl, getImageUrl } from '../utils/imageUrl';
@@ -248,7 +249,14 @@ export default function CartPage() {
                           <p className="item-brand">{item.brand || item.brandId || item.product?.brand || 'BRAND'}</p>
                           <p className="item-name">{item.productDetails?.name || item.name || item.product?.name || item.product?.title || 'Product'}</p>
                           <div className="item-pricing">
-                            <span className="current-price">${parseFloat(item.price).toFixed(2)}</span>
+                            {item.discount && item.discount > 0 ? (
+                              <>
+                                <span className="original-price">${(parseFloat(item.price) / (1 - item.discount / 100)).toFixed(2)}</span>
+                                <span className="current-price">${parseFloat(item.price).toFixed(2)}</span>
+                              </>
+                            ) : (
+                              <span className="current-price">${parseFloat(item.price).toFixed(2)}</span>
+                            )}
                           </div>
                         </div>
                         <div className="item-quantity">
@@ -273,14 +281,22 @@ export default function CartPage() {
                           </button>
                         </div>
                         <div className="item-total">
-                          ${(parseFloat(item.price) * item.quantity).toFixed(2)}
+                          {item.discount && item.discount > 0 ? (
+                            <>
+                              <div className="total-original">${((parseFloat(item.price) / (1 - item.discount / 100)) * item.quantity).toFixed(2)}</div>
+                              <div className="total-discounted">${(parseFloat(item.price) * item.quantity).toFixed(2)}</div>
+                            </>
+                          ) : (
+                            <div className="total-price">${(parseFloat(item.price) * item.quantity).toFixed(2)}</div>
+                          )}
                         </div>
                         <button 
                           onClick={() => handleRemoveItem(item._id)}
                           className="delete-btn"
                           title="Remove from cart"
+                          aria-label="Delete item"
                         >
-                          🗑️
+                          <FaTrash />
                         </button>
                       </div>
                     );

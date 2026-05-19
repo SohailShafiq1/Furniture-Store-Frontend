@@ -81,10 +81,14 @@
 }
 
 .footer-actions {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 60px;
   padding: 56px 40px 32px;
+  flex-wrap: wrap;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .actions-carousel {
@@ -119,6 +123,9 @@
   background: rgba(255, 255, 255, 0.03);
   padding: 36px 30px;
   text-align: center;
+  min-width: 320px;
+  flex: 1;
+  max-width: 500px;
 }
 
 .footer-action-icon {
