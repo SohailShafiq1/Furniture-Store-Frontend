@@ -45,19 +45,22 @@
 }
 
 .banner-image-wrapper {
-  width: auto;
-  height: auto;
-  border-radius: 0;
-  overflow: visible;
-  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 26px;
+  border: 2px solid #d9d9d9;
+  border-radius: 18px;
+  background: #ffffff;
+  overflow: hidden;
   flex-shrink: 0;
 }
 
 .banner-image {
   width: auto;
   height: auto;
-  max-height: 96px;
-  max-width: 240px;
+  max-height: 120px;
+  max-width: 280px;
   object-fit: cover;
   display: block;
 }
@@ -78,8 +81,7 @@
   }
 
   .banner-image-wrapper {
-    width: auto;
-    height: auto;
+    padding: 18px 22px;
   }
 
   .banner-content {
@@ -98,8 +100,7 @@
   }
 
   .banner-image-wrapper {
-    width: auto;
-    height: auto;
+    padding: 16px 20px;
   }
 
   .banner-content {
@@ -118,8 +119,7 @@
   }
 
   .banner-image-wrapper {
-    width: auto;
-    height: auto;
+    padding: 14px 18px;
   }
 
   .banner-content {

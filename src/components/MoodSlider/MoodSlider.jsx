@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react';
 export default function MoodSlider() {
   // Use actual files in the public/mood folder
   const items = [
-    { id: 1, img: '/mood/Gemini_Generated_Image_87xwn387xwn387xw.png', text: 'Furniture For' },
-    { id: 2, img: '/mood/Gemini_Generated_Image_dmdgnsdmdgnsdmdg.png', text: 'Every room' },
-    { id: 3, img: '/mood/Gemini_Generated_Image_t89yagt89yagt89y.png', text: 'Every mood' },
+    { id: 1, img: '/mood/16.svg', text: 'Furniture For' },
+    { id: 2, img: '/mood/17.svg', text: 'Every room' },
+    { id: 3, img: '/mood/18.svg', text: 'Every mood' },
   ];
 
   // Duplicate for a seamless loop like SlidingBanner
