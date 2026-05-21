@@ -1,0 +1,49 @@
+.mood-slider {
+  width: 100%;
+  padding: 36px 0;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.mood-track {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.mood-content {
+  display: flex;
+  align-items: center;
+  gap: 64px;
+  animation: moodSlide 32s linear infinite;
+  width: max-content;
+}
+
+@keyframes moodSlide {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-33.333%); }
+}
+
+.mood-item {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-shrink: 0;
+}
+
+.mood-image-wrap { background: transparent; }
+
+.mood-image { display:block; max-height: 140px; width: auto; height: auto; }
+
+.mood-text { font-size: 48px; font-weight:700; color:#111; white-space:nowrap }
+
+@media (max-width: 1024px) {
+  .mood-image { max-height: 110px }
+  .mood-text { font-size: 40px }
+}
+
+@media (max-width: 768px) {
+  .mood-content { gap: 36px; animation-duration: 24s }
+  .mood-image { max-height: 80px }
+  .mood-text { font-size: 26px }
+}

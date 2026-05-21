@@ -5,6 +5,7 @@ import { API_BASE_URL, BACKEND_URL } from '../config/api';
 import axios from 'axios';
 import Header from '../components/Header/Header';
 import HeroSection from '../components/HeroSection/HeroSection';
+import MoodSlider from '../components/MoodSlider/MoodSlider';
 import Sectionals from '../components/Sectionals/Sectionals';
 import PromoBanners from '../components/PromoBanners/PromoBanners';
 import ShopByCategory from '../components/ShopByCategory/ShopByCategory';
@@ -817,6 +818,7 @@ export default function HomePage() {
     <div className="home-page">
       <Header />
       <HeroSection />
+      {/* <MoodSlider /> */}
       <ShopByCategory />
       <PromoStrip
         title={prioritizedDealSource?.promoStrip?.enabled ? prioritizedDealSource?.promoStrip?.highlightText : ''}
@@ -852,7 +854,8 @@ export default function HomePage() {
       ))}
 
       {/* Static components at the bottom */}
-      <SlidingBanner />
+      {/* <SlidingBanner /> */}
+        <MoodSlider />
       <InspirationSection />
       <TopBrands />
       <NewsUpdates />

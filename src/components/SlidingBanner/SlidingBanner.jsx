@@ -2,12 +2,12 @@ import './SlidingBanner.css';
 
 export default function SlidingBanner() {
   const items = [
-    { id: 1, type: 'text', content: 'every room,' },
-    { id: 2, type: 'image', src: '/category/bedroom_6b25cc7c-ac96-4ce7-a44f-504036ac840b.webp', alt: 'Bedroom' },
-    { id: 3, type: 'text', content: 'every mood.' },
-    { id: 4, type: 'image', src: '/category/living-room_da94c724-0fba-40fe-9384-303ada964589.jpg', alt: 'Living Room' },
-    { id: 5, type: 'text', content: 'Furniture for' },
-    { id: 6, type: 'image', src: '/download (1).jpeg', alt: 'Furniture' },
+    { id: 1, type: 'image', src: '/Financing Companies/Gemini_Generated_Image_23za9423za9423za.png', alt: 'Financing company 1' },
+    { id: 2, type: 'image', src: '/Financing Companies/Gemini_Generated_Image_5hjrcc5hjrcc5hjr.png', alt: 'Financing company 2' },
+    { id: 3, type: 'image', src: '/Financing Companies/Gemini_Generated_Image_9mxnxb9mxnxb9mxn.png', alt: 'Financing company 3' },
+    { id: 4, type: 'image', src: '/Financing Companies/Gemini_Generated_Image_gafu2mgafu2mgafu (1).png', alt: 'Financing company 4' },
+    { id: 5, type: 'image', src: '/Financing Companies/Gemini_Generated_Image_n2wrjsn2wrjsn2wr.png', alt: 'Financing company 5' },
+    { id: 6, type: 'image', src: '/Financing Companies/Gemini_Generated_Image_p2q74xp2q74xp2q7.png', alt: 'Financing company 6' },
   ];
 
   // Duplicate items for seamless loop
