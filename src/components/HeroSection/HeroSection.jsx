@@ -4,7 +4,7 @@ import './HeroSection.css';
 
 // Public assets are referenced by absolute paths from the Vite public folder.
 const DESKTOP_IMAGES = [
-  '/Desktop/6.jpg',
+  // '/Desktop/6.jpg',
   '/Desktop/7.jpg',
   '/Desktop/8.jpg',
   '/Desktop/9.jpg',
