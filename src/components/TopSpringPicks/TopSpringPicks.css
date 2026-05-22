@@ -14,6 +14,7 @@
   font-weight: 700;
   color: #1a1a1a;
   margin: 0 0 40px 0;
+  padding-left: 60px;
   text-align: left;
 }
 
@@ -102,7 +103,7 @@
 
 .pick-content {
   padding: 24px;
-  background-color: #d4e8e0;
+  background-color: #f8e6e8;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -111,12 +112,12 @@
 .pick-price {
   font-size: 24px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--color-primary);
   margin: 0;
 }
 
 .pick-button {
-  background-color: #2d7a5e;
+  background-color: var(--color-accent);
   color: white;
   border: none;
   padding: 12px 28px;
@@ -131,7 +132,7 @@
 }
 
 .pick-button:hover {
-  background-color: #235f48;
+  background-color: var(--color-accent-hover);
   transform: translateY(-2px);
 }
 
@@ -148,6 +149,7 @@
   .spring-picks-title {
     font-size: 32px;
     margin-bottom: 32px;
+    padding-left: 48px;
   }
 
   .pick-price {
@@ -184,6 +186,7 @@
   .spring-picks-title {
     font-size: 28px;
     margin-bottom: 28px;
+    padding-left: 0;
   }
 
   .pick-image-wrapper {
@@ -199,6 +202,7 @@
   .spring-picks-title {
     font-size: 24px;
     margin-bottom: 24px;
+    padding-left: 0;
   }
 
   .pick-content {

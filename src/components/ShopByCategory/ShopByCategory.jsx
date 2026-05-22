@@ -13,12 +13,15 @@ export default function ShopByCategory({ showArrows = true, allCategories = fals
   const trackRef = useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
+  const [hasOverflow, setHasOverflow] = useState(false);
 
   const updateScrollState = () => {
     const track = trackRef.current;
     if (!track) return;
+    const overflow = track.scrollWidth > track.clientWidth + 8;
+    setHasOverflow(overflow);
     setCanScrollLeft(track.scrollLeft > 8);
-    setCanScrollRight(track.scrollLeft + track.clientWidth < track.scrollWidth - 8);
+    setCanScrollRight(overflow && track.scrollLeft + track.clientWidth < track.scrollWidth - 8);
   };
 
   useEffect(() => {
@@ -35,6 +38,16 @@ export default function ShopByCategory({ showArrows = true, allCategories = fals
     track.scrollBy({ left: offset, behavior: 'smooth' });
   };
 
+  const scrollByOneCategory = (direction) => {
+    const track = trackRef.current;
+    if (!track) return;
+
+    const firstItem = track.querySelector('.category-item');
+    const itemWidth = firstItem?.getBoundingClientRect().width || 180;
+    const gap = window.innerWidth <= 768 ? 15 : 22;
+    scrollByOffset(direction * (itemWidth + gap));
+  };
+
   if (loading) {
     return (
       <section className="shop-by-category">
@@ -44,15 +57,17 @@ export default function ShopByCategory({ showArrows = true, allCategories = fals
     );
   }
 
+  const shouldShowArrows = showArrows && hasOverflow;
+
   return (
-    <section className={`shop-by-category ${showArrows ? '' : 'no-arrows'}`}>
+    <section className={`shop-by-category ${shouldShowArrows ? '' : 'no-arrows'}`}>
       <h2 className="category-heading" data-aos="fade-up">Shop by Category</h2>
       <div className="category-carousel">
-        {showArrows && (
+        {shouldShowArrows && (
           <button
             type="button"
             className={`carousel-arrow carousel-arrow-left ${canScrollLeft ? '' : 'disabled'}`}
-            onClick={() => scrollByOffset(-420)}
+            onClick={() => scrollByOneCategory(-1)}
             disabled={!canScrollLeft}
             aria-label="Scroll categories left"
           >
@@ -102,11 +117,11 @@ export default function ShopByCategory({ showArrows = true, allCategories = fals
           </div>
         </div>
 
-        {showArrows && (
+        {shouldShowArrows && (
           <button
             type="button"
             className={`carousel-arrow carousel-arrow-right ${canScrollRight ? '' : 'disabled'}`}
-            onClick={() => scrollByOffset(420)}
+            onClick={() => scrollByOneCategory(1)}
             disabled={!canScrollRight}
             aria-label="Scroll categories right"
           >

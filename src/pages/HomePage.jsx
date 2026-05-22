@@ -173,7 +173,7 @@ const DynamicPromoBanners = ({ homeContent }) => {
   );
 
   return (
-    <div style={{ width: '100%', padding: '60px 40px', backgroundColor: 'var(--color-background)' }}>
+    <div style={{ width: '100%', padding: '28px 40px 20px', backgroundColor: 'var(--color-background)' }}>
       <div style={{ maxWidth: '1480px', margin: '0 auto' }}>
         <div style={{
           display: 'flex',
@@ -210,7 +210,7 @@ const DynamicPromoBanners = ({ homeContent }) => {
           <div style={{
             display: 'grid',
             gridTemplateColumns: isMobile ? '1fr' : `repeat(${visibleCount}, minmax(0, 1fr))`,
-            gap: '32px',
+            gap: '20px',
             flex: 1
           }}>
             {visibleBanners.map((banner, idx) => {
@@ -228,7 +228,7 @@ const DynamicPromoBanners = ({ homeContent }) => {
               <div style={{
                 position: 'relative',
                 width: '100%',
-                paddingBottom: '100%',
+                paddingBottom: isMobile ? '62%' : '68%',
                 overflow: 'hidden',
                 backgroundColor: 'var(--color-secondary)',
                 borderRadius: '8px 8px 0 0'
@@ -252,7 +252,7 @@ const DynamicPromoBanners = ({ homeContent }) => {
 
               {/* Banner Content */}
               <div style={{
-                padding: '32px 24px',
+                padding: '20px 20px 22px',
                 backgroundColor: '#F5EFE7',
                 borderRadius: '0 0 8px 8px',
                 display: 'flex',
@@ -264,10 +264,10 @@ const DynamicPromoBanners = ({ homeContent }) => {
               }}>
                 {banner.heading && (
                   <h3 style={{
-                    fontSize: '28px',
+                    fontSize: '22px',
                     fontWeight: '700',
                     color: 'var(--color-primary)',
-                    margin: '0 0 8px 0',
+                    margin: '0 0 6px 0',
                     lineHeight: '1.2'
                   }}>
                     {banner.heading}
@@ -276,9 +276,9 @@ const DynamicPromoBanners = ({ homeContent }) => {
 
                 {banner.subHeading && (
                   <p style={{
-                    fontSize: '16px',
+                    fontSize: '14px',
                     color: '#333',
-                    margin: '0 0 16px 0',
+                    margin: '0 0 10px 0',
                     lineHeight: '1.5'
                   }}>
                     {banner.subHeading}
@@ -290,16 +290,16 @@ const DynamicPromoBanners = ({ homeContent }) => {
                     type="button"
                     onClick={() => bannerAction && bannerAction()}
                     style={{
-                      padding: '12px 32px',
+                      padding: '10px 26px',
                       backgroundColor: 'var(--color-accent)',
                       color: 'white',
                       border: 'none',
                       borderRadius: '4px',
-                      fontSize: '15px',
+                      fontSize: '14px',
                       fontWeight: '700',
                       cursor: bannerAction ? 'pointer' : 'default',
                       transition: 'all 0.3s ease',
-                      marginTop: '8px'
+                      marginTop: '4px'
                     }}
                     onMouseEnter={(e) => {
                       if (banner.buttonSubcategory) {
