@@ -1,6 +1,6 @@
 .promo-banners {
   width: 100%;
-  padding: 60px 20px;
+  padding: 12px 40px 8px;
   background-color: #f8f8f8;
 }
 
@@ -102,7 +102,7 @@
 /* Responsive */
 @media (max-width: 1024px) {
   .promo-banners {
-    padding: 50px 20px;
+    padding: 12px 20px 8px;
   }
 
   .banners-grid {
@@ -124,7 +124,7 @@
 
 @media (max-width: 768px) {
   .promo-banners {
-    padding: 48px 16px;
+    padding: 12px 16px 8px;
   }
 
   .banners-grid {
@@ -156,7 +156,7 @@
 
 @media (max-width: 480px) {
   .promo-banners {
-    padding: 40px 16px;
+    padding: 10px 12px 6px;
   }
 
   .banner-content-section {

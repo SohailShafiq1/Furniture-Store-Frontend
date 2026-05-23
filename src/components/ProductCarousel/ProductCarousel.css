@@ -57,7 +57,7 @@
 .home-content-carousel .product-carousel-header {
   padding-left: 13px;
   padding-right: 20px;
-  margin-bottom: 18px;
+  margin-bottom: 12px;
 }
 
 .home-content-carousel .product-carousel-title {
@@ -65,8 +65,8 @@
 }
 
 .home-content-carousel {
-  padding-top: 29px;
-  padding-bottom: 29px;
+  padding-top: 8px;
+  padding-bottom: 20px;
 }
 
 .view-all-link {
