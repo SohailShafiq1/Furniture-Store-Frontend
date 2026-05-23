@@ -1,5 +1,5 @@
 import './TopBrands.css';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { API_BASE_URL } from '../../config/api';
 import { getImageUrl, getAlternateImageUrl } from '../../utils/imageUrl';
@@ -10,7 +10,23 @@ export default function TopBrands() {
   const [error, setError] = useState(null);
   const [brokenBrandIds, setBrokenBrandIds] = useState({});
 
-  const apiEndpoint = `${API_BASE_URL}/brands`;
+  useEffect(() => {
+    const fetchBrands = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(`${API_BASE_URL}/brands/all`);
+        setBrands(Array.isArray(response.data) ? response.data : []);
+        setError(null);
+      } catch (fetchError) {
+        console.error('Failed to fetch brands:', fetchError);
+        setError('Failed to load brands');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBrands();
+  }, []);
 
   const handleImageError = (brandId, imagePath) => (event) => {
     const img = event.currentTarget;
@@ -28,42 +44,24 @@ export default function TopBrands() {
     setBrokenBrandIds((prev) => ({ ...prev, [brandId]: true }));
   };
 
-  useEffect(() => {
-    const fetchBrands = async () => {
-      try {
-        setLoading(true);
-        const res = await axios.get(`${apiEndpoint}/all`);
-        setBrands(res.data);
-        setError(null);
-      } catch (err) {
-        console.error('Failed to fetch brands:', err);
-        setError('Failed to load brands');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBrands();
-  }, []);
-
   return (
     <section className="top-brands">
       <div className="top-brands-container">
         <h2 className="top-brands-title">Top Brands at the Best Prices</h2>
-        
-        {loading && <div className="loading-message">Loading brands...</div>}
-        {error && <div className="error-message">{error}</div>}
-        
-        {!loading && brands.length === 0 && (
-          <div className="no-brands-message">No brands available yet.</div>
+
+        {loading && <div className="top-brands-message">Loading brands...</div>}
+        {error && <div className="top-brands-message top-brands-message--error">{error}</div>}
+
+        {!loading && !error && brands.length === 0 && (
+          <div className="top-brands-message">No brands available yet.</div>
         )}
-        
-        {!loading && brands.length > 0 && (
-          <div className="brands-grid">
+
+        {!loading && !error && brands.length > 0 && (
+          <div className="brands-grid" aria-label="Top brands">
             {brands.map((brand) => (
               <div key={brand._id} className="brand-item">
                 {brand.image && !brokenBrandIds[brand._id] ? (
-                  <img 
+                  <img
                     src={getImageUrl(brand.image)}
                     alt={brand.name}
                     className="brand-logo"

@@ -1,165 +1,144 @@
 .top-brands {
   width: 100%;
-  padding: 80px 20px;
-  background-color: #f8f8f8;
+  padding: 56px 20px 60px;
+  background: #ffffff;
 }
 
 .top-brands-container {
-  max-width: 1480px;
+  max-width: 1680px;
   margin: 0 auto;
+  padding: 0 130px;
 }
 
 .top-brands-title {
-  font-size: 36px;
-  font-weight: 700;
-  color: #1a1a1a;
+  margin: 0 0 28px;
   text-align: center;
-  margin: 0 0 50px 0;
+  color: #1f1f1f;
+  font-size: clamp(30px, 2.6vw, 52px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
 }
 
-.loading-message,
-.error-message,
-.no-brands-message {
+.top-brands-message {
   text-align: center;
-  padding: 40px 20px;
+  padding: 20px 12px;
+  color: #666;
   font-size: 16px;
 }
 
-.loading-message {
-  color: #666;
+.top-brands-message--error {
+  color: #c0392b;
 }
 
-.error-message {
-  color: #d32f2f;
-  background-color: #ffebee;
-  border: 1px solid #ef5350;
-  border-radius: 4px;
-  padding: 20px;
-}
-
-.no-brands-message {
-  color: #999;
-  font-style: italic;
-}
-
-.brands-grid {
+.top-brands .brands-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 40px;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 10px;
   align-items: center;
   justify-items: center;
-  max-width: 1200px;
-  margin: 0 auto;
+  width: 100%;
 }
 
-.brand-item {
+.top-brands .brand-item {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
-  padding: 20px;
-  transition: transform 0.3s ease;
+  min-height: 103px;
+  padding: 0;
 }
 
-.brand-item:hover {
-  transform: scale(1.1);
-}
-
-.brand-logo {
-  max-width: 140px;
-  width: 100%;
+.top-brands .brand-logo {
+  display: block;
+  max-width: 100%;
+  max-height: 141px;
+  width: auto;
   height: auto;
   object-fit: contain;
-  filter: grayscale(100%);
-  opacity: 0.7;
-  transition: all 0.3s ease;
-}
-
-.brand-item:hover .brand-logo {
-  filter: grayscale(0%);
+  filter: none;
   opacity: 1;
+  transition: transform 0.2s ease;
 }
 
-.brand-placeholder {
+.top-brands .brand-item:hover .brand-logo {
+  transform: scale(1.04);
+}
+
+.top-brands .brand-placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 140px;
-  height: 100px;
-  background-color: #e0e0e0;
-  border-radius: 4px;
-  padding: 10px;
-  text-align: center;
-  font-weight: 600;
+  width: 100%;
+  min-height: 103px;
+  padding: 0;
+  border-radius: 0;
+  background: #f0f0f0;
   color: #666;
   font-size: 14px;
+  font-weight: 600;
+  text-align: center;
 }
 
-/* Responsive */
 @media (max-width: 1024px) {
   .top-brands {
-    padding: 70px 20px;
+    padding: 48px 18px 52px;
   }
 
-  .top-brands-title {
-    font-size: 32px;
-    margin-bottom: 40px;
+  .top-brands .brands-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
   }
 
-  .brands-grid {
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-    gap: 35px;
-  }
-
-  .brand-logo {
-    max-width: 120px;
+  .top-brands .brand-logo {
+    max-height: 126px;
   }
 }
 
 @media (max-width: 768px) {
   .top-brands {
-    padding: 60px 16px;
+    padding: 40px 16px 44px;
   }
 
   .top-brands-title {
+    margin-bottom: 22px;
     font-size: 28px;
-    margin-bottom: 35px;
   }
 
-  .brands-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 30px;
+  .top-brands .brands-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
   }
 
-  .brand-logo {
-    max-width: 100px;
+  .top-brands .brand-item {
+    min-height: 95px;
   }
 
-  .brand-item {
-    padding: 15px;
+  .top-brands .brand-logo {
+    max-height: 119px;
   }
 }
 
 @media (max-width: 480px) {
   .top-brands {
-    padding: 50px 16px;
+    padding: 36px 14px 40px;
   }
 
   .top-brands-title {
+    margin-bottom: 18px;
     font-size: 24px;
-    margin-bottom: 30px;
   }
 
-  .brands-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 25px;
+  .top-brands .brands-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
   }
 
-  .brand-logo {
-    max-width: 90px;
+  .top-brands .brand-item {
+    min-height: 89px;
   }
 
-  .brand-item {
-    padding: 12px;
+  .top-brands .brand-logo {
+    max-height: 111px;
   }
 }
