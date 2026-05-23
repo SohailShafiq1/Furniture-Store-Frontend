@@ -265,7 +265,7 @@ const DynamicPromoBanners = ({ homeContent }) => {
               }}>
                 {banner.heading && (
                   <h3 style={{
-                    fontSize: '22px',
+                    fontSize: '26px',
                     fontWeight: '700',
                     color: 'var(--color-primary)',
                     margin: '0 0 6px 0',
@@ -277,7 +277,7 @@ const DynamicPromoBanners = ({ homeContent }) => {
 
                 {banner.subHeading && (
                   <p style={{
-                    fontSize: '14px',
+                    fontSize: '16px',
                     color: '#333',
                     margin: '0 0 10px 0',
                     lineHeight: '1.5'
@@ -296,7 +296,7 @@ const DynamicPromoBanners = ({ homeContent }) => {
                       color: 'white',
                       border: 'none',
                       borderRadius: '4px',
-                      fontSize: '14px',
+                      fontSize: '16px',
                       fontWeight: '700',
                       cursor: bannerAction ? 'pointer' : 'default',
                       transition: 'all 0.3s ease',
