@@ -97,6 +97,7 @@ export default function Navigation({ activeMenu, onCategoryHover, isOpen: contro
                   className={`nav-link ${activeMenu === item.id ? 'active' : ''}`}
                 >
                   {item.label}
+                  <ChevronIcon open={activeMenu === item.id} />
                 </Link>
                 {item.subcategories.length > 0 && (
                   <button

@@ -7,7 +7,7 @@ import AuthModal from '../common/AuthModal';
 import { useUserAuth } from '../../context/UserAuthContext';
 import { useCart } from '../../context/CartContext';
 import { useCategoryData } from '../../hooks/useCategoryData';
-import { FiBox, FiTruck, FiCreditCard } from 'react-icons/fi';
+import { FiBox } from 'react-icons/fi';
 import { BACKEND_URL } from '../../config/api';
 import { getAlternateImageUrl, getImageUrl } from '../../utils/imageUrl';
 import './Header.css';
@@ -92,6 +92,8 @@ export default function Header() {
   }));
 
   const activeNavItem = navItems.find((item) => item.id === activeMenu);
+  const navbarPromoImageOne = encodeURI('/navbar/Areeb Client 1 New Website Work.svg');
+  const navbarPromoImageTwo = encodeURI('/navbar/Areeb Client 1 New Website Work (1).svg');
 
   return (
     <header className="header" onMouseLeave={() => setActiveMenu(null)}>
@@ -297,18 +299,18 @@ export default function Header() {
 
             <aside className="mega-menu-right">
               <Link to="/delivery-policy" className="mega-promo-box promo-shipping">
-                <div>
-                  <div className="promo-box-heading">FAST SHIPPING, NATIONWIDE.</div>
-                  <div className="promo-box-copy">Right to your location.</div>
-                </div>
-                <div className="promo-box-icon"><FiTruck /></div>
+                <img
+                  src={navbarPromoImageOne}
+                  alt="Areeb Client 1 New Website Work"
+                  className="promo-box-image"
+                />
               </Link>
               <Link to="/financing" className="mega-promo-box promo-financing">
-                <div>
-                  <div className="promo-box-heading">BUY NOW, PAY OVER TIME.</div>
-                  <div className="promo-box-copy">Flexible payments, your way.</div>
-                </div>
-                <div className="promo-box-icon"><FiCreditCard /></div>
+                <img
+                  src={navbarPromoImageTwo}
+                  alt="Areeb Client 1 New Website Work (1)"
+                  className="promo-box-image"
+                />
               </Link>
             </aside>
           </div>

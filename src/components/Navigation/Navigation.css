@@ -81,6 +81,10 @@
   transition: transform 0.2s ease;
 }
 
+.nav-link .chevron.open {
+  transform: rotate(180deg);
+}
+
 .nav-link:hover .chevron {
   transform: rotate(180deg);
   color: var(--color-accent);
@@ -156,6 +160,10 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
+  }
+
+  .nav-link .chevron {
+    display: none;
   }
 
   .submenu-toggle {
