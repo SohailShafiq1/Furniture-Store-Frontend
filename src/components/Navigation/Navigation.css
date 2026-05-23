@@ -125,7 +125,7 @@
     overflow-y: auto;
     transition: max-height 0.3s ease;
     z-index: 4000;
-    border-top: 1px solid #eee;
+    border-top: none;
   }
 
   .nav-list.active {
