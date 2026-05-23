@@ -65,11 +65,11 @@
 }
 
 .nav-link:hover {
-  color: #ff6b35;
+  color: var(--color-accent);
 }
 
 .nav-link.active {
-  color: #ff6b35;
+  color: var(--color-accent);
 }
 
 .nav-link .chevron {
@@ -83,27 +83,27 @@
 
 .nav-link:hover .chevron {
   transform: rotate(180deg);
-  color: #ff6b35;
+  color: var(--color-accent);
 }
 
 .nav-link.active .chevron {
   transform: rotate(180deg);
-  color: #ff6b35;
+  color: var(--color-accent);
 }
 
 /* Premium item */
 .nav-link.premium {
-  color: #e67e22;
+  color: var(--color-accent);
   font-weight: 600;
 }
 
 .nav-link.premium .chevron {
-  color: #e67e22;
+  color: var(--color-accent);
 }
 
 .nav-link.premium:hover {
-  color: #d35400;
-  border-bottom-color: #e67e22;
+  color: var(--color-accent-hover);
+  border-bottom-color: var(--color-accent);
 }
 
 /* ===== RESPONSIVE ===== */
