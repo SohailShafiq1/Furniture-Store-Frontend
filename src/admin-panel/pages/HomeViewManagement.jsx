@@ -58,6 +58,10 @@ const HomeViewManagement = () => {
   const [editingId, setEditingId] = useState(null);
   const [showForm, setShowForm] = useState(true);
   const [activeSection, setActiveSection] = useState('home');
+  const [liveSales, setLiveSales] = useState([]);
+  const [liveSaleTitle, setLiveSaleTitle] = useState('');
+  const [liveSaleEnabled, setLiveSaleEnabled] = useState(true);
+  const [editingSaleId, setEditingSaleId] = useState(null);
   
   const { token } = useAdminAuth();
   const apiEndpoint = `${API_BASE_URL}`;
@@ -381,6 +385,61 @@ const HomeViewManagement = () => {
     }
   };
 
+  // Live sale API helpers
+  const fetchLiveSales = async () => {
+    try {
+      const res = await axios.get(`${apiEndpoint}/live-sales/admin/all`, config);
+      setLiveSales(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.error('Failed to fetch live sales', err);
+      setLiveSales([]);
+    }
+  };
+
+  const handleCreateLiveSale = async () => {
+    if (!liveSaleTitle || liveSaleTitle.trim() === '') {
+      setError('Sale title is required');
+      return;
+    }
+    try {
+      setLoading(true);
+      await axios.post(`${apiEndpoint}/live-sales`, { title: liveSaleTitle.trim(), isActive: liveSaleEnabled }, config);
+      setMessage('Live sale created');
+      setLiveSaleTitle('');
+      setLiveSaleEnabled(true);
+      await fetchLiveSales();
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to create sale');
+    } finally { setLoading(false); }
+  };
+
+  const handleUpdateLiveSale = async () => {
+    if (!editingSaleId) return;
+    try {
+      setLoading(true);
+      await axios.put(`${apiEndpoint}/live-sales/${editingSaleId}`, { title: liveSaleTitle.trim(), isActive: liveSaleEnabled }, config);
+      setMessage('Live sale updated');
+      setEditingSaleId(null);
+      setLiveSaleTitle('');
+      setLiveSaleEnabled(true);
+      await fetchLiveSales();
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to update sale');
+    } finally { setLoading(false); }
+  };
+
+  const handleDeleteLiveSale = async (id) => {
+    if (!window.confirm('Delete this live sale?')) return;
+    try {
+      setLoading(true);
+      await axios.delete(`${apiEndpoint}/live-sales/${id}`, config);
+      setMessage('Live sale deleted');
+      await fetchLiveSales();
+    } catch (err) {
+      setError('Failed to delete live sale');
+    } finally { setLoading(false); }
+  };
+
   // Fetch saved content
   const fetchSavedContent = async () => {
     try {
@@ -507,9 +566,77 @@ const HomeViewManagement = () => {
         >
           Instagram Posts Adding
         </button>
+        <button
+          type="button"
+          className={`home-view-tab-btn ${activeSection === 'live' ? 'active' : ''}`}
+          onClick={() => { setActiveSection('live'); fetchLiveSales(); }}
+        >
+          Live A Sale
+        </button>
       </div>
 
       {activeSection === 'instagram' && <InstagramPostsManager />}
+      {activeSection === 'live' && (
+        <div className="live-sale-section">
+          <h2>Live Sales</h2>
+          <p className="section-subtitle">Create, edit, or delete quick sales (title only).</p>
+
+          <div className="form-group">
+            <label>Sale Title</label>
+            <input
+              type="text"
+              placeholder="e.g., Memorial Day Sale"
+              value={liveSaleTitle}
+              onChange={(e) => setLiveSaleTitle(e.target.value)}
+            />
+          </div>
+
+          <div className="form-group checkbox-group">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={liveSaleEnabled}
+                onChange={(e) => setLiveSaleEnabled(e.target.checked)}
+              />
+              Active Sale
+            </label>
+          </div>
+
+          <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
+            <button
+              type="button"
+              className="btn-primary"
+              onClick={editingSaleId ? handleUpdateLiveSale : handleCreateLiveSale}
+            >
+              {editingSaleId ? 'Update Sale' : 'Create Sale'}
+            </button>
+            {editingSaleId && (
+              <button type="button" onClick={() => { setEditingSaleId(null); setLiveSaleTitle(''); setLiveSaleEnabled(true); }}>
+                Cancel
+              </button>
+            )}
+          </div>
+
+          <h3>Existing Sales</h3>
+          <div>
+            {liveSales.length === 0 && <p>No live sales yet.</p>}
+            {liveSales.map((s) => (
+              <div key={s._id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #eee' }}>
+                <div>
+                  <strong>{s.title}</strong>
+                  <div style={{ fontSize: 13, color: '#666' }}>{s.isActive ? 'Enabled' : 'Disabled'}</div>
+                </div>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button type="button" onClick={() => { setEditingSaleId(s._id); setLiveSaleTitle(s.title); setLiveSaleEnabled(Boolean(s.isActive)); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
+                    Edit
+                  </button>
+                  <button type="button" onClick={() => handleDeleteLiveSale(s._id)}>Delete</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       {activeSection === 'home' && (
         <>
       

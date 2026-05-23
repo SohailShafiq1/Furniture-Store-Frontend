@@ -9,7 +9,7 @@
   font-size: 28px;
   font-weight: 800;
   color: var(--color-primary);
-  margin: 0 0 40px 0;
+  margin: 0 0 16px 0;
   letter-spacing: -0.5px;
 }
 
@@ -18,6 +18,7 @@
   width: 100%;
   display: flex;
   align-items: center;
+  padding: 0 34px;
 }
 
 .category-track-wrapper {
@@ -31,7 +32,8 @@
   overflow-x: auto;
   scroll-behavior: smooth;
   padding-bottom: 10px;
-  margin: 0 -11px;
+  margin: 0;
+  scroll-padding-inline: 34px;
 }
 
 .category-track::-webkit-scrollbar {
@@ -78,11 +80,11 @@
 }
 
 .carousel-arrow-left {
-  left: -22px;
+  left: 0;
 }
 
 .carousel-arrow-right {
-  right: -22px;
+  right: 0;
 }
 
 .category-circle {
@@ -144,6 +146,10 @@
     padding: 32px 16px 40px;
   }
 
+  .category-carousel {
+    padding: 0 30px;
+  }
+
   .category-heading {
     font-size: 24px;
     margin-bottom: 24px;
@@ -151,7 +157,8 @@
 
   .category-track {
     gap: 16px;
-    margin: 0 -8px;
+    margin: 0;
+    scroll-padding-inline: 30px;
   }
 
   .category-item {
@@ -167,6 +174,10 @@
     padding: 28px 14px 36px;
   }
 
+  .category-carousel {
+    padding: 0 26px;
+  }
+
   .category-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 20px 10px;
@@ -174,7 +185,8 @@
 
   .category-track {
     gap: 14px;
-    margin: 0 -7px;
+    margin: 0;
+    scroll-padding-inline: 26px;
   }
 
   .category-item {

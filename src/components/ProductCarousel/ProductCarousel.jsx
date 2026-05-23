@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCart } from '../../context/CartContext';
 import './ProductCarousel.css';
 
 export default function ProductCarousel({
@@ -11,12 +12,21 @@ export default function ProductCarousel({
   className = ''
 }) {
   const navigate = useNavigate();
+  const { addToCart } = useCart();
   const [startIndex, setStartIndex] = useState(0);
-  const [visibleCount, setVisibleCount] = useState(4);
+  const [visibleCount, setVisibleCount] = useState(5);
+  const [cartPopup, setCartPopup] = useState('');
 
   useEffect(() => {
     setStartIndex(0);
   }, [products]);
+
+  useEffect(() => {
+    if (!cartPopup) return undefined;
+
+    const timer = window.setTimeout(() => setCartPopup(''), 2200);
+    return () => window.clearTimeout(timer);
+  }, [cartPopup]);
 
   useEffect(() => {
     const updateVisibleCount = () => {
@@ -29,8 +39,6 @@ export default function ProductCarousel({
         nextVisibleCount = 2;
       } else if (width <= 1280) {
         nextVisibleCount = 3;
-      } else if (width <= 1500) {
-        nextVisibleCount = 4;
       } else if (width <= 1800) {
         nextVisibleCount = 5;
       } else {
@@ -67,6 +75,36 @@ export default function ProductCarousel({
     }
   };
 
+  const handleAddToCart = async (product, event) => {
+    event?.stopPropagation();
+
+    const parsedPrice = typeof product.price === 'number'
+      ? product.price
+      : Number.parseFloat(String(product.currentPrice || '').replace(/[^0-9.]/g, '')) || 0;
+    const discount = typeof product.discount === 'number' ? product.discount : 0;
+
+    const added = await addToCart(
+      product.id,
+      null,
+      1,
+      parsedPrice,
+      {
+        name: product.name,
+        image: product.image,
+        brand: product.brand,
+        price: parsedPrice
+      },
+      null,
+      discount
+    );
+
+    if (added) {
+      setCartPopup(`${product.name} added to cart`);
+    } else {
+      setCartPopup('Unable to add item to cart');
+    }
+  };
+
   const renderStars = (rating) => {
     const stars = [];
     // If no rating (0 stars), show 5 full stars by default
@@ -89,6 +127,11 @@ export default function ProductCarousel({
 
   return (
     <section className={`product-carousel ${className}`.trim()} data-aos="fade-up">
+      {cartPopup && (
+        <div className="product-cart-popup" role="status" aria-live="polite">
+          {cartPopup}
+        </div>
+      )}
       <div className="product-carousel-container">
         <div className="product-carousel-header">
           <h2 className="product-carousel-title" data-aos="fade-right">{title}</h2>
@@ -137,17 +180,45 @@ export default function ProductCarousel({
                   />
                 </div>
                 <div className="product-info">
-                  {product.badge && (
+                  <div className="product-top-row">
                     <div className="product-badges">
-                      <span className="badge spring-sale">
-                        <svg className="badge-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                          <path d="M20 10.6V6a2 2 0 0 0-2-2h-4.6a2 2 0 0 0-1.4.59L4.59 12a2 2 0 0 0 0 2.82l4.59 4.59a2 2 0 0 0 2.82 0L19.41 12a2 2 0 0 0 .59-1.4Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                          <circle cx="15" cy="9" r="1.5" fill="currentColor"/>
-                        </svg>
-                        {product.badge}
-                      </span>
+                      {product.badge && (
+                        <span className="badge spring-sale">
+                          <svg className="badge-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M20 10.6V6a2 2 0 0 0-2-2h-4.6a2 2 0 0 0-1.4.59L4.59 12a2 2 0 0 0 0 2.82l4.59 4.59a2 2 0 0 0 2.82 0L19.41 12a2 2 0 0 0 .59-1.4Z" fill="none" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                            <circle cx="15" cy="9" r="1.4" fill="#ffffff"/>
+                          </svg>
+                          {product.badge}
+                        </span>
+                      )}
+                      {product.anniversary && (
+                        <span className="badge anniversary">
+                          <svg className="badge-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M20 10.6V6a2 2 0 0 0-2-2h-4.6a2 2 0 0 0-1.4.59L4.59 12a2 2 0 0 0 0 2.82l4.59 4.59a2 2 0 0 0 2.82 0L19.41 12a2 2 0 0 0 .59-1.4Z" fill="none" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                            <circle cx="15" cy="9" r="1.4" fill="#ffffff"/>
+                          </svg>
+                          {product.saleTitle || 'Anniversary Sale'}
+                        </span>
+                      )}
+                      {product.quantity > 0 && (
+                        <span className="badge in-stock">In Stock</span>
+                      )}
                     </div>
-                  )}
+
+                    <button
+                      type="button"
+                      className="product-cart-overlay"
+                      aria-label={`Add ${product.name} to cart`}
+                      onClick={(event) => handleAddToCart(product, event)}
+                    >
+                      <svg viewBox="0 0 24 24" className="product-cart-icon" aria-hidden="true">
+                        <path d="M7 7h14l-2 8H8L7 7Z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
+                        <path d="M7 7 6.2 4.6A1 1 0 0 0 5.24 4H3" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                        <circle cx="9" cy="19" r="1.5" fill="currentColor"/>
+                        <circle cx="17" cy="19" r="1.5" fill="currentColor"/>
+                      </svg>
+                    </button>
+                  </div>
                   <p className="product-brand">{product.brand}</p>
                   <h3 className="product-name">{product.name}</h3>
                   <div className="product-rating">
@@ -158,6 +229,7 @@ export default function ProductCarousel({
                     <span className="current-price">{product.currentPrice}</span>
                     <span className="original-price">{product.originalPrice}</span>
                   </div>
+                  {/* In-stock CTA removed — keep only badge to avoid extra button at carousel end */}
                 </div>
               </div>
               ))}

@@ -18,6 +18,7 @@ import TopBrands from '../components/TopBrands/TopBrands';
 import NewsUpdates from '../components/NewsUpdates/NewsUpdates';
 import Footer from '../components/Footer/Footer';
 import StayInTouch from '../components/Footer/StayInTouch';
+import ProductCarousel from '../components/ProductCarousel/ProductCarousel';
 
 
 // checking is sohail 
@@ -674,6 +675,7 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [homeDeal, setHomeDeal] = useState(null);
   const [homeInstagramPost, setHomeInstagramPost] = useState(null);
+  const [activeLiveSaleTitle, setActiveLiveSaleTitle] = useState('');
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -754,6 +756,21 @@ export default function HomePage() {
     };
 
     fetchInstagramHomePost();
+  }, []);
+
+  useEffect(() => {
+    const fetchActiveLiveSale = async () => {
+      try {
+        const res = await axios.get(`${API_BASE_URL}/live-sales/active`);
+        const sales = Array.isArray(res.data) ? res.data : [];
+        setActiveLiveSaleTitle(sales[0]?.title || '');
+      } catch (err) {
+        console.error('Error fetching active live sale:', err);
+        setActiveLiveSaleTitle('');
+      }
+    };
+
+    fetchActiveLiveSale();
   }, []);
 
   const prioritizedDealSource = homeInstagramPost || homeDeal;
@@ -837,11 +854,35 @@ export default function HomePage() {
         <div key={content._id || idx}>
           {/* Show Subcategory Component with selected products first */}
           {content.selectedSubCategoryName && content.selectedProducts && content.selectedProducts.length > 0 ? (
-            <DynamicSubcategoryComponent 
-              subcategoryName={content.selectedSubCategoryName}
-              selectedProducts={content.selectedProducts}
-              categoryId={content.selectedCategory?._id || content.selectedProducts[0]?.category}
-            />
+            (() => {
+              const mapped = (content.selectedProducts || []).map((p) => ({
+                id: p._id || p.id,
+                image: p.image?.startsWith('http') ? p.image : `${BACKEND_URL}/${p.image}`,
+                brand: p.brand || p.brandId || 'LUNA',
+                name: p.name || p.title || 'Product',
+                rating: p.rating || Math.round(p.avgRating || 0) || 0,
+                reviews: p.numReviews || p.reviews || 0,
+                price: parseFloat(p.price || 0),
+                discount: p.discount || 0,
+                currentPrice: `$${parseFloat(p.price || 0).toFixed(2)}`,
+                originalPrice: p.discount > 0 ? `$${(parseFloat(p.price || 0) * (1 + (p.discount || 0) / 100)).toFixed(2)}` : '',
+                badge: p.badge || '',
+                anniversary: Boolean(activeLiveSaleTitle),
+                saleTitle: activeLiveSaleTitle,
+                quantity: p.quantity || p.stock || 1,
+                targetPath: `/product/${p.category || ''}/${p._id || p.id}`
+              }));
+
+              return (
+                <ProductCarousel
+                  title={content.selectedSubCategoryName}
+                  products={mapped}
+                  showViewAll={false}
+                  className="home-content-carousel"
+                  onProductClick={(prod) => prod?.targetPath && window.location.assign(prod.targetPath)}
+                />
+              );
+            })()
           ) : (
             <div style={{ padding: '20px', textAlign: 'center', color: '#999' }}>
               No products selected for: {content.selectedSubCategoryName}
