@@ -213,8 +213,8 @@ export default function Footer() {
           <h4>Contact Us</h4>
           <Link to="/contact-us" className="footer-list-link">Contact Us</Link>
           <ul>
-            <li><a href="tel:+18329003800" className="footer-list-link"> <span style={{ fontWeight: 'bold' }}> Call/Text:</span> (832) 900-3800</a></li>
-            <li><a href="mailto:customerservice@dimondmodernfurniture.com" className="footer-list-link"> <span style={{ fontWeight: 'bold' }}> Email:</span> customerservice@dimondmodernfurniture.com</a></li>
+            <li><a href="tel:+18329003800" className="footer-list-link"> <span style={{ fontWeight: 'bold' }}> Call/Text:</span>  (877) 349-5003</a></li>
+            <li><a href="mailto:Management@3roompackages.com" className="footer-list-link"> <span style={{ fontWeight: 'bold' }}> Email:</span> customerservice@dimondmodernfurniture.com</a></li>
           </ul>
         </div>
         <div className="footer-col footer-col-newsletter">  
