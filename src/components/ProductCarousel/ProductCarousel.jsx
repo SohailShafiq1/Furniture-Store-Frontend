@@ -7,6 +7,7 @@ export default function ProductCarousel({
   title,
   products,
   showViewAll = true,
+  onViewAllClick,
   onProductClick,
   maxDesktopVisible,
   className = ''
@@ -135,7 +136,19 @@ export default function ProductCarousel({
       <div className="product-carousel-container">
         <div className="product-carousel-header">
           <h2 className="product-carousel-title" data-aos="fade-right">{title}</h2>
-          {showViewAll && <a href="#" className="view-all-link">View all</a>}
+          {showViewAll && (
+            <a
+              href="#"
+              className="view-all-link"
+              onClick={(event) => {
+                if (!onViewAllClick) return;
+                event.preventDefault();
+                onViewAllClick(event);
+              }}
+            >
+              View all
+            </a>
+          )}
         </div>
         <div className="products-scroll-container">
           <div className="products-carousel-row">

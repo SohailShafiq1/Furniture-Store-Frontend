@@ -877,8 +877,17 @@ export default function HomePage() {
                 <ProductCarousel
                   title={content.selectedSubCategoryName}
                   products={mapped}
-                  showViewAll={false}
+                  showViewAll={true}
                   className="home-content-carousel"
+                  onViewAllClick={() => {
+                    const categoryId = content?.selectedCategory?._id || content?.selectedCategory;
+                    if (!categoryId) return;
+
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    navigate(`/category/${categoryId}`, {
+                      state: { subcategoryFilter: content.selectedSubCategoryName }
+                    });
+                  }}
                   onProductClick={(prod) => prod?.targetPath && window.location.assign(prod.targetPath)}
                 />
               );
