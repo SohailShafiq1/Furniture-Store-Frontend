@@ -7,8 +7,8 @@
 .hero-container {
   position: relative;
   width: 100%;
-  aspect-ratio: 1440 / 520;
-  min-height: 400px;
+  aspect-ratio: 1280 / 426;
+  min-height: 320px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -29,6 +29,7 @@
   height: 100%;
   display: block;
   object-fit: cover;
+  object-position: center center;
   opacity: 1;
   transition: opacity 1.15s cubic-bezier(0.4, 0, 0.2, 1), transform 1.15s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: opacity, transform;
@@ -90,8 +91,8 @@
 
 @media (max-width: 768px) {
   .hero-container {
-    aspect-ratio: 768 / 260;
-    min-height: 250px;
+    aspect-ratio: 980 / 1225;
+    min-height: 420px;
   }
 
   .hero-content {
@@ -107,8 +108,8 @@
 
 @media (max-width: 480px) {
   .hero-container {
-    aspect-ratio: 480 / 200;
-    min-height: 200px;
+    aspect-ratio: 980 / 1225;
+    min-height: 360px;
   }
 
   .hero-content {
