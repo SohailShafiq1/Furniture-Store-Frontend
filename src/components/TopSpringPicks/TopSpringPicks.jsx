@@ -37,10 +37,7 @@ export default function TopSpringPicks({ items = [], title = 'Top Spring Picks' 
   const [startIndex, setStartIndex] = useState(0);
   const [visibleCount, setVisibleCount] = useState(3);
   const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    setStartIndex(0);
-  }, [items]);
+  const [mobileScrollPercent, setMobileScrollPercent] = useState(0);
 
   useEffect(() => {
     const updateVisibleCount = () => {
@@ -54,6 +51,15 @@ export default function TopSpringPicks({ items = [], title = 'Top Spring Picks' 
 
     return () => window.removeEventListener('resize', updateVisibleCount);
   }, []);
+
+  const handleMobileScroll = () => {
+    if (!trackRef.current) return;
+
+    const track = trackRef.current;
+    const maxScroll = Math.max(1, track.scrollWidth - track.clientWidth);
+    const scrolledPercent = (track.scrollLeft / maxScroll) * 100;
+    setMobileScrollPercent(Math.max(6, Math.min(100, scrolledPercent)));
+  };
 
   const scrollByCard = (direction) => {
     if (!isMobile || !trackRef.current) return;
@@ -72,10 +78,23 @@ export default function TopSpringPicks({ items = [], title = 'Top Spring Picks' 
   };
 
   const maxStart = Math.max(0, items.length - visibleCount);
+  const effectiveStartIndex = Math.min(startIndex, maxStart);
   const visibleItems = useMemo(
-    () => items.slice(startIndex, startIndex + visibleCount),
-    [items, startIndex, visibleCount]
+    () => items.slice(effectiveStartIndex, effectiveStartIndex + visibleCount),
+    [items, effectiveStartIndex, visibleCount]
   );
+
+  const progressPercent = useMemo(() => {
+    if (!items.length) return 0;
+    if (items.length <= visibleCount) return 100;
+
+    if (isMobile) {
+      return mobileScrollPercent || 6;
+    }
+
+    const pagePercent = ((effectiveStartIndex + 1) / (maxStart + 1)) * 100;
+    return Math.max(6, Math.min(100, pagePercent));
+  }, [items.length, visibleCount, isMobile, mobileScrollPercent, effectiveStartIndex, maxStart]);
 
   if (!items.length) {
     return null;
@@ -98,7 +117,7 @@ export default function TopSpringPicks({ items = [], title = 'Top Spring Picks' 
 
                 setStartIndex((prev) => Math.max(0, prev - 1));
               }}
-              disabled={startIndex === 0}
+              disabled={effectiveStartIndex === 0}
               aria-label="Previous items"
             >
               <ChevronIcon direction="left" />
@@ -106,117 +125,117 @@ export default function TopSpringPicks({ items = [], title = 'Top Spring Picks' 
           )}
 
           {isMobile ? (
-            <div ref={trackRef} className="spring-picks-track is-mobile">
+            <div ref={trackRef} className="spring-picks-track is-mobile" onScroll={handleMobileScroll}>
               {items.map((pick) => (
-            <div key={pick.id} className="spring-pick-card">
-              <div
-                className={`pick-image-wrapper ${pick.imageOnClick || pick.onClick ? 'pick-clickable' : ''}`}
-                onClick={() => {
-                  const imageClick = pick.imageOnClick || pick.onClick;
-                  if (imageClick) {
-                    imageClick();
-                  }
-                }}
-                role={pick.imageOnClick || pick.onClick ? 'button' : undefined}
-                tabIndex={pick.imageOnClick || pick.onClick ? 0 : -1}
-                onKeyDown={(event) => {
-                  const imageClick = pick.imageOnClick || pick.onClick;
-                  if (imageClick && (event.key === 'Enter' || event.key === ' ')) {
-                    event.preventDefault();
-                    imageClick();
-                  }
-                }}
-              >
-                {pick.mediaType === 'video' ? (
-                  <video
-                    src={pick.image}
-                    className="pick-image"
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                  />
-                ) : (
-                  <img
-                    src={pick.image}
-                    alt={pick.title || 'Deal item'}
-                    className="pick-image"
-                  />
-                )}
-              </div>
-              <div className="pick-content">
-                {pick.priceLabel && <p className="pick-price">{pick.priceLabel}</p>}
-                <button
-                  className="pick-button"
-                  onClick={() => {
-                    const buttonClick = pick.buttonOnClick || pick.onClick;
-                    if (buttonClick) {
-                      buttonClick();
-                    }
-                  }}
-                  disabled={!(pick.buttonOnClick || pick.onClick)}
-                >
-                  {pick.buttonText || 'Shop now'}
-                </button>
-              </div>
-            </div>
+                <div key={pick.id} className="spring-pick-card">
+                  <div
+                    className={`pick-image-wrapper ${pick.imageOnClick || pick.onClick ? 'pick-clickable' : ''}`}
+                    onClick={() => {
+                      const imageClick = pick.imageOnClick || pick.onClick;
+                      if (imageClick) {
+                        imageClick();
+                      }
+                    }}
+                    role={pick.imageOnClick || pick.onClick ? 'button' : undefined}
+                    tabIndex={pick.imageOnClick || pick.onClick ? 0 : -1}
+                    onKeyDown={(event) => {
+                      const imageClick = pick.imageOnClick || pick.onClick;
+                      if (imageClick && (event.key === 'Enter' || event.key === ' ')) {
+                        event.preventDefault();
+                        imageClick();
+                      }
+                    }}
+                  >
+                    {pick.mediaType === 'video' ? (
+                      <video
+                        src={pick.image}
+                        className="pick-image"
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                      />
+                    ) : (
+                      <img
+                        src={pick.image}
+                        alt={pick.title || 'Deal item'}
+                        className="pick-image"
+                      />
+                    )}
+                  </div>
+                  <div className="pick-content">
+                    {pick.priceLabel && <p className="pick-price">{pick.priceLabel}</p>}
+                    <button
+                      className="pick-button"
+                      onClick={() => {
+                        const buttonClick = pick.buttonOnClick || pick.onClick;
+                        if (buttonClick) {
+                          buttonClick();
+                        }
+                      }}
+                      disabled={!(pick.buttonOnClick || pick.onClick)}
+                    >
+                      {pick.buttonText || 'Shop now'}
+                    </button>
+                  </div>
+                </div>
               ))}
             </div>
           ) : (
             <div className="spring-picks-grid">
               {visibleItems.map((pick) => (
-              <div key={pick.id} className="spring-pick-card">
-                <div
-                  className={`pick-image-wrapper ${pick.imageOnClick || pick.onClick ? 'pick-clickable' : ''}`}
-                  onClick={() => {
-                    const imageClick = pick.imageOnClick || pick.onClick;
-                    if (imageClick) {
-                      imageClick();
-                    }
-                  }}
-                  role={pick.imageOnClick || pick.onClick ? 'button' : undefined}
-                  tabIndex={pick.imageOnClick || pick.onClick ? 0 : -1}
-                  onKeyDown={(event) => {
-                    const imageClick = pick.imageOnClick || pick.onClick;
-                    if (imageClick && (event.key === 'Enter' || event.key === ' ')) {
-                      event.preventDefault();
-                      imageClick();
-                    }
-                  }}
-                >
-                  {pick.mediaType === 'video' ? (
-                    <video
-                      src={pick.image}
-                      className="pick-image"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                    />
-                  ) : (
-                    <img
-                      src={pick.image}
-                      alt={pick.title || 'Deal item'}
-                      className="pick-image"
-                    />
-                  )}
-                </div>
-                <div className="pick-content">
-                  {pick.priceLabel && <p className="pick-price">{pick.priceLabel}</p>}
-                  <button
-                    className="pick-button"
+                <div key={pick.id} className="spring-pick-card">
+                  <div
+                    className={`pick-image-wrapper ${pick.imageOnClick || pick.onClick ? 'pick-clickable' : ''}`}
                     onClick={() => {
-                      const buttonClick = pick.buttonOnClick || pick.onClick;
-                      if (buttonClick) {
-                        buttonClick();
+                      const imageClick = pick.imageOnClick || pick.onClick;
+                      if (imageClick) {
+                        imageClick();
                       }
                     }}
-                    disabled={!(pick.buttonOnClick || pick.onClick)}
+                    role={pick.imageOnClick || pick.onClick ? 'button' : undefined}
+                    tabIndex={pick.imageOnClick || pick.onClick ? 0 : -1}
+                    onKeyDown={(event) => {
+                      const imageClick = pick.imageOnClick || pick.onClick;
+                      if (imageClick && (event.key === 'Enter' || event.key === ' ')) {
+                        event.preventDefault();
+                        imageClick();
+                      }
+                    }}
                   >
-                    {pick.buttonText || 'Shop now'}
-                  </button>
+                    {pick.mediaType === 'video' ? (
+                      <video
+                        src={pick.image}
+                        className="pick-image"
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                      />
+                    ) : (
+                      <img
+                        src={pick.image}
+                        alt={pick.title || 'Deal item'}
+                        className="pick-image"
+                      />
+                    )}
+                  </div>
+                  <div className="pick-content">
+                    {pick.priceLabel && <p className="pick-price">{pick.priceLabel}</p>}
+                    <button
+                      className="pick-button"
+                      onClick={() => {
+                        const buttonClick = pick.buttonOnClick || pick.onClick;
+                        if (buttonClick) {
+                          buttonClick();
+                        }
+                      }}
+                      disabled={!(pick.buttonOnClick || pick.onClick)}
+                    >
+                      {pick.buttonText || 'Shop now'}
+                    </button>
+                  </div>
                 </div>
-              </div>
               ))}
             </div>
           )}
@@ -233,13 +252,22 @@ export default function TopSpringPicks({ items = [], title = 'Top Spring Picks' 
 
                 setStartIndex((prev) => Math.min(maxStart, prev + 1));
               }}
-              disabled={startIndex >= maxStart}
+              disabled={effectiveStartIndex >= maxStart}
               aria-label="Next items"
             >
               <ChevronIcon direction="right" />
             </button>
           )}
         </div>
+
+        {items.length > 0 && (
+          <div className="spring-picks-progress-bar-container" aria-hidden="true">
+            <div
+              className="spring-picks-progress-bar"
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
+        )}
       </div>
     </section>
   );
