@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import { FaInstagram, FaYoutube, FaTiktok, FaPinterest, FaTwitter, FaGift, FaPencilAlt, FaRegHandshake, FaDollarSign, FaTags, FaMapMarkerAlt, FaFacebook } from 'react-icons/fa';
+import { API_BASE_URL } from '../../config/api';
 import './Footer.css';
 
 const benefitItems = [
@@ -76,6 +78,10 @@ const actionCards = [
 export default function Footer() {
   const [activeBenefit, setActiveBenefit] = useState(0);
   const [activeAction, setActiveAction] = useState(0);
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterMessage, setNewsletterMessage] = useState('');
+  const [newsletterMessageType, setNewsletterMessageType] = useState('');
+  const [newsletterSubmitting, setNewsletterSubmitting] = useState(false);
   const intervalRef = useRef(null);
   const actionIntervalRef = useRef(null);
 
@@ -108,6 +114,41 @@ export default function Footer() {
 
   const prevAction = () => goToAction((activeAction + actionCards.length - 1) % actionCards.length);
   const nextAction = () => goToAction((activeAction + 1) % actionCards.length);
+
+  const showNewsletterMessage = (message, type = 'success') => {
+    setNewsletterMessage(message);
+    setNewsletterMessageType(type);
+
+    window.clearTimeout(showNewsletterMessage.timer);
+    showNewsletterMessage.timer = window.setTimeout(() => {
+      setNewsletterMessage('');
+      setNewsletterMessageType('');
+    }, 2800);
+  };
+
+  const handleNewsletterSubmit = async (event) => {
+    event.preventDefault();
+
+    const trimmedEmail = newsletterEmail.trim();
+    if (!trimmedEmail) {
+      showNewsletterMessage('Please add email first', 'error');
+      return;
+    }
+
+    setNewsletterSubmitting(true);
+    try {
+      const response = await axios.post(`${API_BASE_URL}/newsletter-subscribers/subscribe`, {
+        email: trimmedEmail
+      });
+
+      showNewsletterMessage(response.data?.message || 'Your email is saved successfully', 'success');
+      setNewsletterEmail('');
+    } catch (error) {
+      showNewsletterMessage(error.response?.data?.message || 'Failed to save email', 'error');
+    } finally {
+      setNewsletterSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     intervalRef.current = window.setInterval(() => {
@@ -219,12 +260,24 @@ export default function Footer() {
         </div>
         <div className="footer-col footer-col-newsletter">  
           <h4>Drop your email to get first dibs on new arrivals, sales, and more.</h4>
-          <form className="newsletter-form" onSubmit={(e) => e.preventDefault()}>
+          <form className="newsletter-form" onSubmit={handleNewsletterSubmit}>
             <div className="newsletter-field">
-              <input type="email" placeholder="Your email" aria-label="Email address" />
-              <button type="submit" aria-label="Submit email">→</button>
+              <input
+                type="email"
+                placeholder="Your email"
+                aria-label="Email address"
+                value={newsletterEmail}
+                onChange={(event) => setNewsletterEmail(event.target.value)}
+                autoComplete="email"
+              />
+              <button type="submit" aria-label="Submit email" disabled={newsletterSubmitting}>→</button>
             </div>
           </form>
+          {newsletterMessage && (
+            <div className={`newsletter-message newsletter-message--${newsletterMessageType}`} role="status" aria-live="polite">
+              {newsletterMessage}
+            </div>
+          )}
           <div className="social-row" aria-label="Social media links">
             <a href="#" aria-label="Instagram"><FaInstagram /></a>
             <a href="#" aria-label="YouTube"><FaYoutube /></a>

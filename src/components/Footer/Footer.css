@@ -263,6 +263,30 @@
   margin-bottom: 26px;
 }
 
+.newsletter-message {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 0 22px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.newsletter-message--success {
+  background: #fbe9eb;
+  color: var(--color-accent);
+  border: 1px solid rgba(193, 18, 31, 0.16);
+}
+
+.newsletter-message--error {
+  background: #fff5f5;
+  color: #c92a2a;
+  border: 1px solid #ffd6d6;
+}
+
 .newsletter-field {
   position: relative;
   width: 100%;
@@ -302,6 +326,11 @@
   cursor: pointer;
   padding: 0;
   border-radius: 50%;
+}
+
+.newsletter-form button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .social-row {
