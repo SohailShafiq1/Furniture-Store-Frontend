@@ -94,9 +94,11 @@
 }
 
 .products-progress {
-  width: 100%;
+  width: calc(100% - 40px);
   height: 4px;
   margin-top: 14px;
+  margin-left: 18px;
+  margin-right: 18px;
   background: #d7d7d7;
   border-radius: 999px;
   overflow: hidden;
@@ -438,6 +440,9 @@
 
   .products-progress {
     margin-top: 12px;
+    width: calc(100% - 32px);
+    margin-left: 16px;
+    margin-right: 16px;
   }
 
   .products-arrow {
