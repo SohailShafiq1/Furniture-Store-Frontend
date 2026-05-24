@@ -260,21 +260,25 @@
 .newsletter-form {
   display: flex;
   align-items: center;
-  gap: 10px;
   margin-bottom: 26px;
 }
 
+.newsletter-field {
+  position: relative;
+  width: 100%;
+}
+
 .newsletter-form input {
-  flex: 1;
   width: 100%;
   min-width: 0;
-  padding: 14px 18px;
+  padding: 14px 56px 14px 18px;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(255, 255, 255, 0.04);
   color: #ffffff;
   font-size: 0.95rem;
   outline: none;
+  box-sizing: border-box;
 }
 
 .newsletter-form input::placeholder {
@@ -282,12 +286,22 @@
 }
 
 .newsletter-form button {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: none;
-  background: transparent;
+  background: #111111;
   color: #ffffff;
-  font-size: 1.3rem;
+  font-size: 1.05rem;
   cursor: pointer;
-  padding: 10px 12px;
+  padding: 0;
+  border-radius: 50%;
 }
 
 .social-row {

@@ -25,6 +25,10 @@
   width: 100%;
 }
 
+.spring-picks-track {
+  display: contents;
+}
+
 .spring-picks-carousel-row {
   position: relative;
   display: flex;
@@ -167,8 +171,8 @@
   }
 
   .spring-picks-carousel-row {
-    gap: 8px;
-    padding: 0 48px;
+    gap: 10px;
+    padding: 0;
   }
 
   .spring-picks-arrow {
@@ -176,11 +180,33 @@
     height: 36px;
     font-size: 24px;
     border-width: 1.5px;
+    z-index: 2;
   }
 
-  .spring-picks-grid {
-    grid-template-columns: 1fr;
-    gap: 24px;
+  .spring-picks-track.is-mobile {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 16px;
+    scrollbar-width: none;
+  }
+
+  .spring-picks-track.is-mobile::-webkit-scrollbar {
+    display: none;
+  }
+
+  .spring-picks-track.is-mobile .spring-pick-card {
+    flex: 0 0 84%;
+    scroll-snap-align: start;
+  }
+
+  .spring-picks-track.is-mobile .spring-pick-card:last-child {
+    margin-right: 8px;
   }
 
   .spring-picks-title {
@@ -216,5 +242,9 @@
   .pick-button {
     padding: 10px 24px;
     font-size: 13px;
+  }
+
+  .spring-picks-track.is-mobile .spring-pick-card {
+    flex-basis: 86%;
   }
 }

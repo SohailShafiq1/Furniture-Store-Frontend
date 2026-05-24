@@ -220,8 +220,10 @@ export default function Footer() {
         <div className="footer-col footer-col-newsletter">  
           <h4>Drop your email to get first dibs on new arrivals, sales, and more.</h4>
           <form className="newsletter-form" onSubmit={(e) => e.preventDefault()}>
-            <input type="email" placeholder="Your email" aria-label="Email address" />
-            <button type="submit" aria-label="Submit email">→</button>
+            <div className="newsletter-field">
+              <input type="email" placeholder="Your email" aria-label="Email address" />
+              <button type="submit" aria-label="Submit email">→</button>
+            </div>
           </form>
           <div className="social-row" aria-label="Social media links">
             <a href="#" aria-label="Instagram"><FaInstagram /></a>

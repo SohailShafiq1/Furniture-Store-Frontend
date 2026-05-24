@@ -92,8 +92,11 @@ export default function Header() {
   }));
 
   const activeNavItem = navItems.find((item) => item.id === activeMenu);
-  const navbarPromoImageOne = encodeURI('/navbar/Areeb Client 1 New Website Work.svg');
-  const navbarPromoImageTwo = encodeURI('/navbar/Areeb Client 1 New Website Work (1).svg');
+  const navbarLocationIcon = '/navbar/28.svg';
+  const navbarProfileIcon = '/navbar/29.svg';
+  const navbarCartIcon = '/navbar/30.svg';
+  const navbarPromoImageOne = '/navbar/Areeb Client 1 New Website Work.svg';
+  const navbarPromoImageTwo = '/navbar/Areeb Client 1 New Website Work (1).svg';
 
   return (
     <header className="header" onMouseLeave={() => setActiveMenu(null)}>
@@ -130,6 +133,21 @@ export default function Header() {
 
       {/* Row 1: Logo | Search | Icons */}
       <div className={`header-top-row ${isMobileSearchOpen ? 'mobile-search-open' : ''}`}>
+        <button
+          type="button"
+          className="header-mobile-menu-toggle"
+          onClick={() => {
+            setIsMobileSearchOpen(false);
+            setIsMobileNavOpen((prev) => !prev);
+          }}
+          aria-label="Toggle menu"
+          aria-expanded={isMobileNavOpen}
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
         {/* Logo */}
         <Link to="/" className="logo-container">
           <img src="/logo.svg" alt="Furniture Store" className="logo" />
@@ -160,16 +178,20 @@ export default function Header() {
             title="Store Locations"
             onClick={() => navigate('/store-locations')}
           >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-              <circle cx="12" cy="10" r="3"></circle>
-            </svg>
+            <img src={navbarLocationIcon} alt="" aria-hidden="true" className="header-icon-image" />
           </button>
           
           <div className="user-account-container">
             {user ? (
               <div className="user-profile-nav">
-                <span className="user-name-bubble">{user.name.charAt(0).toUpperCase()}</span>
+                <button
+                  type="button"
+                  className="header-icon-btn user-profile-button"
+                  title="Account"
+                  onClick={() => navigate('/profile-settings')}
+                >
+                  <img src={navbarProfileIcon} alt="" aria-hidden="true" className="header-icon-image" />
+                </button>
                 <div className="user-dropdown">
                   <div className="dropdown-header">
                     <strong>{user.name}</strong>
@@ -204,10 +226,7 @@ export default function Header() {
                 title="Account"
                 onClick={() => setIsAuthModalOpen(true)}
               >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="12" cy="7" r="4"></circle>
-                </svg>
+                <img src={navbarProfileIcon} alt="" aria-hidden="true" className="header-icon-image" />
               </button>
             )}
           </div>
@@ -218,22 +237,12 @@ export default function Header() {
             onClick={() => navigate('/cart')}
           >
             <div className="cart-icon-wrapper">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-                <line x1="3" y1="6" x2="21" y2="6"></line>
-                <path d="M16 10a4 4 0 0 1-8 0"></path>
-              </svg>
+              <img src={navbarCartIcon} alt="" aria-hidden="true" className="header-icon-image header-cart-image" />
               {cartItemCount > 0 && <span className="cart-badge">{cartItemCount}</span>}
             </div>
           </button>
         </div>
       </div>
-
-      {isMobileSearchOpen && (
-        <div className="header-mobile-search-panel">
-          <SearchBar autoFocus />
-        </div>
-      )}
 
       <AuthModal 
         isOpen={isAuthModalOpen} 
@@ -262,7 +271,6 @@ export default function Header() {
         <div className="mega-menu" role="region" aria-label={`${activeNavItem.label} subcategories`}>
           <div className="mega-menu-grid">
             <div className="mega-menu-left">
-              <div className="mega-menu-left-title">{activeNavItem.label}</div>
               <div className="mega-menu-left-list">
                 {activeNavItem.subcategories.map((sub) => {
                   const imageUrl = getImageUrl(sub.image);

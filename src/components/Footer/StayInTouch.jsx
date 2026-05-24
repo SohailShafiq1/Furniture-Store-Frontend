@@ -8,8 +8,10 @@ export default function StayInTouch() {
         <p className="stay-sub">Sign up for new arrivals, promotions, and trends.</p>
         <form className="stay-form" onSubmit={(e) => e.preventDefault()}>
           <label className="visually-hidden" htmlFor="email">Email</label>
-          <input id="email" type="email" placeholder="Your email" className="stay-input" />
-          <button className="stay-btn" aria-label="Subscribe">→</button>
+          <div className="stay-field">
+            <input id="email" type="email" placeholder="Your email" className="stay-input" />
+            <button className="stay-btn" aria-label="Subscribe">→</button>
+          </div>
         </form>
       </div>
     </section>

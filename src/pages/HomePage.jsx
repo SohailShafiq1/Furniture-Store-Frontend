@@ -139,6 +139,37 @@ const buildHomeContentBannerAction = (navigate, banner, homeContent) => {
   return null;
 };
 
+const ChevronIcon = ({ direction }) => (
+  <svg
+    viewBox="0 0 24 24"
+    width="18"
+    height="18"
+    aria-hidden="true"
+    focusable="false"
+    style={{ display: 'block' }}
+  >
+    {direction === 'left' ? (
+      <path
+        d="M15 6 9 12l6 6"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    ) : (
+      <path
+        d="M9 6l6 6-6 6"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    )}
+  </svg>
+);
+
 // Dynamic PromoBanners Component that accepts custom data
 const DynamicPromoBanners = ({ homeContent }) => {
   const navigate = useNavigate();
@@ -193,8 +224,6 @@ const DynamicPromoBanners = ({ homeContent }) => {
                 borderRadius: '50%',
                 border: '2px solid #222',
                 background: '#fff',
-                fontSize: '30px',
-                lineHeight: 1,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -204,7 +233,7 @@ const DynamicPromoBanners = ({ homeContent }) => {
                 opacity: startIndex === 0 ? 0.35 : 1
               }}
             >
-              &lsaquo;
+              <ChevronIcon direction="left" />
             </button>
           )}
 
@@ -413,8 +442,6 @@ const DynamicSubcategoryComponent = ({ subcategoryName, selectedProducts, catego
                 borderRadius: '50%',
                 border: '2px solid #222',
                 background: '#fff',
-                fontSize: '24px',
-                lineHeight: 1,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -620,7 +647,7 @@ const DynamicSubcategoryComponent = ({ subcategoryName, selectedProducts, catego
               opacity: startIndex >= maxStart ? 0.35 : 1
             }}
           >
-            &rsaquo;
+              <ChevronIcon direction="right" />
           </button>
         )}
       </div>

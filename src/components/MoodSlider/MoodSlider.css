@@ -19,6 +19,11 @@
   width: max-content;
 }
 
+.mood-slider:hover .mood-content,
+.mood-track:hover .mood-content {
+  animation-play-state: paused;
+}
+
 @keyframes moodSlide {
   0% { transform: translateX(0); }
   100% { transform: translateX(-33.333%); }

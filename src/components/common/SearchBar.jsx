@@ -117,18 +117,20 @@ export default function SearchBar({ autoFocus = false }) {
         <circle cx="11" cy="11" r="8"></circle>
         <path d="m21 21-4.35-4.35"></path>
       </svg>
-      <input
-        ref={inputRef}
-        type="text"
-        placeholder={placeholder}
-        className="search-input"
-        value={query}
-        onChange={(event) => {
-          setQuery(event.target.value);
-          setIsOpen(true);
-        }}
-        onFocus={() => setIsOpen(true)}
-      />
+      <div className="search-input-wrap">
+        <input
+          ref={inputRef}
+          type="text"
+          placeholder={placeholder}
+          className="search-input"
+          value={query}
+          onChange={(event) => {
+            setQuery(event.target.value);
+            setIsOpen(true);
+          }}
+          onFocus={() => setIsOpen(true)}
+        />
+      </div>
 
       {isOpen && query.trim().length > 0 && (
         <div className="search-results">

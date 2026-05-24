@@ -57,7 +57,7 @@
 .home-content-carousel .product-carousel-header {
   padding-left: 13px;
   padding-right: 20px;
-  margin-bottom: 12px;
+  margin-bottom: -2px;
 }
 
 .home-content-carousel .product-carousel-title {
@@ -93,11 +93,31 @@
   position: relative;
 }
 
+.products-progress {
+  width: 100%;
+  height: 4px;
+  margin-top: 14px;
+  background: #d7d7d7;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.products-progress-fill {
+  height: 100%;
+  background: #111111;
+  border-radius: inherit;
+  transition: width 0.25s ease;
+}
+
 .products-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 20px;
   width: 100%;
+}
+
+.products-grid.is-mobile {
+  display: flex;
 }
 
 .products-arrow {
@@ -413,7 +433,11 @@
   }
 
   .products-carousel-row {
-    gap: 8px;
+    gap: 10px;
+  }
+
+  .products-progress {
+    margin-top: 12px;
   }
 
   .products-arrow {
@@ -421,6 +445,7 @@
     height: 36px;
     font-size: 24px;
     border-width: 1.5px;
+    z-index: 4;
   }
 
   .product-carousel-title {
@@ -436,9 +461,25 @@
     font-size: 14px;
   }
 
-  .products-grid {
-    grid-template-columns: 1fr;
+  .products-grid.is-mobile {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
     gap: 14px;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 16px;
+    scrollbar-width: none;
+  }
+
+  .products-grid.is-mobile::-webkit-scrollbar {
+    display: none;
+  }
+
+  .products-grid.is-mobile .product-card {
+    flex: 0 0 84%;
+    scroll-snap-align: start;
   }
 
   .product-info {
@@ -510,5 +551,9 @@
 
   .original-price {
     font-size: 19px;
+  }
+
+  .products-grid.is-mobile .product-card {
+    flex-basis: 86%;
   }
 }

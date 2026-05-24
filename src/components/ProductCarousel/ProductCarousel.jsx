@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import './ProductCarousel.css';
@@ -14,8 +14,12 @@ export default function ProductCarousel({
 }) {
   const navigate = useNavigate();
   const { addToCart } = useCart();
+  const trackRef = useRef(null);
   const [startIndex, setStartIndex] = useState(0);
   const [visibleCount, setVisibleCount] = useState(5);
+  const [isMobile, setIsMobile] = useState(false);
+  const [mobileNavState, setMobileNavState] = useState({ atStart: true, atEnd: false });
+  const [mobileProgress, setMobileProgress] = useState(0);
   const [cartPopup, setCartPopup] = useState('');
 
   useEffect(() => {
@@ -32,9 +36,10 @@ export default function ProductCarousel({
   useEffect(() => {
     const updateVisibleCount = () => {
       const width = window.innerWidth;
+      const mobile = width <= 768;
       let nextVisibleCount;
 
-      if (width <= 768) {
+      if (mobile) {
         nextVisibleCount = 1;
       } else if (width <= 1024) {
         nextVisibleCount = 2;
@@ -50,6 +55,7 @@ export default function ProductCarousel({
         nextVisibleCount = Math.min(nextVisibleCount, maxDesktopVisible);
       }
 
+      setIsMobile(mobile);
       setVisibleCount(nextVisibleCount);
     };
 
@@ -59,11 +65,80 @@ export default function ProductCarousel({
     return () => window.removeEventListener('resize', updateVisibleCount);
   }, [maxDesktopVisible]);
 
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return undefined;
+
+    const updateMobileNavState = () => {
+      if (!trackRef.current || !isMobile) {
+        setMobileNavState({ atStart: true, atEnd: false });
+        return;
+      }
+
+      const { scrollLeft, scrollWidth, clientWidth } = trackRef.current;
+      const atStart = scrollLeft <= 4;
+      const atEnd = scrollLeft + clientWidth >= scrollWidth - 4;
+
+      setMobileNavState({ atStart, atEnd });
+    };
+
+    updateMobileNavState();
+    track.addEventListener('scroll', updateMobileNavState, { passive: true });
+    window.addEventListener('resize', updateMobileNavState);
+
+    return () => {
+      track.removeEventListener('scroll', updateMobileNavState);
+      window.removeEventListener('resize', updateMobileNavState);
+    };
+  }, [isMobile, products, visibleCount, startIndex]);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track || !isMobile) {
+      setMobileProgress(0);
+      return undefined;
+    }
+
+    const updateMobileProgress = () => {
+      const { scrollLeft, scrollWidth, clientWidth } = track;
+      const maxScroll = Math.max(1, scrollWidth - clientWidth);
+      setMobileProgress(Math.min(1, Math.max(0, scrollLeft / maxScroll)));
+    };
+
+    updateMobileProgress();
+    track.addEventListener('scroll', updateMobileProgress, { passive: true });
+    window.addEventListener('resize', updateMobileProgress);
+
+    return () => {
+      track.removeEventListener('scroll', updateMobileProgress);
+      window.removeEventListener('resize', updateMobileProgress);
+    };
+  }, [isMobile, products]);
+
+  const scrollByCard = (direction) => {
+    if (!trackRef.current) return;
+
+    const card = trackRef.current.querySelector('.product-card');
+    if (!card) return;
+
+    const cardWidth = card.getBoundingClientRect().width;
+    const trackStyles = window.getComputedStyle(trackRef.current);
+    const gap = Number.parseFloat(trackStyles.gap || trackStyles.columnGap || '0') || 0;
+
+    trackRef.current.scrollBy({
+      left: direction * (cardWidth + gap),
+      behavior: 'smooth'
+    });
+  };
+
   const maxStart = Math.max(0, products.length - visibleCount);
   const visibleProducts = useMemo(
     () => products.slice(startIndex, startIndex + visibleCount),
     [products, startIndex, visibleCount]
   );
+  const renderProducts = isMobile ? products : visibleProducts;
+  const desktopProgress = maxStart === 0 ? 0 : startIndex / maxStart;
+  const trackProgress = isMobile ? mobileProgress : desktopProgress;
 
   const handleProductClick = (product) => {
     if (onProductClick) {
@@ -126,6 +201,37 @@ export default function ProductCarousel({
     return stars;
   };
 
+  const ChevronIcon = ({ direction }) => (
+    <svg
+      viewBox="0 0 24 24"
+      width="18"
+      height="18"
+      aria-hidden="true"
+      focusable="false"
+      style={{ display: 'block' }}
+    >
+      {direction === 'left' ? (
+        <path
+          d="M15 6 9 12l6 6"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      ) : (
+        <path
+          d="M9 6l6 6-6 6"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      )}
+    </svg>
+  );
+
   return (
     <section className={`product-carousel ${className}`.trim()} data-aos="fade-up">
       {cartPopup && (
@@ -156,16 +262,27 @@ export default function ProductCarousel({
               <button
                 type="button"
                 className="products-arrow"
-                onClick={() => setStartIndex((prev) => Math.max(0, prev - 1))}
-                disabled={startIndex === 0}
+                onClick={() => {
+                  if (isMobile) {
+                    scrollByCard(-1);
+                    return;
+                  }
+
+                  setStartIndex((prev) => Math.max(0, prev - 1));
+                }}
+                disabled={isMobile ? mobileNavState.atStart : startIndex === 0}
                 aria-label="Previous products"
               >
-                <span>&lsaquo;</span>
+                  <ChevronIcon direction="left" />
               </button>
             )}
 
-            <div className="products-grid" style={{ gridTemplateColumns: `repeat(${visibleCount}, minmax(0, 1fr))` }}>
-              {visibleProducts.map((product, idx) => (
+            <div
+              ref={trackRef}
+              className={`products-grid ${isMobile ? 'is-mobile' : 'is-desktop'}`}
+              style={{ gridTemplateColumns: isMobile ? undefined : `repeat(${visibleCount}, minmax(0, 1fr))` }}
+            >
+              {renderProducts.map((product, idx) => (
               <div
                 key={product.id}
                 className="product-card"
@@ -252,13 +369,27 @@ export default function ProductCarousel({
               <button
                 type="button"
                 className="products-arrow"
-                onClick={() => setStartIndex((prev) => Math.min(maxStart, prev + 1))}
-                disabled={startIndex >= maxStart}
+                onClick={() => {
+                  if (isMobile) {
+                    scrollByCard(1);
+                    return;
+                  }
+
+                  setStartIndex((prev) => Math.min(maxStart, prev + 1));
+                }}
+                disabled={isMobile ? mobileNavState.atEnd : startIndex >= maxStart}
                 aria-label="Next products"
               >
-                <span>&rsaquo;</span>
+                  <ChevronIcon direction="right" />
               </button>
             )}
+          </div>
+
+          <div className="products-progress" aria-hidden="true">
+            <div
+              className="products-progress-fill"
+              style={{ width: `${Math.max(4, trackProgress * 100)}%` }}
+            />
           </div>
         </div>
       </div>
