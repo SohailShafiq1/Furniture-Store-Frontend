@@ -24,10 +24,10 @@ export default function PromoStrip({ title, subtitle, code }) {
           {subtitle && <p className="promo-strip-subtitle">{subtitle}</p>}
         </div>
         {promoCode && (
-          <div className="promo-strip-action">
-            <span className="promo-code-label">{promoCode}</span>
+          <div className={`promo-strip-action ${copied ? 'copied' : ''}`}>
+            <span className={`promo-code-label ${copied ? 'promo-code-label--hidden' : ''}`}>{promoCode}</span>
             <button 
-              className="copy-code-btn"
+              className={`copy-code-btn ${copied ? 'copy-code-btn--hidden' : ''}`}
               onClick={handleCopyCode}
               title="Copy code"
             >
@@ -37,6 +37,7 @@ export default function PromoStrip({ title, subtitle, code }) {
               </svg>
               {copied ? 'Copied!' : 'Copy code'}
             </button>
+            {copied && <span className="copy-success copy-success--centered">Copied!</span>}
           </div>
         )}
       </div>

@@ -289,8 +289,10 @@ export default function DealsPage() {
                     {promoSource.promoStrip?.normalText || 'A small boost for your tax refund season.'}
                   </span>
                 </div>
-                <div className="promo-code-box" onClick={handleCopy}>
-                  <div className="promo-code">{promoSource.promoStrip?.code || 'SS5OFF'}</div>
+                <div className={`promo-code-box ${copied ? 'copied' : ''}`} onClick={handleCopy}>
+                  <div className={`promo-code ${copied ? 'promo-code--hidden' : ''}`}>
+                    {promoSource.promoStrip?.code || 'SS5OFF'}
+                  </div>
                   <div className="promo-copy">
                     {copied ? (
                       <span className="copy-success">Copied!</span>
@@ -313,6 +315,7 @@ export default function DealsPage() {
                       </>
                     )}
                   </div>
+                  {copied && <span className="copy-success copy-success--centered">Copied!</span>}
                 </div>
               </div>
             </div>

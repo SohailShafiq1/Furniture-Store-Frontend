@@ -45,10 +45,22 @@
   align-items: center;
   gap: 0;
   flex-shrink: 0;
+  position: relative;
   background: #f5efe7;
   border: 2px solid #cdbfae;
   border-radius: 6px;
   padding: 6px 0;
+  overflow: hidden;
+  transform-origin: center;
+  will-change: transform, box-shadow, border-color, background-color;
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.promo-strip-action.copied {
+  animation: promoStripPulse 0.6s ease;
+  border-color: #71cba5;
+  background-color: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 0 0 6px rgba(113, 203, 165, 0.12), 0 12px 30px rgba(0, 0, 0, 0.12);
 }
 
 .promo-code-label {
@@ -82,6 +94,31 @@
   white-space: nowrap;
 }
 
+.promo-code-label,
+.copy-code-btn {
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.promo-code-label--hidden,
+.copy-code-btn--hidden {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px) scale(0.98);
+  pointer-events: none;
+}
+
+.copy-success--centered {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #71cba5;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  pointer-events: none;
+}
+
 .copy-code-btn:hover {
   background: rgba(255, 255, 255, 0.4);
 }
@@ -93,6 +130,21 @@
 .copy-code-btn svg {
   width: 16px;
   height: 16px;
+}
+
+@keyframes promoStripPulse {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.03);
+  }
+  70% {
+    transform: scale(0.995);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 @media (max-width: 768px) {
