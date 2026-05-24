@@ -79,24 +79,35 @@
   background-color: #ffffff;
   color: #2d5f52;
   border: none;
+  outline: none;
   padding: 12px 32px;
   font-size: 14px;
   font-weight: 600;
   text-transform: capitalize;
   cursor: pointer;
-  transition: background-color 0.25s ease, transform 0.2s ease;
+  transition: background-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
   border-radius: 4px;
   margin-top: 8px;
   white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 .banner-button:hover {
-  background-color: #f5f5f5;
-  transform: scale(1.05);
+  background-color: #f8f1f2;
+  color: var(--color-accent, #c1121f);
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 10px 18px rgba(193, 18, 31, 0.18);
 }
 
 .banner-button:active {
-  transform: scale(0.98);
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.banner-button:focus-visible {
+  background-color: #f8f1f2;
+  color: var(--color-accent, #c1121f);
+  box-shadow: 0 0 0 3px rgba(193, 18, 31, 0.22), 0 10px 18px rgba(193, 18, 31, 0.14);
 }
 
 /* Responsive */
