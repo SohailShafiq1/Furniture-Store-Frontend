@@ -58,9 +58,9 @@
 
 .promo-strip-action.copied {
   animation: promoStripPulse 0.6s ease;
-  border-color: #71cba5;
+  border-color: var(--color-accent);
   background-color: rgba(255, 255, 255, 0.16);
-  box-shadow: 0 0 0 6px rgba(113, 203, 165, 0.12), 0 12px 30px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 0 0 6px rgba(193, 18, 31, 0.12), 0 12px 30px rgba(0, 0, 0, 0.12);
 }
 
 .promo-code-label {
@@ -113,7 +113,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #71cba5;
+  color: var(--color-accent);
   font-weight: 700;
   letter-spacing: 0.2px;
   pointer-events: none;
