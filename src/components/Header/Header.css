@@ -153,6 +153,11 @@
   color: #333;
 }
 
+.cart-icon-btn {
+  position: relative;
+  overflow: visible;
+}
+
 .header-icon-btn:hover {
   background-color: #ececec;
   transform: translateY(-1px);
@@ -160,7 +165,6 @@
 
 /* Cart Icon & Badge */
 .cart-icon-wrapper {
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -168,19 +172,22 @@
 
 .cart-badge {
   position: absolute;
-  top: -6px;
-  right: -6px;
+  top: 2px;
+  right: 2px;
   background-color: var(--color-accent);
   color: white;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
-  min-width: 16px;
-  height: 16px;
+  min-width: 18px;
+  height: 18px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 4px;
+  padding: 0 5px;
+  z-index: 3;
+  transform: translate(30%, -30%);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
 }
 
 /* User Account Container */
@@ -669,6 +676,11 @@
     height: 64px;
   }
 
+  .cart-badge {
+    top: 4px;
+    right: 4px;
+  }
+
   .header-cart-image {
     width: 116px;
     height: 44px;
@@ -712,6 +724,14 @@
     width: 56px;
     height: 56px;
     padding: 4px;
+  }
+
+  .cart-badge {
+    top: 4px;
+    right: 4px;
+    min-width: 18px;
+    height: 18px;
+    font-size: 10px;
   }
 
   .header-cart-image {
