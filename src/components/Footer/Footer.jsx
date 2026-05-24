@@ -79,11 +79,10 @@ export default function Footer() {
   const [activeBenefit, setActiveBenefit] = useState(0);
   const [activeAction, setActiveAction] = useState(0);
   const [newsletterEmail, setNewsletterEmail] = useState('');
-  const [newsletterMessage, setNewsletterMessage] = useState('');
-  const [newsletterMessageType, setNewsletterMessageType] = useState('');
   const [newsletterSubmitting, setNewsletterSubmitting] = useState(false);
   const intervalRef = useRef(null);
   const actionIntervalRef = useRef(null);
+  const newsletterEmailRef = useRef(null);
 
   const handleBackToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -115,23 +114,24 @@ export default function Footer() {
   const prevAction = () => goToAction((activeAction + actionCards.length - 1) % actionCards.length);
   const nextAction = () => goToAction((activeAction + 1) % actionCards.length);
 
-  const showNewsletterMessage = (message, type = 'success') => {
-    setNewsletterMessage(message);
-    setNewsletterMessageType(type);
-
-    window.clearTimeout(showNewsletterMessage.timer);
-    showNewsletterMessage.timer = window.setTimeout(() => {
-      setNewsletterMessage('');
-      setNewsletterMessageType('');
-    }, 2800);
-  };
-
   const handleNewsletterSubmit = async (event) => {
     event.preventDefault();
 
     const trimmedEmail = newsletterEmail.trim();
     if (!trimmedEmail) {
-      showNewsletterMessage('Please add email first', 'error');
+      if (newsletterEmailRef.current) {
+        newsletterEmailRef.current.setCustomValidity('Please add email first');
+        newsletterEmailRef.current.reportValidity();
+        newsletterEmailRef.current.setCustomValidity('');
+        newsletterEmailRef.current.focus();
+      } else {
+        window.alert('Please add email first');
+      }
+      return;
+    }
+
+    if (newsletterEmailRef.current && !newsletterEmailRef.current.checkValidity()) {
+      newsletterEmailRef.current.reportValidity();
       return;
     }
 
@@ -141,10 +141,10 @@ export default function Footer() {
         email: trimmedEmail
       });
 
-      showNewsletterMessage(response.data?.message || 'Your email is saved successfully', 'success');
+      window.alert(response.data?.message || 'Your email is saved successfully');
       setNewsletterEmail('');
     } catch (error) {
-      showNewsletterMessage(error.response?.data?.message || 'Failed to save email', 'error');
+      window.alert(error.response?.data?.message || 'Failed to save email');
     } finally {
       setNewsletterSubmitting(false);
     }
@@ -260,10 +260,12 @@ export default function Footer() {
         </div>
         <div className="footer-col footer-col-newsletter">  
           <h4>Drop your email to get first dibs on new arrivals, sales, and more.</h4>
-          <form className="newsletter-form" onSubmit={handleNewsletterSubmit}>
+          <form className="newsletter-form" onSubmit={handleNewsletterSubmit} noValidate>
             <div className="newsletter-field">
               <input
+                ref={newsletterEmailRef}
                 type="email"
+                required
                 placeholder="Your email"
                 aria-label="Email address"
                 value={newsletterEmail}
@@ -273,11 +275,6 @@ export default function Footer() {
               <button type="submit" aria-label="Submit email" disabled={newsletterSubmitting}>→</button>
             </div>
           </form>
-          {newsletterMessage && (
-            <div className={`newsletter-message newsletter-message--${newsletterMessageType}`} role="status" aria-live="polite">
-              {newsletterMessage}
-            </div>
-          )}
           <div className="social-row" aria-label="Social media links">
             <a href="#" aria-label="Instagram"><FaInstagram /></a>
             <a href="#" aria-label="YouTube"><FaYoutube /></a>
