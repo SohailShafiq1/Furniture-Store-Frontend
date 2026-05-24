@@ -10,6 +10,7 @@ import '../admin-panel.css';
 const ProductManagement = () => {
     const { token } = useAdminAuth();
     const [categories, setCategories] = useState([]);
+    const [brands, setBrands] = useState([]);
     const [products, setProducts] = useState([]);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
@@ -40,7 +41,7 @@ const ProductManagement = () => {
         subCategoryName: '',
         subSubCategoryName: '',
         collectionName: '',
-        brandId: ''
+        brandIds: []
     });
     const [stockType, setStockType] = useState('Universal');
     const [stockDistribution, setStockDistribution] = useState({ total: '0' });
@@ -161,14 +162,16 @@ const ProductManagement = () => {
 
     const fetchInitialData = async () => {
         try {
-            const [catsRes, productsRes, storesRes] = await Promise.all([
+            const [catsRes, productsRes, storesRes, brandsRes] = await Promise.all([
                 axios.get(`${apiBase}/categories/all`, config),
                 axios.get(`${apiBase}/products/all`, config),
-                axios.get(`${apiBase}/admin/stores`, config)
+                axios.get(`${apiBase}/admin/stores`, config),
+                axios.get(`${apiBase}/brands/all`)
             ]);
             setCategories(Array.isArray(catsRes.data) ? catsRes.data : []);
             setProducts(Array.isArray(productsRes.data) ? productsRes.data : []);
             setStores(Array.isArray(storesRes.data) ? storesRes.data : []);
+            setBrands(Array.isArray(brandsRes.data) ? brandsRes.data : []);
         } catch (err) {
             setError('Failed to load data');
         }
@@ -296,7 +299,9 @@ const ProductManagement = () => {
             subCategoryName: prod.subCategoryName || '',
             subSubCategoryName: prod.subSubCategoryName || '',
             collectionName: prod.collectionName || '',
-            brandId: prod.brandId || ''
+                brandIds: Array.isArray(prod.brandIds) && prod.brandIds.length > 0
+                    ? prod.brandIds
+                    : (prod.brandId ? [prod.brandId] : [])
         });
 
         // Populate stock attribution
@@ -472,7 +477,13 @@ const ProductManagement = () => {
 
         try {
             const fd = new FormData();
-            Object.keys(formData).forEach(key => fd.append(key, formData[key]));
+                Object.keys(formData).forEach(key => {
+                    if (key === 'brandIds') {
+                        fd.append(key, JSON.stringify(formData.brandIds || []));
+                    } else {
+                        fd.append(key, formData[key]);
+                    }
+                });
             
             // Only send new images if they were added
             if (productImages.length > 0) {
@@ -538,7 +549,7 @@ const ProductManagement = () => {
             subCategoryName: '',
             subSubCategoryName: '',
             collectionName: '',
-            brandId: ''
+            brandIds: []
         });
         setProductImages([]);
         setExistingImages([]);
@@ -693,14 +704,76 @@ const ProductManagement = () => {
                                     onChange={e => setFormData({...formData, collectionName: e.target.value})}
                                 />
                             </div>
-                            <div className="form-group">
-                                <label>Brand Reference</label>
-                                <input 
-                                    className="form-control"
-                                    placeholder="Optional"
-                                    value={formData.brandId} 
-                                    onChange={e => setFormData({...formData, brandId: e.target.value})}
-                                />
+                            <div className="form-group brand-reference-group">
+                                <div className="brand-reference-head">
+                                    <label>Brand Reference</label>
+                                    <span className="brand-reference-count">
+                                        {formData.brandIds.length} selected
+                                    </span>
+                                </div>
+                                <div className="brand-reference-picker">
+                                    <div className="brand-reference-grid" role="list" aria-label="Brand reference options">
+                                        {brands.map((brand) => {
+                                            const isSelected = formData.brandIds.includes(brand.name);
+                                            return (
+                                                <button
+                                                    key={brand._id}
+                                                    type="button"
+                                                    className={`brand-option ${isSelected ? 'selected' : ''}`}
+                                                    aria-pressed={isSelected}
+                                                    onClick={() => {
+                                                        setFormData({
+                                                            ...formData,
+                                                            brandIds: isSelected
+                                                                ? formData.brandIds.filter((name) => name !== brand.name)
+                                                                : [...formData.brandIds, brand.name]
+                                                        });
+                                                    }}
+                                                >
+                                                    <span className="brand-option-label">{brand.name}</span>
+                                                    <span className="brand-option-icon" aria-hidden="true">
+                                                        {isSelected ? (
+                                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                                                <path d="M20 6 9 17l-5-5" />
+                                                            </svg>
+                                                        ) : (
+                                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                                                <path d="M12 5v14" />
+                                                                <path d="M5 12h14" />
+                                                            </svg>
+                                                        )}
+                                                    </span>
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+
+                                    <div className="brand-reference-selected">
+                                        {formData.brandIds.length > 0 ? (
+                                            formData.brandIds.map((brandName) => (
+                                                <button
+                                                    key={brandName}
+                                                    type="button"
+                                                    className="brand-chip"
+                                                    onClick={() => setFormData({
+                                                        ...formData,
+                                                        brandIds: formData.brandIds.filter((name) => name !== brandName)
+                                                    })}
+                                                >
+                                                    <span>{brandName}</span>
+                                                    <span aria-hidden="true">×</span>
+                                                </button>
+                                            ))
+                                        ) : (
+                                            <div className="brand-reference-empty">
+                                                No brands selected yet.
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                                <small className="brand-reference-help">
+                                    Click the plus icon to add a brand. Click a selected brand chip to remove it.
+                                </small>
                             </div>
                         </div>
 

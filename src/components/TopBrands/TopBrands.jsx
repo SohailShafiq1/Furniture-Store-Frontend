@@ -1,6 +1,7 @@
 import './TopBrands.css';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 import { API_BASE_URL } from '../../config/api';
 import { getImageUrl, getAlternateImageUrl } from '../../utils/imageUrl';
 
@@ -59,7 +60,12 @@ export default function TopBrands() {
         {!loading && !error && brands.length > 0 && (
           <div className="brands-grid" aria-label="Top brands">
             {brands.map((brand) => (
-              <div key={brand._id} className="brand-item">
+              <Link
+                key={brand._id}
+                to={`/brand/${encodeURIComponent(brand._id)}`}
+                className="brand-item"
+                aria-label={`View products for ${brand.name}`}
+              >
                 {brand.image && !brokenBrandIds[brand._id] ? (
                   <img
                     src={getImageUrl(brand.image)}
@@ -71,7 +77,7 @@ export default function TopBrands() {
                 ) : (
                   <div className="brand-placeholder">{brand.name}</div>
                 )}
-              </div>
+              </Link>
             ))}
           </div>
         )}
