@@ -78,11 +78,17 @@ const actionCards = [
 export default function Footer() {
   const [activeBenefit, setActiveBenefit] = useState(0);
   const [activeAction, setActiveAction] = useState(0);
+  const [openFooterSections, setOpenFooterSections] = useState({
+    aboutUs: true,
+    resources: true
+  });
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterSubmitting, setNewsletterSubmitting] = useState(false);
   const intervalRef = useRef(null);
   const actionIntervalRef = useRef(null);
   const newsletterEmailRef = useRef(null);
+  const benefitTouchStartRef = useRef(null);
+  const actionTouchStartRef = useRef(null);
 
   const handleBackToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -100,6 +106,46 @@ export default function Footer() {
 
   const prevBenefit = () => goToBenefit((activeBenefit + benefitItems.length - 1) % benefitItems.length);
   const nextBenefit = () => goToBenefit((activeBenefit + 1) % benefitItems.length);
+
+  const handleTouchStart = (touchStartRef) => (event) => {
+    const touch = event.touches[0];
+    touchStartRef.current = {
+      x: touch.clientX,
+      y: touch.clientY
+    };
+  };
+
+  const handleTouchEnd = (touchStartRef, onSwipeLeft, onSwipeRight) => (event) => {
+    const startPoint = touchStartRef.current;
+    if (!startPoint) {
+      return;
+    }
+
+    const touch = event.changedTouches[0];
+    const deltaX = touch.clientX - startPoint.x;
+    const deltaY = touch.clientY - startPoint.y;
+    const swipeThreshold = 50;
+
+    touchStartRef.current = null;
+
+    if (Math.abs(deltaX) < swipeThreshold || Math.abs(deltaX) <= Math.abs(deltaY)) {
+      return;
+    }
+
+    if (deltaX < 0) {
+      onSwipeLeft();
+      return;
+    }
+
+    onSwipeRight();
+  };
+
+  const toggleFooterSection = (sectionKey) => {
+    setOpenFooterSections((prevState) => ({
+      ...prevState,
+      [sectionKey]: !prevState[sectionKey]
+    }));
+  };
 
   const goToAction = (nextIndex) => {
     setActiveAction(nextIndex);
@@ -171,7 +217,14 @@ export default function Footer() {
 
   return (
     <footer className="site-footer">
-      <div className="benefits-carousel">
+      <div
+        className="benefits-carousel"
+        onTouchStart={handleTouchStart(benefitTouchStartRef)}
+        onTouchEnd={handleTouchEnd(benefitTouchStartRef, nextBenefit, prevBenefit)}
+        onTouchCancel={() => {
+          benefitTouchStartRef.current = null;
+        }}
+      >
         <button type="button" className="benefits-nav prev" onClick={prevBenefit} aria-label="Previous benefit">
           ‹
         </button>
@@ -206,7 +259,14 @@ export default function Footer() {
         Back to top
       </div>
 
-      <div className="actions-carousel">
+      <div
+        className="actions-carousel"
+        onTouchStart={handleTouchStart(actionTouchStartRef)}
+        onTouchEnd={handleTouchEnd(actionTouchStartRef, nextAction, prevAction)}
+        onTouchCancel={() => {
+          actionTouchStartRef.current = null;
+        }}
+      >
         <button type="button" className="actions-nav prev" onClick={prevAction} aria-label="Previous action">
           ‹
         </button>
@@ -228,9 +288,17 @@ export default function Footer() {
       </div>
 
       <div className="footer-main">
-        <div className="footer-col footer-col-links">
-          <h4>About Us</h4>
-          <ul>
+        <div className="footer-col footer-col-links footer-accordion-col">
+          <button
+            type="button"
+            className="footer-accordion-trigger"
+            aria-expanded={openFooterSections.aboutUs}
+            onClick={() => toggleFooterSection('aboutUs')}
+          >
+            <h4>About Us</h4>
+            <span className={`footer-accordion-arrow ${openFooterSections.aboutUs ? 'open' : ''}`} aria-hidden="true">⌄</span>
+          </button>
+          <ul className={`footer-accordion-panel ${openFooterSections.aboutUs ? 'open' : ''}`}>
             <li><Link to="/about-us" className="footer-list-link">Our Story</Link></li>
             <li><Link to="/why-dimond-modern-furniture" className="footer-list-link">Why Dimond Modern Furniture?</Link></li>
             <li><Link to="/reviews" className="footer-list-link">Reviews</Link></li>
@@ -239,9 +307,17 @@ export default function Footer() {
             <li><Link to="/careers" className="footer-list-link">Careers</Link></li>
           </ul>
         </div>
-        <div className="footer-col footer-col-links">
-          <h4>Resources</h4>
-          <ul>
+        <div className="footer-col footer-col-links footer-accordion-col">
+          <button
+            type="button"
+            className="footer-accordion-trigger"
+            aria-expanded={openFooterSections.resources}
+            onClick={() => toggleFooterSection('resources')}
+          >
+            <h4>Resources</h4>
+            <span className={`footer-accordion-arrow ${openFooterSections.resources ? 'open' : ''}`} aria-hidden="true">⌄</span>
+          </button>
+          <ul className={`footer-accordion-panel ${openFooterSections.resources ? 'open' : ''}`}>
             <li><Link to="/track-order" className="footer-list-link">Track My Order</Link></li>
             <li><Link to="/damage-claim" className="footer-list-link">Damage Claim</Link></li>
             <li><Link to="/return-policy" className="footer-list-link">Return Policy</Link></li>

@@ -197,14 +197,16 @@
   justify-content:space-between;
   align-items:center;
   padding:20px 40px;
-  color:var(--color-text-secondary);
+  color:#ffffff;
   font-size:13px;
-  background:var(--color-background);
-  border-top:1px solid var(--color-border);
+    background: #1f1f1f;
+
+  border-top:1px solid rgba(255, 255, 255, 0.08);
+  text-align: left;
 }
 
 .footer-bottom .left {
-  color:var(--color-primary);
+  color:#ffffff;
 }
 
 .footer-bottom .right {
@@ -213,13 +215,13 @@
 }
 
 .footer-bottom .right a {
-  color:var(--color-primary);
+  color:#ffffff;
   text-decoration:none;
 }
 
 .footer-bottom .right a:hover {
   text-decoration:underline;
-  color: var(--color-accent);
+  color: rgba(255, 255, 255, 0.82);
 }
 
 .footer-col h4 {
@@ -228,6 +230,58 @@
   font-size: 0.95rem;
   letter-spacing: 0.12em;
   color: #ffffff;
+}
+
+.footer-accordion-col {
+  align-self: start;
+}
+
+.footer-accordion-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  border: 0;
+  padding: 8px 0 10px;
+  margin: 0 0 18px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.footer-accordion-trigger:focus,
+.footer-accordion-trigger:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.footer-accordion-trigger h4 {
+  margin: 0;
+}
+
+.footer-accordion-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1.25rem;
+  line-height: 1;
+  transition: transform 0.2s ease;
+  transform: rotate(0deg);
+}
+
+.footer-accordion-arrow.open {
+  transform: rotate(180deg);
+}
+
+.footer-accordion-panel {
+  display: none;
+}
+
+.footer-accordion-panel.open {
+  display: block;
 }
 
 .footer-col ul {
@@ -345,6 +399,11 @@
 }
 
 @media (max-width: 768px) {
+  .benefits-carousel,
+  .actions-carousel {
+    touch-action: pan-y;
+  }
+
   .footer-actions,
   .footer-main {
     grid-template-columns: 1fr;
@@ -356,6 +415,20 @@
 
   .footer-main {
     padding: 0 20px 30px;
+  }
+
+  .footer-accordion-col {
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+  }
+
+  .footer-accordion-trigger {
+    padding: 10px 0 12px;
+    margin-bottom: 14px;
+  }
+
+  .footer-accordion-panel {
+    padding-bottom: 4px;
   }
 
   .benefits-strip {
@@ -390,7 +463,7 @@
   }
 
   .benefits-nav {
-    display: flex;
+    display: none;
   }
 
   .actions-carousel {
@@ -399,7 +472,7 @@
   }
 
   .actions-nav {
-    display: flex;
+    display: none;
   }
 
   .footer-actions {
@@ -438,7 +511,8 @@
   .footer-bottom {
     flex-direction: column;
     gap: 10px;
-    text-align: center;
+    align-items: flex-start;
+    text-align: left;
   }
 
   .newsletter-form {
@@ -473,6 +547,11 @@
   .footer-main {
     gap: 20px;
     padding: 0 16px 24px;
+  }
+
+  .footer-accordion-trigger {
+    padding: 10px 0 12px;
+    margin-bottom: 12px;
   }
 
   .social-row {
