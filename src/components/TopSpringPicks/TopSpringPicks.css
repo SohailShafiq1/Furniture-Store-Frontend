@@ -222,7 +222,7 @@
   }
 
   .spring-picks-track.is-mobile .spring-pick-card {
-    flex: 0 0 84%;
+    flex: 0 0 calc(84% + 10px);
     scroll-snap-align: start;
   }
 
@@ -237,7 +237,8 @@
   }
 
   .pick-image-wrapper {
-    aspect-ratio: 1.5;
+    height: 45vh;
+    aspect-ratio: auto;
   }
 }
 
@@ -266,6 +267,11 @@
   }
 
   .spring-picks-track.is-mobile .spring-pick-card {
-    flex-basis: 86%;
+    flex-basis: calc(96% + 10px);
+  }
+
+  .pick-image-wrapper {
+    height: 40vh;
+    aspect-ratio: auto;
   }
 }
