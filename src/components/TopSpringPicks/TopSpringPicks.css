@@ -121,7 +121,7 @@
   transform: scale(1.05);
 }
 
-.pick-content {
+.spring-pick-content {
   padding: 24px;
   background-color: #f8e6e8;
   display: flex;
@@ -129,14 +129,14 @@
   gap: 16px;
 }
 
-.pick-price {
+.spring-pick-price {
   font-size: 24px;
   font-weight: 700;
   color: var(--color-primary);
   margin: 0;
 }
 
-.pick-button {
+.spring-pick-button {
   background-color: var(--color-accent);
   color: white;
   border: none;
@@ -151,12 +151,12 @@
   white-space: nowrap;
 }
 
-.pick-button:hover {
+.spring-pick-button:hover {
   background-color: var(--color-accent-hover);
   transform: translateY(-2px);
 }
 
-.pick-button:active {
+.spring-pick-button:active {
   transform: translateY(0);
 }
 
@@ -172,12 +172,18 @@
     padding-left: 48px;
   }
 
-  .pick-price {
-    font-size: 22px;
+  .spring-pick-price {
+    font-size: 24px;
+    font-family: sans-serif;
   }
 
-  .pick-content {
+  .spring-pick-content {
     padding: 20px;
+  }
+
+  .spring-pick-button {
+    font-size: 14px;
+    font-family: sans-serif;
   }
 }
 
@@ -236,6 +242,20 @@
     padding-left: 0;
   }
 
+  .spring-pick-content {
+    padding: 20px;
+  }
+
+  .spring-pick-price {
+    font-size: 24px;
+    font-family: sans-serif;
+  }
+
+  .spring-pick-button {
+    font-size: 14px;
+    font-family: sans-serif;
+  }
+
   .pick-image-wrapper {
     height: 45vh;
     aspect-ratio: auto;
@@ -253,17 +273,19 @@
     padding-left: 0;
   }
 
-  .pick-content {
+  .spring-pick-content {
     padding: 18px;
   }
 
-  .pick-price {
-    font-size: 20px;
+  .spring-pick-price {
+    font-size: 24px;
+    font-family: sans-serif;
   }
 
-  .pick-button {
+  .spring-pick-button {
     padding: 10px 24px;
-    font-size: 13px;
+    font-size: 14px;
+    font-family: sans-serif;
   }
 
   .spring-picks-track.is-mobile .spring-pick-card {

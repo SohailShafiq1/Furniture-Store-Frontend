@@ -163,10 +163,10 @@ export default function TopSpringPicks({ items = [], title = 'Top Spring Picks' 
                       />
                     )}
                   </div>
-                  <div className="pick-content">
-                    {pick.priceLabel && <p className="pick-price">{pick.priceLabel}</p>}
+                  <div className="spring-pick-content">
+                    {pick.priceLabel && <p className="spring-pick-price">{pick.priceLabel}</p>}
                     <button
-                      className="pick-button"
+                      className="spring-pick-button"
                       onClick={() => {
                         const buttonClick = pick.buttonOnClick || pick.onClick;
                         if (buttonClick) {
@@ -220,10 +220,10 @@ export default function TopSpringPicks({ items = [], title = 'Top Spring Picks' 
                       />
                     )}
                   </div>
-                  <div className="pick-content">
-                    {pick.priceLabel && <p className="pick-price">{pick.priceLabel}</p>}
+                  <div className="spring-pick-content">
+                    {pick.priceLabel && <p className="spring-pick-price">{pick.priceLabel}</p>}
                     <button
-                      className="pick-button"
+                      className="spring-pick-button"
                       onClick={() => {
                         const buttonClick = pick.buttonOnClick || pick.onClick;
                         if (buttonClick) {
