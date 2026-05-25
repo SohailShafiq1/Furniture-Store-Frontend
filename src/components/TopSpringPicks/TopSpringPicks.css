@@ -203,11 +203,7 @@
   }
 
   .spring-picks-arrow {
-    width: 36px;
-    height: 36px;
-    font-size: 24px;
-    border-width: 1.5px;
-    z-index: 2;
+    display: none;
   }
 
   .spring-picks-track.is-mobile {
@@ -271,6 +267,10 @@
     font-size: 24px;
     margin-bottom: 24px;
     padding-left: 0;
+  }
+
+  .spring-picks-arrow {
+    display: none;
   }
 
   .spring-pick-content {
