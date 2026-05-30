@@ -48,7 +48,16 @@
 }
 
 @media (max-width: 768px) {
+  .mood-slider { padding: 46px 0 }
   .mood-content { gap: 36px; animation-duration: 24s }
-  .mood-image { max-height: 80px }
-  .mood-text { font-size: 26px }
+  .mood-image {
+    width: 120px;
+    height: 120px;
+    max-height: none;
+    object-fit: contain;
+  }
+  .mood-text {
+    font-size: 37px;
+    font-family: sans-serif;
+  }
 }
