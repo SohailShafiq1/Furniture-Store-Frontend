@@ -205,7 +205,7 @@ const DynamicPromoBanners = ({ homeContent }) => {
   );
 
   return (
-    <div style={{ width: '100%', padding: '28px 40px 20px', backgroundColor: 'var(--color-background)' }}>
+    <div style={{ width: '100%', padding: isMobile ? '24px 20px 20px' : '28px 40px 20px', backgroundColor: 'var(--color-background)' }}>
       <div style={{ maxWidth: '1480px', margin: '0 auto' }}>
         <div style={{
           display: 'flex',
@@ -241,7 +241,8 @@ const DynamicPromoBanners = ({ homeContent }) => {
             display: 'grid',
             gridTemplateColumns: isMobile ? '1fr' : `repeat(${visibleCount}, minmax(0, 1fr))`,
             gap: '20px',
-            flex: 1
+            flex: 1,
+            justifyItems: isMobile ? 'center' : 'stretch'
           }}>
             {visibleBanners.map((banner, idx) => {
               const bannerAction = buildHomeContentBannerAction(navigate, banner, homeContent);
@@ -252,13 +253,15 @@ const DynamicPromoBanners = ({ homeContent }) => {
                   overflow: 'hidden',
                   borderRadius: '8px',
                   transition: 'all 0.3s ease',
-                  height: '100%'
+                  height: '100%',
+                  width: isMobile ? 'min(350px, 100%)' : '100%'
                 }}>
               {/* Banner Image */}
               <div style={{
                 position: 'relative',
                 width: '100%',
-                paddingBottom: isMobile ? '62%' : '68%',
+                height: isMobile ? '262px' : 'auto',
+                paddingBottom: isMobile ? undefined : '68%',
                 overflow: 'hidden',
                 backgroundColor: 'var(--color-secondary)',
                 borderRadius: '8px 8px 0 0'
