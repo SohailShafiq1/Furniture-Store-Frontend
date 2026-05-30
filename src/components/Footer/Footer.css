@@ -12,7 +12,7 @@
   gap: 16px;
   background: var(--color-primary);
   color: #fff;
-  padding: 20px 24px;
+  padding: 12px 24px;
   justify-content: center;
   align-items: center;
 }
@@ -434,9 +434,9 @@
   .benefits-strip {
     display: block;
     position: relative;
-    padding: 20px 16px;
+    padding: 12px 16px;
     overflow: hidden;
-    min-height: 180px;
+    min-height: 130px;
   }
 
   .benefit {
