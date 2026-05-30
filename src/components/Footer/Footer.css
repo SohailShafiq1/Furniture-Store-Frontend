@@ -259,6 +259,8 @@
 
 .footer-accordion-trigger h4 {
   margin: 0;
+  flex: 1;
+  min-width: 0;
 }
 
 .footer-accordion-arrow {
@@ -266,6 +268,8 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  width: 24px;
+  height: 24px;
   font-size: 1.25rem;
   line-height: 1;
   transition: transform 0.2s ease;
@@ -320,6 +324,7 @@
 .newsletter-field {
   position: relative;
   width: 100%;
+  min-height: 52px;
 }
 
 .newsletter-form input {
@@ -353,6 +358,7 @@
   background: #111111;
   color: #ffffff;
   font-size: 1.05rem;
+  line-height: 1;
   cursor: pointer;
   padding: 0;
   border-radius: 50%;
@@ -423,8 +429,12 @@
   }
 
   .footer-accordion-trigger {
-    padding: 10px 0 12px;
+    padding: 10px 8px 12px 0;
     margin-bottom: 14px;
+  }
+
+  .footer-accordion-arrow {
+    margin-left: 8px;
   }
 
   .footer-accordion-panel {
@@ -522,6 +532,10 @@
 
   .newsletter-form button {
     align-self: flex-end;
+    width: 38px;
+    height: 38px;
+    right: 8px;
+    font-size: 1.35rem;
   }
 }
 
@@ -550,7 +564,7 @@
   }
 
   .footer-accordion-trigger {
-    padding: 10px 0 12px;
+    padding: 10px 6px 12px 0;
     margin-bottom: 12px;
   }
 
