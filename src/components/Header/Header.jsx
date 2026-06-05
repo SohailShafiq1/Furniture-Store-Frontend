@@ -18,6 +18,7 @@ export default function Header() {
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [activeBannerIndex, setActiveBannerIndex] = useState(0);
+  const [previousBannerIndex, setPreviousBannerIndex] = useState(null);
   const [latestNewsId, setLatestNewsId] = useState(null);
   const { user, logout } = useUserAuth();
   const { cart } = useCart();
@@ -68,13 +69,29 @@ export default function Header() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setActiveBannerIndex((current) => (current + 1) % bannerItems.length);
+      setActiveBannerIndex((current) => {
+        setPreviousBannerIndex(current);
+        return (current + 1) % bannerItems.length;
+      });
     }, 5000);
 
     return () => clearInterval(interval);
   }, [bannerItems.length, latestNewsId]);
 
+  useEffect(() => {
+    if (previousBannerIndex === null) {
+      return undefined;
+    }
+
+    const timeout = setTimeout(() => {
+      setPreviousBannerIndex(null);
+    }, 850);
+
+    return () => clearTimeout(timeout);
+  }, [previousBannerIndex]);
+
   const activeBanner = bannerItems[activeBannerIndex];
+  const previousBanner = previousBannerIndex !== null ? bannerItems[previousBannerIndex] : null;
 
   // Calculate total items in cart
   const cartItemCount = cart.items.reduce((total, item) => total + item.quantity, 0);
@@ -107,17 +124,26 @@ export default function Header() {
             className="announcement-message"
             onClick={() => navigate(activeBanner.route)}
           >
-            <span
-              key={activeBannerIndex}
-              className={`announcement-message-content ${
-                activeBannerIndex % 2 === 0
-                  ? 'announcement-message-content--from-left'
-                  : 'announcement-message-content--from-right'
-              }`}
-            >
-              {activeBanner.prefix}
-              <span className="announcement-highlight">{activeBanner.highlight}</span>
-              {activeBanner.suffix || ''}
+            <span className="announcement-message-track">
+              {previousBanner ? (
+                <span
+                  key={`previous-${previousBannerIndex}`}
+                  className="announcement-message-content announcement-message-content--exit-right"
+                >
+                  {previousBanner.prefix}
+                  <span className="announcement-highlight">{previousBanner.highlight}</span>
+                  {previousBanner.suffix || ''}
+                </span>
+              ) : null}
+
+              <span
+                key={`active-${activeBannerIndex}`}
+                className="announcement-message-content announcement-message-content--enter-left"
+              >
+                {activeBanner.prefix}
+                <span className="announcement-highlight">{activeBanner.highlight}</span>
+                {activeBanner.suffix || ''}
+              </span>
             </span>
           </button>
           <div className="announcement-links">

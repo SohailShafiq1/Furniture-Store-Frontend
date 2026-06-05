@@ -44,19 +44,30 @@
   white-space: nowrap;
 }
 
-.announcement-message-content {
-  display: inline-block;
+.announcement-message-track {
+  position: relative;
+  display: block;
+  width: 100%;
+  min-height: 1.2em;
   overflow: hidden;
-  white-space: nowrap;
-  will-change: transform, clip-path, opacity;
 }
 
-.announcement-message-content--from-left {
+.announcement-message-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  white-space: nowrap;
+  will-change: transform, opacity;
+}
+
+.announcement-message-content--enter-left {
   animation: announcementTextRevealFromLeft 0.85s ease-out both;
 }
 
-.announcement-message-content--from-right {
-  animation: announcementTextRevealFromRight 0.85s ease-out both;
+.announcement-message-content--exit-right {
+  animation: announcementTextExitToRight 0.85s ease-in both;
 }
 
 .announcement-highlight {
@@ -76,37 +87,43 @@
 @keyframes announcementTextRevealFromLeft {
   from {
     opacity: 0;
-    transform: translateX(-120%);
-    clip-path: inset(0 100% 0 0);
+    transform: translateX(-100vw);
   }
 
   to {
     opacity: 1;
     transform: translateX(0);
-    clip-path: inset(0 0 0 0);
   }
 }
 
-@keyframes announcementTextRevealFromRight {
+@keyframes announcementTextExitToRight {
   from {
-    opacity: 0;
-    transform: translateX(120%);
-    clip-path: inset(0 0 0 100%);
+    opacity: 1;
+    transform: translateX(0);
   }
 
   to {
-    opacity: 1;
-    transform: translateX(0);
-    clip-path: inset(0 0 0 0);
+    opacity: 0;
+    transform: translateX(100vw);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .announcement-message-content,
-  .announcement-message-content--from-left,
-  .announcement-message-content--from-right {
+  .announcement-message-content--enter-left,
+  .announcement-message-content--exit-right {
     animation: none;
-    clip-path: none;
+    position: static;
+    opacity: 1;
+    transform: none;
+  }
+
+  .announcement-message-track {
+    overflow: visible;
+  }
+
+  .announcement-message-content--exit-right {
+    display: none;
   }
 }
 
@@ -861,10 +878,6 @@
   .header-mobile-menu-toggle span {
     width: 32px;
     height: 3px;
-  }
-
-  .icon-group {
-    /* gap: 8px; */
   }
 
   .header-icon-btn {
