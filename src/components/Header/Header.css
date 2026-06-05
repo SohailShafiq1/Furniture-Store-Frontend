@@ -41,6 +41,22 @@
   font-size: inherit;
   font-weight: inherit;
   text-align: left;
+  white-space: nowrap;
+}
+
+.announcement-message-content {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  will-change: transform, clip-path, opacity;
+}
+
+.announcement-message-content--from-left {
+  animation: announcementTextRevealFromLeft 0.85s ease-out both;
+}
+
+.announcement-message-content--from-right {
+  animation: announcementTextRevealFromRight 0.85s ease-out both;
 }
 
 .announcement-highlight {
@@ -55,6 +71,43 @@
 
 .announcement-message:hover {
   text-decoration: none;
+}
+
+@keyframes announcementTextRevealFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-120%);
+    clip-path: inset(0 100% 0 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes announcementTextRevealFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(120%);
+    clip-path: inset(0 0 0 100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .announcement-message-content,
+  .announcement-message-content--from-left,
+  .announcement-message-content--from-right {
+    animation: none;
+    clip-path: none;
+  }
 }
 
 .announcement-links {
@@ -134,7 +187,7 @@
 .icon-group {
   display: flex;
   align-items: center;
-  gap: 12px;
+  /* gap: 12px; */
   flex-shrink: 0;
 }
 
@@ -569,6 +622,9 @@
     flex: 1 1 100%;
     text-align: center;
     font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: clip;
   }
 
   .announcement-links {
@@ -620,7 +676,7 @@
   .icon-group {
     flex: 0 0 auto;
     margin-left: auto;
-    gap: 12px;
+    /* gap: 12px; */
     max-width: none;
     justify-content: flex-end;
   }
@@ -672,8 +728,8 @@
   }
 
   .header-icon-btn {
-    width: 64px;
-    height: 64px;
+    width: 60px;
+    height: 44px;
   }
 
   .cart-badge {
@@ -682,17 +738,31 @@
   }
 
   .header-cart-image {
-    width: 116px;
+    width: 60px;
+    height: 44px;
+  }
+
+  .header-icon-image {
+    width: 60px;
     height: 44px;
   }
 
   .user-profile-button {
-    width: 64px;
-    height: 64px;
+    width: 60px;
+    height: 44px;
   }
 }
 
 @media (max-width: 480px) {
+  .header-announcement-inner {
+    padding: 0 12px;
+  }
+
+  .announcement-message {
+    font-size: 12px;
+    line-height: 1.2;
+  }
+
   .header-top-row {
     padding: 8px 12px 8px;
     gap: 8px;
@@ -721,9 +791,9 @@
   }
 
   .header-icon-btn {
-    width: 56px;
-    height: 56px;
-    padding: 4px;
+    width: 60px;
+    height: 44px;
+    padding: 0;
   }
 
   .cart-badge {
@@ -735,7 +805,12 @@
   }
 
   .header-cart-image {
-    width: 80px;
+    width: 60px;
+    height: 44px;
+  }
+
+  .header-icon-image {
+    width: 60px;
     height: 44px;
   }
 
@@ -789,7 +864,7 @@
   }
 
   .icon-group {
-    gap: 8px;
+    /* gap: 8px; */
   }
 
   .header-icon-btn {
@@ -800,6 +875,11 @@
   .header-icon-btn svg {
     width: 20px;
     height: 20px;
+  }
+
+  .header-icon-image {
+    width: 60px;
+    height: 44px;
   }
 
   .cart-badge {

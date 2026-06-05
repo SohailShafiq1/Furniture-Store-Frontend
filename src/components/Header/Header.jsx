@@ -69,7 +69,7 @@ export default function Header() {
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveBannerIndex((current) => (current + 1) % bannerItems.length);
-    }, 3000);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, [bannerItems.length, latestNewsId]);
@@ -107,9 +107,18 @@ export default function Header() {
             className="announcement-message"
             onClick={() => navigate(activeBanner.route)}
           >
-            {activeBanner.prefix}
-            <span className="announcement-highlight">{activeBanner.highlight}</span>
-            {activeBanner.suffix || ''}
+            <span
+              key={activeBannerIndex}
+              className={`announcement-message-content ${
+                activeBannerIndex % 2 === 0
+                  ? 'announcement-message-content--from-left'
+                  : 'announcement-message-content--from-right'
+              }`}
+            >
+              {activeBanner.prefix}
+              <span className="announcement-highlight">{activeBanner.highlight}</span>
+              {activeBanner.suffix || ''}
+            </span>
           </button>
           <div className="announcement-links">
             <button
