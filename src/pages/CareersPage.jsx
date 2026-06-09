@@ -39,7 +39,7 @@ export default function CareersPage() {
           <table className="careers-contact-table">
             <tbody>
               <tr>
-                <td>Irfan Demir | info@lunafurn.com</td>
+                <td>Irfan Demir | info@dimondfurn.com</td>
                 <td>4655 Wright Rd, Ste 140</td>
               </tr>
               <tr>

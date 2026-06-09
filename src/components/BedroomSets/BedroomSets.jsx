@@ -25,7 +25,7 @@ export default function BedroomSets() {
           .map(p => ({
             id: p._id,
             name: p.name,
-            brand: p.brandId || 'Luna',
+            brand: p.brandId || 'Dimond Furniture',
             currentPrice: `$${p.price}`,
             originalPrice: p.discount > 0 ? `$${(p.price / (1 - p.discount / 100)).toFixed(2)}` : '',
             image: p.images?.[0] || p.image,

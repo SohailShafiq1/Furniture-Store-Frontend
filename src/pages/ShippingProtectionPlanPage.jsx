@@ -31,7 +31,7 @@ export default function ShippingProtectionPlanPage() {
           </p>
 
           <p>
-            To file a service request, simply contact us at <a href="mailto:customerservice@lunafurn.com">customerservice@lunafurn.com</a>. When submitting a request, you will be prompted to indicate whether the item(s) in question were lost, stolen, or damaged. If the package contains multiple items, you may need to specify which protected items have been affected.
+            To file a service request, simply contact us at <a href="mailto:customerservice@DimondFurn.com">customerservice@DimondFurn.com</a>. When submitting a request, you will be prompted to indicate whether the item(s) in question were lost, stolen, or damaged. If the package contains multiple items, you may need to specify which protected items have been affected.
           </p>
 
           <p>As part of your service request, we may request additional information and documents, such as:</p>

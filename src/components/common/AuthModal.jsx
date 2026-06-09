@@ -61,7 +61,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                 <button className="auth-close-btn" onClick={onClose}>&times;</button>
                 
                 <div className="auth-logo">
-                    <img src="/logo.svg" alt="Luna Furniture" className="auth-logo-img" />
+                    <img src="/logo.svg" alt="Dimond Furniture" className="auth-logo-img" />
                 </div>
 
                 <h3 className="auth-title">

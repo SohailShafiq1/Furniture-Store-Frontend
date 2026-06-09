@@ -37,7 +37,7 @@ export default function PrivacyPolicyPage() {
             </p>
             <p><strong>How do I withdraw my consent?</strong></p>
             <p>
-              If after you opt-in, you change your mind, you may withdraw your consent for us to contact you, for the continued collection, use or disclosure of your information, at anytime, by contacting us at info@lunafurn.com or mailing us at:
+              If after you opt-in, you change your mind, you may withdraw your consent for us to contact you, for the continued collection, use or disclosure of your information, at anytime, by contacting us at info@Dimondfurn.com or mailing us at:
             </p>
             <address>
               Dimond Moder Furniture<br />
@@ -132,14 +132,14 @@ export default function PrivacyPolicyPage() {
 
             <h2>QUESTIONS AND CONTACT INFORMATION</h2>
             <p>
-              If you would like to: access, correct, amend or delete any personal information we have about you, register a complaint, or simply want more information contact our Privacy Compliance Officer at info@lunafurn.com or by mail at
+              If you would like to: access, correct, amend or delete any personal information we have about you, register a complaint, or simply want more information contact our Privacy Compliance Officer at info@DimondFurn.com or by mail at
             </p>
             <address>
               Dimond Moder Furniture<br />
               [Re: Privacy Compliance Officer]<br />
               7010 Harwin Dr.<br />
               Houston Texas US 77036<br />
-              info@lunafurn.com
+              info@DimondFurn.com
             </address>
 
             <h2>SMS/MMS MOBILE MESSAGING MARKETING PROGRAM</h2>

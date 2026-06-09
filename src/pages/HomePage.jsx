@@ -571,7 +571,7 @@ const DynamicSubcategoryComponent = ({ subcategoryName, selectedProducts, catego
 
               {/* Product Info */}
               <p style={{ fontSize: '14px', color: '#999', margin: '0 0 8px 0' }}>
-                {product.brand || product.brandId || 'LUNA'}
+                {product.brand || product.brandId || 'Dimond'}
               </p>
 
               <h3 style={{
@@ -888,7 +888,7 @@ export default function HomePage() {
               const mapped = (content.selectedProducts || []).map((p) => ({
                 id: p._id || p.id,
                 image: p.image?.startsWith('http') ? p.image : `${BACKEND_URL}/${p.image}`,
-                brand: p.brand || p.brandId || 'LUNA',
+                brand: p.brand || p.brandId || 'Dimond',
                 name: p.name || p.title || 'Product',
                 rating: p.rating || Math.round(p.avgRating || 0) || 0,
                 reviews: p.numReviews || p.reviews || 0,

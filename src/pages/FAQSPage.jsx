@@ -38,7 +38,7 @@ export default function FAQSPage() {
       question: 'Do you offer Financing?',
       answer: (
         <p>
-          Surely, we do. Luna Furniture has partnered with several companies to
+          Surely, we do. Dimond Furniture has partnered with several companies to
           offer our customers a lot of great financing options. Please see your
           options <Link to="/financing">HERE</Link>.
         </p>
@@ -75,7 +75,7 @@ export default function FAQSPage() {
       answer: (
         <>
           <p>
-            Luna Furniture has two locations in the Houston area, offering a
+            Dimond Furniture has two locations in the Houston area, offering a
             wide variety of display products of your liking for you to see.
           </p>
           <p>Locations:</p>
@@ -115,7 +115,7 @@ export default function FAQSPage() {
       id: 'extra-info-order',
       icon: '⎔',
       question:
-        'Why is Luna Furniture requesting additional information to fulfill my order?',
+        'Why is Dimond Furniture requesting additional information to fulfill my order?',
       answer: (
         <p>
           Our system may flag your order as a medium or high-risk order,
@@ -188,7 +188,7 @@ export default function FAQSPage() {
       question: 'Which delivery method should I select?',
       answer: (
         <>
-          <p>Luna Furniture offers 4 methods of delivery:</p>
+          <p>Dimond Furniture offers 4 methods of delivery:</p>
           <ul>
             <li>
               <strong>Indoor Drop-Off:</strong> We will bring your delivery inside the front door of your home. You must assemble the item on your own.
@@ -314,7 +314,7 @@ export default function FAQSPage() {
       question: 'Will you take my old furniture?',
       answer: (
         <p>
-          Luna Furniture will not take your old furniture or disassemble it.
+          Dimond Furniture will not take your old furniture or disassemble it.
         </p>
       )
     },

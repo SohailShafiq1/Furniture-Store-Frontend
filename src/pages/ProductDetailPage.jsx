@@ -901,7 +901,7 @@ export default function ProductDetailPage() {
                     <p className="pd-faq-question">Can I pick up my furniture?</p>
                   </div>
                   <div className="pd-faq-item">
-                    <p className="pd-faq-question">Why is Luna Furniture requesting additional information to fulfill my order?</p>
+                    <p className="pd-faq-question">Why is Dimond Furniture requesting additional information to fulfill my order?</p>
                   </div>
                   <div className="pd-faq-item">
                     <p className="pd-faq-question">Can I cancel my order?</p>
