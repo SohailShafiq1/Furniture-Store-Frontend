@@ -17,17 +17,17 @@ const FinancingPage = () => {
     {
       title: 'Fill your cart.',
       description: 'Add your desired products to the cart and place your order today.',
-      image: '/Financing/financing-cart.png'
+      image: '/Final Financing Pictures/1.svg'
     },
     {
       title: 'Choose payment.',
       description: 'Submit an online application and receive your result within minutes.',
-      image: '/Financing/financing-payment.png'
+      image: '/Final Financing Pictures/2.svg'
     },
     {
       title: 'Pay over time.',
       description: 'Own the product of your dreams with monthly payment options that fit your budget.',
-      image: '/Financing/financing-time.png'
+      image: '/Final Financing Pictures/3.svg'
     }
   ];
 
