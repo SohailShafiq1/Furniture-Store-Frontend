@@ -197,9 +197,9 @@ export default function DeliveryPolicyPage() {
       question: 'Disclaimer',
       answer: (
         <>
-          <p>Dimond Furniture reserves the right to cancel any orders or delay the shipments for reasons including but not limited to manufacturer, carrier, stock, and/or cost-related issues on out-of-state orders without prior notice. Additionally, due to unexpected high shipping costs resulting from carriers, customer might be required to pay an additional fee for shipping. If the customer denies to pay for additional surcharge fee, the order will be cancelled.</p>
+          <p>Dimond Modern Furniture reserves the right to cancel any orders or delay the shipments for reasons including but not limited to manufacturer, carrier, stock, and/or cost-related issues on out-of-state orders without prior notice. Additionally, due to unexpected high shipping costs resulting from carriers, customer might be required to pay an additional fee for shipping. If the customer denies to pay for additional surcharge fee, the order will be cancelled.</p>
           <p>We inspect and ship all merchandise in factory manufactured condition unless stated or requested otherwise. Likewise, we make every effort by meticulous palletizing and/or thorough packaging to prevent partial loss or damage of merchandise.</p>
-          <p>In case of loss or damage of shipments en route, after the shipment leaves our warehouse, it is the buyer's responsibility to file a claim against the freight company. In certain cases, Dimond Furniture, at its whole discretion, may choose to arrange a repair service when/where possible and/or applicable. Monetary compensation of any amount will never be an option if insurance or freight liability or repair is a possible remedy of any level or kind.</p>
+          <p>In case of loss or damage of shipments en route, after the shipment leaves our warehouse, it is the buyer's responsibility to file a claim against the freight company. In certain cases, Dimond Modern Furniture, at its whole discretion, may choose to arrange a repair service when/where possible and/or applicable. Monetary compensation of any amount will never be an option if insurance or freight liability or repair is a possible remedy of any level or kind.</p>
           <p>By law, tax exemption does not apply to orders placed and/or fulfilled in the state of TX where our HQ is located.</p>
         </>
       )
@@ -227,7 +227,7 @@ export default function DeliveryPolicyPage() {
             <p className="faqs-kicker">THANK YOU FOR CHOOSING US</p>
             <h2>We want to make the delivery process as simple as possible for you.</h2>
             <p className="faqs-subtitle">
-              Dimond Furniture provides a variety of delivery options, including Outdoor Drop-Off, Indoor Drop-Off, Room of Choice, White Glove, and Pick-Up.
+              Dimond Modern Furniture provides a variety of delivery options, including Outdoor Drop-Off, Indoor Drop-Off, Room of Choice, White Glove, and Pick-Up.
 
 
             </p>

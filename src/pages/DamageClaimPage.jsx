@@ -133,7 +133,7 @@ export default function DamageClaimPage() {
           <form className="damage-claim-form" onSubmit={handleSubmit}>
             <div className="damage-claim-banner">Damage Claim Form</div>
             <div className="damage-claim-logo-wrap">
-              <img src="/logo.svg" alt="Dimond Furniture" className="damage-claim-logo" />
+              <img src="/logo.svg" alt="Dimond Modern Furniture" className="damage-claim-logo" />
             </div>
 
             <h3>Received a damaged item? We are here to help. Please read our policy carefully and submit the form below!</h3>
@@ -275,7 +275,7 @@ export default function DamageClaimPage() {
               <label htmlFor="termsAcceptedName">I have read and understood the terms and conditions *</label>
               <textarea
                 className="damage-claim-terms"
-                value="By making a purchase from Dimond Furniture you acknowledge and agree to our delivery and return policy and related conditions."
+                value="By making a purchase from  Dimond Modern Furniture you acknowledge and agree to our delivery and return policy and related conditions."
                 readOnly
                 rows={4}
               />

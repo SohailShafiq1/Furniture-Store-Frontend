@@ -17,13 +17,13 @@ export default function ReturnPolicyPage() {
             </p>
             <p><strong>Order Confirmation and Payment:</strong></p>
             <p>
-              After placing your order, a Dimond Furniture representative will email you to confirm details and verify accuracy. Your payment will be processed after you confirm or 48 hours after the initial transaction, whichever comes first.
+              After placing your order, a Dimond Modern Furniture representative will email you to confirm details and verify accuracy. Your payment will be processed after you confirm or 48 hours after the initial transaction, whichever comes first.
             </p>
             <p><strong>Cancellation Fees:</strong></p>
             <ul>
               <li>Within 24 hours: Full refund, no fees. Exclusions apply if the item is in the warehouse or in transit.</li>
               <li>After 24 hours: 3% non-negotiable payment processing fee.</li>
-              <li>Products in Dimond Furniture's possession, in transit (to Dimond   Furniture's warehouse or to your address), or ready for delivery: 70% refund (covers processing, picking, and handling). Delivery fees are non-refundable.</li>
+              <li>Products in Dimond Modern Furniture's possession, in transit (to Dimond   Modern Furniture's warehouse or to your address), or ready for delivery: 70% refund (covers processing, picking, and handling). Delivery fees are non-refundable.</li>
               <li>Products not ready for delivery: 97% refund (if payment captured) or 100% refund (if payment not captured).</li>
             </ul>
             <p><strong>Special Orders and Shipped Items:</strong></p>
@@ -32,7 +32,7 @@ export default function ReturnPolicyPage() {
             </p>
             <p><strong>Merchant's Inability to Meet ETA:</strong></p>
             <p>
-              Full refund (minus 3% fee) if the order is cancelled due to the merchant's inability to meet the estimated time of arrival (ETA), and the item is not in transit to Dimond Furniture's warehouse or your residence. A 30% cancellation fee applies if the item is in transit.
+              Full refund (minus 3% fee) if the order is cancelled due to the merchant's inability to meet the estimated time of arrival (ETA), and the item is not in transit to Dimond Modern Furniture's warehouse or your residence. A 30% cancellation fee applies if the item is in transit.
             </p>
             <p><strong>Refunds:</strong></p>
             <p>
