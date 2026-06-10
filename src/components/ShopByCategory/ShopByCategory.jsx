@@ -11,9 +11,19 @@ export default function ShopByCategory({ showArrows = true, allCategories = fals
     ? categories
     : categories.filter((cat) => cat.showInShopByCategory !== false);
   const trackRef = useRef(null);
+  const [isMobileView, setIsMobileView] = useState(false);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
   const [hasOverflow, setHasOverflow] = useState(false);
+
+  useEffect(() => {
+    const updateViewport = () => setIsMobileView(window.innerWidth <= 768);
+
+    updateViewport();
+    window.addEventListener('resize', updateViewport);
+
+    return () => window.removeEventListener('resize', updateViewport);
+  }, []);
 
   const updateScrollState = () => {
     const track = trackRef.current;
@@ -57,7 +67,7 @@ export default function ShopByCategory({ showArrows = true, allCategories = fals
     );
   }
 
-  const shouldShowArrows = showArrows && hasOverflow;
+  const shouldShowArrows = showArrows && hasOverflow && !isMobileView;
 
   return (
     <section className={`shop-by-category ${shouldShowArrows ? '' : 'no-arrows'}`}>
