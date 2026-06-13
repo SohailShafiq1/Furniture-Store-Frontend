@@ -179,7 +179,7 @@
 /* Small Mobile */
 @media (max-width: 480px) {
   .shop-by-category {
-    padding: 28px 14px 36px;
+    padding: 28px 0px 36px;
   }
 
   .category-carousel {
@@ -208,7 +208,7 @@
   }
 
   .category-label {
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 17px;
+    font-weight: bolder;
   }
 }
