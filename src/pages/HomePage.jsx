@@ -285,7 +285,7 @@ const DynamicPromoBanners = ({ homeContent }) => {
 
               {/* Banner Content */}
               <div style={{
-                padding: '20px 20px 22px',
+                padding: '20px 20px 16px',
                 backgroundColor: '#F5EFE7',
                 borderRadius: '0 0 8px 8px',
                 display: 'flex',
