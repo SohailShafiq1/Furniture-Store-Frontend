@@ -55,7 +55,7 @@ const actionCards = [
   {
     icon: <FaDollarSign />,
     title: 'FINANCING',
-    description: 'Flexible payment plans to fit your lifestyle.',
+    description: 'Flexible payment plans to fit your world lifestyle.',
     link: '/financing',
     cta: 'LEARN MORE'
   },
