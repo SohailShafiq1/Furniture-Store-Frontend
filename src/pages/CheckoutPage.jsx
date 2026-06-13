@@ -645,7 +645,7 @@ const CheckoutPage = () => {
                     checked={tipEnabled}
                     onChange={(e) => handleTipToggle(e.target.checked)}
                   />
-                  <span>Show your support for the team at Dimond Modern Furniture</span>
+                  <span>Show your support for the team at Diamond Modern Furniture</span>
                 </label>
 
                 {tipEnabled && (

@@ -300,7 +300,7 @@ export default function Footer() {
           </button>
           <ul className={`footer-accordion-panel ${openFooterSections.aboutUs ? 'open' : ''}`}>
             <li><Link to="/about-us" className="footer-list-link">Our Story</Link></li>
-            <li><Link to="/why-dimond-modern-furniture" className="footer-list-link">Why Dimond Modern Furniture?</Link></li>
+            <li><Link to="/why-dimond-modern-furniture" className="footer-list-link">Why Diamond Modern Furniture?</Link></li>
             <li><Link to="/reviews" className="footer-list-link">Reviews</Link></li>
             <li><Link to="/financing" className="footer-list-link">Financing</Link></li>
             <li><Link to="/news-blog" className="footer-list-link">News & Blog</Link></li>

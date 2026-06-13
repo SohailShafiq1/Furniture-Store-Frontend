@@ -25,7 +25,7 @@ export default function NewsUpdates() {
   return (
     <section className="news-updates">
       <div className="news-container">
-        <h2 className="news-title">Dimond Modern Furniture Furniture News & Updates</h2>
+        <h2 className="news-title">Diamond Modern Furniture Furniture News & Updates</h2>
         <div className="news-grid">
           {news.map((item) => (
             <Link key={item._id} to={`/news/${item._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>

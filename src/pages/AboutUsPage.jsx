@@ -17,7 +17,7 @@ export default function AboutUsPage() {
         </section>
 
         <section className="about-intro" aria-label="About us intro">
-          <p className="about-intro-brand">DIOMOND MODER FURNITURE</p>
+          <p className="about-intro-brand">DIAMOND MODER FURNITURE</p>
           <h2>Furniture for every room, every mood.</h2>
           <p className="about-intro-subheading">
             Enjoy a wide range of products, flexible financing, and top-notch
@@ -55,7 +55,7 @@ export default function AboutUsPage() {
               Today, we are proud to have become one of the largest online furniture retailers in the USA-a testament to the trust our customers place in us. Our journey, rooted in the Ilhan family&#39;s passion and decades of experience, is one of a relentless drive to offer a better way to shop for your home.
             </p>
             <p>
-              We are Dimond Modern Furniture, and we are here to help you create a space you love.
+              We are Diamond Modern Furniture, and we are here to help you create a space you love.
             </p>
           </div>
         </section>
@@ -77,7 +77,7 @@ export default function AboutUsPage() {
           <div className="about-split-text">
             <h3>Customer First, Always.</h3>
             <p>
-              At Dimond Modern Furniture, our customers are at the heart of everything we do.
+              At Diamond Modern Furniture, our customers are at the heart of everything we do.
               We understand the excitement and apprehension that come with buying
               furniture online for the first time. That&#39;s why we ensure a seamless
               shopping experience from product discovery to delivery. We promise to
@@ -157,7 +157,7 @@ export default function AboutUsPage() {
           <div className="about-cta-container">
             <h3>Transform Your Home with Dimond Modern Furniture.</h3>
             <p>
-              Dimond Modern Furniture believes in making it easy for everyone to create a home they love. Through innovation and a customer-centric approach, we offer a seamless shopping experience that covers everything from product discovery to delivery. Join us in transforming your living space with quality, style, and convenience.
+              Diamond Modern Furniture believes in making it easy for everyone to create a home they love. Through innovation and a customer-centric approach, we offer a seamless shopping experience that covers everything from product discovery to delivery. Join us in transforming your living space with quality, style, and convenience.
             </p>
             <div className="about-cta-actions">
               <Link to="/" className="about-cta-btn about-cta-btn-primary" onClick={handleNavigateTop}>Let&apos;s Shop</Link>

@@ -23,11 +23,11 @@ export default function WhyDimondFurniturePage() {
       <Header />
       <main className="about-us-page">
         <section className="about-hero" aria-label="Why Dimond Modern Furniture hero section">
-          <h1>Why Dimond Modern Furniture? </h1>
+          <h1>Why Diamond Modern Furniture? </h1>
         </section>
 
-        <section className="about-intro" aria-label="Why Dimond Modern Furniture intro">
-          <p className="about-intro-brand">DIOMOND MODER FURNITURE</p>
+        <section className="about-intro" aria-label="Why Diamond Modern Furniture intro">
+          <p className="about-intro-brand">DIAMOND MODERN FURNITURE</p>
           <h2>Where beautiful and affordable furniture is just a click away.</h2>
           <p className="about-intro-subheading">
            Since 2016, we’ve been helping customers create beautiful spaces with seamless nationwide delivery. Recognized as one of the top 100 furniture stores in the US, we offer great prices, fast deliveries, and a delightful shopping experience.
@@ -54,14 +54,14 @@ export default function WhyDimondFurniturePage() {
           },
           {
             title: 'Fast Nationwide Delivery',
-            body: 'Your satisfaction is our priority, and that includes getting your furniture to you quickly. Whether you live in a busy city or a quiet town, our fast nationwide delivery ensures you can enjoy Dimond Modern Furniture’s offerings no matter where you are.',
+            body: 'Your satisfaction is our priority, and that includes getting your furniture to you quickly. Whether you live in a busy city or a quiet town, our fast nationwide delivery ensures you can enjoy Diamond Modern Furniture’s offerings no matter where you are.',
             cta: 'Delivery Options',
             to: '/all-collections',
             mirrored: true,
           },
           {
             title: 'Affordable Prices',
-            body: 'We believe quality furniture should be affordable. At Dimond Modern Furniture, you’ll find stylish and durable pieces at prices that make decorating your home easy on your budget.',
+            body: 'We believe quality furniture should be affordable. At Diamond Modern Furniture, you’ll find stylish and durable pieces at prices that make decorating your home easy on your budget.',
             cta: 'Shop Sale',
             to: '/deals',
           },
@@ -89,7 +89,7 @@ export default function WhyDimondFurniturePage() {
             <section
               key={section.title}
               className="about-split about-split-story why-dimond-section"
-              aria-label="Why Dimond Modern Furniture section"
+              aria-label="Why Diamond Modern Furniture section"
             >
               {section.mirrored ? null : (
                 <div className="about-split-image-wrap why-dimond-image-wrap">
@@ -129,7 +129,7 @@ export default function WhyDimondFurniturePage() {
         })}
         <section className="about-cta" aria-label="Transform your home">
           <div className="about-cta-container">
-            <h3>At Dimond Modern Furniture, we believe everyone deserves a beautiful and comfortable home.
+            <h3>At Diamond Modern Furniture, we believe everyone deserves a beautiful and comfortable home.
 </h3>
             <p>
             Explore our collections, enjoy our fast nationwide delivery, and see why so many people love shopping with us. Your dream home is just a click away!

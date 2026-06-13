@@ -86,7 +86,7 @@ export default function ContactPage() {
                 </svg>
               </div>
               <h3>E-Mail Us</h3>
-              <p>customerservice@dimondmodernfurniture.com</p>
+              <p>customerservice@diamondmodernfurniture.com</p>
             </a>
             <a
               href="tel:+18329003800"
@@ -138,7 +138,7 @@ export default function ContactPage() {
             <div className="condition-content">
               <p><strong>CONSENT, OPT-IN & OPT-OUT for Text Messaging</strong></p>
               <p>
-                Prefer to message us instead? Text us at <strong>(832) 900-3800</strong> if you need help. By texting us, you consent to receive text messages from Dimond Modern Furniture at the mobile number you use to text and you are opting-in to receive future messages or a phone call to the number you provided. Message & Data rates may apply. View our <Link to="/privacy-policy">Terms</Link> and <Link to="/privacy-policy">Privacy Policy</Link> for more information.
+                Prefer to message us instead? Text us at <strong>(832) 900-3800</strong> if you need help. By texting us, you consent to receive text messages from Diamond Modern Furniture at the mobile number you use to text and you are opting-in to receive future messages or a phone call to the number you provided. Message & Data rates may apply. View our <Link to="/privacy-policy">Terms</Link> and <Link to="/privacy-policy">Privacy Policy</Link> for more information.
               </p>
               <p>
                 Customers can opt-out of receiving SMS/text messages by replying with <strong>Stop</strong>, <strong>Unsubscribe</strong>, or <strong>Cancel</strong>.
@@ -151,7 +151,7 @@ export default function ContactPage() {
           <div className="store-section-left">
             <div className="store-section-header">
               <h1 className="store-section-tag">Our Stores & Warehouses </h1>
-              <h2 className="store-section-title">Find a Dimond Modern Furniture location near you</h2>
+              <h2 className="store-section-title">Find a Diamond Modern Furniture location near you</h2>
             </div>
 
             {storesLoading ? (
@@ -174,7 +174,7 @@ export default function ContactPage() {
                         <img src={getStoreImage(store)} alt={`${store.name} store`} />
                       </div>
                       <div className="store-card-info">
-                        <p className="store-subtitle">Dimond Modern Furniture</p>
+                        <p className="store-subtitle">Diamond Modern Furniture</p>
                         <h3>{store.name}</h3>
                         <ul className="store-details-list">
                           {details.map((detail, index) => (

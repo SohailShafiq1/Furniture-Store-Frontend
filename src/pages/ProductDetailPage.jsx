@@ -182,7 +182,7 @@ export default function ProductDetailPage() {
   const toCarouselProduct = (p, options = {}) => ({
     id: p._id,
     name: p.name,
-    brand: p.brandId || 'Dimond Modern Furniture',
+    brand: p.brandId || 'Diamond Modern Furniture',
     currentPrice: `$${p.price}`,
     originalPrice: p.discount > 0 ? `$${(p.price / (1 - p.discount / 100)).toFixed(2)}` : '',
     image: buildImageUrl(p.images?.[0] || p.image),
@@ -199,7 +199,7 @@ export default function ProductDetailPage() {
     const currentViewedProduct = {
       id: product._id,
       name: product.name,
-      brand: product.brandId || 'Dimond Modern Furniture',
+      brand: product.brandId || 'Diamond Modern Furniture',
       currentPrice: `$${product.price}`,
       originalPrice: product.discount > 0 ? `$${(product.price / (1 - product.discount / 100)).toFixed(2)}` : '',
       image: buildImageUrl(product.images?.[0] || product.image),

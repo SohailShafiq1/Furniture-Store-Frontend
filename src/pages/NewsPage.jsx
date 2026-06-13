@@ -31,7 +31,7 @@ export default function NewsPage() {
       <Header />
       <section className="news-updates">
         <div className="news-container">
-          <h2 className="news-title">Dimond Modern Furniture News & Updates</h2>
+          <h2 className="news-title">Diamond Modern Furniture News & Updates</h2>
           {loading ? (
             <p>Loading...</p>
           ) : (
