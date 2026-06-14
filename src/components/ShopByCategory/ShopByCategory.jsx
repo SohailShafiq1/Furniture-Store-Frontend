@@ -60,85 +60,88 @@ export default function ShopByCategory({ showArrows = true, allCategories = fals
 
   if (loading) {
     return (
-      <section className="shop-by-category">
+      <>
         <h2 className="category-heading">Shop by Category</h2>
+        <section className="shop-by-category">
         <div style={{ textAlign: 'center', padding: '40px' }}>Loading categories...</div>
-      </section>
+        </section>
+      </>
     );
   }
 
   const shouldShowArrows = showArrows && hasOverflow && !isMobileView;
 
   return (
-    <section className={`shop-by-category ${shouldShowArrows ? '' : 'no-arrows'}`}>
+    <>
       <h2 className="category-heading" data-aos="fade-up">Shop by Category</h2>
-      <div className="category-carousel">
-        {shouldShowArrows && (
-          <button
-            type="button"
-            className={`carousel-arrow carousel-arrow-left ${canScrollLeft ? '' : 'disabled'}`}
-            onClick={() => scrollByOneCategory(-1)}
-            disabled={!canScrollLeft}
-            aria-label="Scroll categories left"
-          >
-            <FiChevronLeft />
-          </button>
-        )}
+      <section className={`shop-by-category ${shouldShowArrows ? '' : 'no-arrows'}`}>
+        <div className="category-carousel">
+          {shouldShowArrows && (
+            <button
+              type="button"
+              className={`carousel-arrow carousel-arrow-left ${canScrollLeft ? '' : 'disabled'}`}
+              onClick={() => scrollByOneCategory(-1)}
+              disabled={!canScrollLeft}
+              aria-label="Scroll categories left"
+            >
+              <FiChevronLeft />
+            </button>
+          )}
 
-        <div className={`category-track-wrapper ${showArrows ? '' : 'no-arrows'}`}>
-          <div
-            className="category-track"
-            ref={trackRef}
-            onScroll={showArrows ? updateScrollState : undefined}
-          >
-            {visibleCategories.map((cat, idx) => {
-              const displayName = (cat.shopByCategoryName || '').trim() || cat.name;
-              const imageUrl = getImageUrl(cat.image);
-              return (
-                <Link
-                  key={cat._id}
-                  to={`/category/${cat._id}`}
-                  className="category-item"
-                  data-aos="zoom-in"
-                  data-aos-delay={idx * 50}
-                >
-                  <div className="category-circle">
-                    <img
-                      src={imageUrl}
-                      alt={displayName}
-                      className="category-image"
-                      loading="lazy"
-                      onError={(e) => {
-                        const currentSrc = e.currentTarget.src;
-                        const alternateUrl = getAlternateImageUrl(currentSrc, cat.image);
+          <div className={`category-track-wrapper ${showArrows ? '' : 'no-arrows'}`}>
+            <div
+              className="category-track"
+              ref={trackRef}
+              onScroll={showArrows ? updateScrollState : undefined}
+            >
+              {visibleCategories.map((cat, idx) => {
+                const displayName = (cat.shopByCategoryName || '').trim() || cat.name;
+                const imageUrl = getImageUrl(cat.image);
+                return (
+                  <Link
+                    key={cat._id}
+                    to={`/category/${cat._id}`}
+                    className="category-item"
+                    data-aos="zoom-in"
+                    data-aos-delay={idx * 50}
+                  >
+                    <div className="category-circle">
+                      <img
+                        src={imageUrl}
+                        alt={displayName}
+                        className="category-image"
+                        loading="lazy"
+                        onError={(e) => {
+                          const currentSrc = e.currentTarget.src;
+                          const alternateUrl = getAlternateImageUrl(currentSrc, cat.image);
 
-                        if (alternateUrl && alternateUrl !== currentSrc) {
-                          e.currentTarget.src = alternateUrl;
-                        } else {
-                          e.currentTarget.onerror = null;
-                        }
-                      }}
-                    />
-                  </div>
-                  <span className="category-label">{displayName}</span>
-                </Link>
-              );
-            })}
+                          if (alternateUrl && alternateUrl !== currentSrc) {
+                            e.currentTarget.src = alternateUrl;
+                          } else {
+                            e.currentTarget.onerror = null;
+                          }
+                        }}
+                      />
+                    </div>
+                    <span className="category-label">{displayName}</span>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
+          {shouldShowArrows && (
+            <button
+              type="button"
+              className={`carousel-arrow carousel-arrow-right ${canScrollRight ? '' : 'disabled'}`}
+              onClick={() => scrollByOneCategory(1)}
+              disabled={!canScrollRight}
+              aria-label="Scroll categories right"
+            >
+              <FiChevronRight />
+            </button>
+          )}
         </div>
-
-        {shouldShowArrows && (
-          <button
-            type="button"
-            className={`carousel-arrow carousel-arrow-right ${canScrollRight ? '' : 'disabled'}`}
-            onClick={() => scrollByOneCategory(1)}
-            disabled={!canScrollRight}
-            aria-label="Scroll categories right"
-          >
-            <FiChevronRight />
-          </button>
-        )}
-      </div>
-    </section>
+      </section>
+    </>
   );
 }
