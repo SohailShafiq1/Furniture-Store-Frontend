@@ -865,8 +865,9 @@
   }
 
   .logo {
-    width: 100px;
+    width: 108px;
     height: auto;
+    margin-top: 10px;
   }
 
   .header-mobile-menu-toggle {
