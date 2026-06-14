@@ -19,7 +19,7 @@
   width: 100%;
   display: flex;
   align-items: center;
-  padding: 0 34px;
+  padding: 0;
 }
 
 .category-track-wrapper {
@@ -34,7 +34,7 @@
   scroll-behavior: smooth;
   padding-bottom: 10px;
   margin: 0;
-  scroll-padding-inline: 34px;
+  scroll-padding-inline: 0;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-x;
   scroll-snap-type: x proximity;
@@ -152,7 +152,7 @@
   }
 
   .category-carousel {
-    padding: 0 30px;
+    padding: 0;
   }
 
   .carousel-arrow {
@@ -167,7 +167,7 @@
   .category-track {
     gap: 16px;
     margin: 0;
-    scroll-padding-inline: 30px;
+    scroll-padding-inline: 0;
   }
 
   .category-item {
@@ -184,7 +184,7 @@
   }
 
   .category-carousel {
-    padding: 0 14px;
+    padding: 0;
   }
 
   .carousel-arrow {
@@ -199,7 +199,7 @@
   .category-track {
     gap: 14px;
     margin: 0;
-    scroll-padding-inline: 26px;
+    scroll-padding-inline: 0;
   }
 
   .category-item {
