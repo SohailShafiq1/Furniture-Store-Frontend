@@ -180,7 +180,7 @@
 /* Small Mobile */
 @media (max-width: 480px) {
   .shop-by-category {
-    padding: 0px 10px 36px;
+    padding: 5px 10px 36px;
   }
 
   .category-carousel {
