@@ -17,7 +17,7 @@ export default function AboutUsPage() {
         </section>
 
         <section className="about-intro" aria-label="About us intro">
-          <p className="about-intro-brand">DIAMOND MODER FURNITURE</p>
+          <p className="about-intro-brand">DIAMOND MODERN FURNITURE</p>
           <h2>Furniture for every room, every mood.</h2>
           <p className="about-intro-subheading">
             Enjoy a wide range of products, flexible financing, and top-notch
