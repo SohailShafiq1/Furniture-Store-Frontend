@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useCategoryData } from '../hooks/useCategoryData';
 import { useProductsByCategory } from '../hooks/useProductsByCategory';
@@ -247,15 +247,48 @@ export default function CategoryPage() {
   const location = useLocation();
   const subSubFromQuery = new URLSearchParams(location.search).get('subSub');
   const navigate = useNavigate();
+  const [activeSubSub, setActiveSubSub] = useState(subSubFromQuery || null);
+
   const { categories, loading: categoriesLoading } = useCategoryData();
-  const { products: categoryProducts, loading: productsLoading } = useProductsByCategory(categoryId);
+  const { 
+    products: categoryProducts, 
+    totalProducts,
+    loading: productsLoading, 
+    loadingMore, 
+    hasMore, 
+    loadMore 
+  } = useProductsByCategory(categoryId, {
+    subCategory: subcategoryName,
+    subSubCategory: activeSubSub,
+    limit: 16
+  });
+
+  const observerTarget = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loadingMore && !productsLoading) {
+          loadMore();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => {
+      if (observerTarget.current) observer.unobserve(observerTarget.current);
+    };
+  }, [hasMore, loadingMore, productsLoading, loadMore]);
   
   // Find the current category from fetched categories
   const category = categories.find(cat => cat._id === categoryId);
   const subCategory = category?.subCategories?.find(s => s.name === subcategoryName);
   
   const [products, setProducts] = useState([]);
-  const [activeSubSub, setActiveSubSub] = useState(null);
   const [viewMode, setViewMode] = useState('grid');
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState({ price: { min: '', max: '' } });
@@ -263,22 +296,8 @@ export default function CategoryPage() {
   const resetFilters = () => ({ price: { min: '', max: '' } });
 
   const baseProducts = useMemo(() => {
-    let items = [...categoryProducts];
-
-    if (subcategoryName) {
-      items = items.filter(
-        (product) => product.subCategoryName?.trim().toLowerCase() === subcategoryName.trim().toLowerCase()
-      );
-    }
-
-    if (activeSubSub) {
-      items = items.filter(
-        (product) => product.subSubCategoryName?.trim().toLowerCase() === activeSubSub.trim().toLowerCase()
-      );
-    }
-
-    return items;
-  }, [categoryProducts, subcategoryName, activeSubSub]);
+    return categoryProducts;
+  }, [categoryProducts]);
 
   const filterSections = useMemo(() => buildDynamicFilterSections(baseProducts), [baseProducts]);
 
@@ -630,6 +649,15 @@ export default function CategoryPage() {
                   <button onClick={() => handleFilterChange('clearAll')} className="luna-clear-btn">
                     Clear all filters
                   </button>
+                </div>
+              )}
+            </div>
+
+            {/* Sentinel Element for Lazy Loading / Infinite Scroll */}
+            <div ref={observerTarget} style={{ height: '40px', margin: '20px 0', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              {loadingMore && (
+                <div style={{ color: '#666', fontSize: '14px', fontWeight: '500' }}>
+                  Loading more products...
                 </div>
               )}
             </div>
