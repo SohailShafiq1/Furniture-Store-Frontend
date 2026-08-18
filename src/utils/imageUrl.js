@@ -4,7 +4,6 @@ const normalizePath = (value) => String(value)
   .replace(/\\/g, '/')
   .replace(/^\/+/, '')
   .replace(/^api\/+/, '');
-
 const swapKnownImageHost = (url) => {
   if (!url) return '';
   if (url.includes('api.bellarosefurniture.com/uploads/')) {
@@ -31,7 +30,7 @@ export const getImageUrl = (imagePath) => {
 
   // Construct the URL
   let backendUrl = BACKEND_URL || 'http://localhost:5001';
-  
+
   // Ensure backend URL has proper protocol
   if (backendUrl && !backendUrl.startsWith('http://') && !backendUrl.startsWith('https://')) {
     backendUrl = 'https://' + backendUrl;
