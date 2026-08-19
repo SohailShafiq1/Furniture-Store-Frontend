@@ -19,6 +19,7 @@ export default function SearchBar({ autoFocus = false, defaultValue = '' }) {
 
   useEffect(() => {
     setQuery(defaultValue);
+    setIsOpen(false);
   }, [defaultValue]);
 
   useEffect(() => {
@@ -56,7 +57,9 @@ export default function SearchBar({ autoFocus = false, defaultValue = '' }) {
         if (res.data) {
           setInstantProducts(res.data.products || []);
           setInstantCollections(res.data.collections || []);
-          setIsOpen(true);
+          if (document.activeElement === inputRef.current) {
+            setIsOpen(true);
+          }
           setSelectedIndex(-1);
         }
       } catch (err) {
@@ -119,18 +122,21 @@ export default function SearchBar({ autoFocus = false, defaultValue = '' }) {
     const finalQuery = (searchQuery || query).trim();
     if (!finalQuery) return;
     setIsOpen(false);
+    inputRef.current?.blur();
     navigate(`/search?q=${encodeURIComponent(finalQuery)}`);
   };
 
   const goToProduct = (product) => {
     if (!product || !product._id) return;
     setIsOpen(false);
+    inputRef.current?.blur();
     navigate(`/product/${product._id}`);
   };
 
   const goToCollection = (collection) => {
     if (!collection || !collection.link) return;
     setIsOpen(false);
+    inputRef.current?.blur();
     navigate(collection.link);
   };
 
