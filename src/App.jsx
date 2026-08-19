@@ -4,6 +4,7 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 import HomePage from './pages/HomePage';
 import CategoryPage from './pages/CategoryPage';
+import SearchPage from './pages/SearchPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import BrandPage from './pages/BrandPage';
 import InspirationPage from './pages/InspirationPage';
@@ -80,6 +81,7 @@ function App() {
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/search" element={<SearchPage />} />
         <Route path="/deals" element={<DealsPage />} />
         <Route path="/deals/collection" element={<DealsCollectionPage />} />
         <Route path="/contact-us" element={<ContactPage />} />
